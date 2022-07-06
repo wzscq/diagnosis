@@ -1,0 +1,1 @@
+docker run -p80:80 -v /root/crvframe/appfile:/frame_service/appfile -v /root/crvframe/apps:/frame_service/apps -v /root/crvframe/conf:/frame_service/conf -v /root/diagnosis/conf:/diagnosis/conf digimatrix/diagnosis:0.1.0
