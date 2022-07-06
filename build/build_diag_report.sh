@@ -12,7 +12,7 @@ cd ../web/diag_report
 npm install
 sed -i  's/host=\"*.*\"/host=\"\"/' ./public/index.html
 npm run build
-cd ../build
+cd ../../build
 
 echo remove last pacakge if exist
 if [ -e package/web/diag_report ]; then
