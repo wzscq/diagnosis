@@ -1,0 +1,17 @@
+{
+    "mysql":{
+        "server":"124.70.36.168:4306",
+        "password":"123456",
+        "user":"root",
+        "dbName":"diagnosis"
+    },
+    "mongo":{
+        "server":"mongodb://124.70.36.168:37017",
+        "password":"AAA@111",
+        "user":"admin",
+        "dbName":"DiagInfo"
+    },
+    "service":{
+        "port":"localhost:8300"
+    }
+}
