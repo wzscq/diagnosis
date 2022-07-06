@@ -1,0 +1,6 @@
+FROM wangzhsh/crvframe:0.1.0
+COPY nginx.conf /etc/nginx/nginx.conf
+ADD ./package/web /web
+ADD ./package/service /diagnosis
+copy entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["sh","entrypoint.sh"]

@@ -16,10 +16,10 @@ if [ ! -e package/service ]; then
   mkdir package/service
 fi
 
-if [ -e package/service/diag_service ]; then
-  rm -rf package/service/diag_service
+if [ -e package/service/diagnosis_service ]; then
+  rm -rf package/service/diagnosis_service
 fi
 
-mv service/diagnosis_service/diagnosis ./package/service/diag_service
+mv service/diagnosis_service/diagnosis ./package/service/diagnosis_service
 
-echo diag_service package build over.
+echo diagnosis_service package build over.
