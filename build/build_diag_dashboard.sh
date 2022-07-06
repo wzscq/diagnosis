@@ -1,5 +1,3 @@
-cd ..
-
 echo create folder for build package ...
 if [ ! -e package ]; then
   mkdir package
@@ -10,17 +8,17 @@ if [ ! -e package/web ]; then
 fi
 
 echo build the code ...
-cd web/diag_dashboard
+cd ../web/diag_dashboard
 npm install
 sed -i  's/host=\"*.*\"/host=\"\"/' ./public/index.html
 npm run build
-cd ../..
+cd ../build
 
 echo remove last pacakge if exist
 if [ -e package/web/diag_dashboard ]; then
   rm -rf package/web/diag_dashboard
 fi
 
-mv web/diag_dashboard/build package/web/diag_dashboard
+mv ../web/diag_dashboard/build package/web/diag_dashboard
 
 echo diag_dashboard package build over.
