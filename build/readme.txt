@@ -29,7 +29,7 @@ mkdir /root/mosquitto/data
 mkdir /root/mosquitto/log
 上传mosquitto.conf和password_file到/root/mosquitto/config目录下
 
-docker run --name mosquitto -p 1983:1883 -p 9101:9001 -v /root/mosquitto/config:/mosquitto/config -v /root/mosquitto/data:/mosquitto/data -v /root/mosquitto/log:/mosquitto/log -d eclipse-mosquitto
+docker run -it --name mosquitto -p 1983:1883 -p 9101:9001 -v /root/mosquitto/config:/mosquitto/config -v /root/mosquitto/data:/mosquitto/data -v /root/mosquitto/log:/mosquitto/log -d eclipse-mosquitto
 
 install node
 wget https://nodejs.org/dist/v16.15.1/node-v16.15.1-linux-x64.tar.xz
@@ -48,7 +48,18 @@ tar -xzf go1.18.3.linux-amd64.tar.gz
 
 vi /etc/profile  增加以下内容
 export PATH=$PATH:/root/go/bin
+export GO111MODULE=on
+export GOPROXY=https://goproxy.io
 让配置生效
 source /etc/profile
 
-docker run -p80:80 -v /root/crvframe/appfile:/frame_service/appfile -v /root/crvframe/apps:/frame_service/apps -v /root/crvframe/conf:/frame_service/conf -v /root/diagnosis/conf:/diagnosis/conf digimatrix/diagnosis:0.1.0
+//go get 加速
+# 配置 GOPROXY 环境变量，以下三选一
+# 1. 七牛 CDN
+GOPROXY=https://goproxy.cn,direct
+# 2. 阿里云
+GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
+# 3. 官方
+GOPROXY=https://goproxy.io,direct
+
+docker run -p80:80 --name diagnosis -v /root/crvframe/appfile:/frame_service/appfile -v /root/crvframe/apps:/frame_service/apps -v /root/crvframe/conf:/frame_service/conf -v /root/diagnosis/conf:/diagnosis/conf -d digimatrix/diagnosis:0.1.0
