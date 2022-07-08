@@ -1,2 +1,4 @@
 
 *.exe
+service/diagnosis_service/Known Hosts/121.36.192.249\[121.36.192.249\]22.pub
+service/diagnosis_service/Known Hosts/hostsmap.txt
