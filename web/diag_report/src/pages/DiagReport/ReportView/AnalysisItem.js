@@ -77,43 +77,34 @@ const styleSignalAnalysis={
 export default function AnalysisItem({itmeIndex,report,rec,vin}){
     const dispatch=useDispatch();
 
-    const signalAnalysis=rec.OtherInfo.map((otherItem,index)=>{
-        return <p style={{textIndent:"20px",padding:"10px"}}>{otherItem.FurtherCheckedSignalsAnalysis}</p>
-    });
+    const signalAnalysis=[(<p style={{textIndent:"20px",padding:"10px"}}>{rec.FurtherCheckedSignalsAnalysis}</p>)];
 
-    let signalList=[];
-    rec.OtherInfo.map((otherItem,index)=>{
-        otherItem.SignalList.map((item)=>{
-            signalList.push(item);
-            return null
-        });
-        return null;
-    });
-
+    let signalList=rec.SignalList;
+   
     const signalChart=signalList.map((item,index)=>{
         return <SignalChart itmeIndex={itmeIndex} chartIndex={index+''} signal={item}/>
     });
 
-    const OtherItems=rec.OtherInfo.map((otherItem,index)=>{
-        return (
+    const index=0;
+    const OtherItems=[
+        (
             <Row>
                 <Col span={2} />
                 <Col span={4} style={styleOtherItemLabel}>{index===0?"故障原因:":""}</Col>
                 <Col span={7} >
                     <div style={styleOtherItemInner}>
-                        {otherItem.PossibleCauses}
+                        {rec.PossibleCauses}
                     </div>
                 </Col>
                 <Col span={2} style={{...styleOtherItemLabel,borderLeft:0}}>{index===0?"修复建议:":""}</Col>
                 <Col span={7} style={styleOtherItemContent}>
                     <div style={styleOtherItemInner}>
-                        {otherItem.RecommendedRecovery}
+                        {rec.RecommendedRecovery}
                     </div>
                 </Col>
                 <Col span={2} />
             </Row>
-        );
-    });
+        )];
 
     useEffect(()=>{
         dispatch(setAnalysisItem({itmeIndex:itmeIndex,item:rec}));

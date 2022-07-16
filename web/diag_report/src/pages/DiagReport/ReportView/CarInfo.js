@@ -42,7 +42,9 @@ export default function CarInfo({report,vin}){
     useEffect(()=>{
         const carInfo=[
             {title:"车辆VIN码",value:vin},
-            {title:"车辆代码",value:""},
+            {title:"项目编号",value:report?.ProjectNum},
+            {title:"车辆代码",value:report?.VehicleManagementCode},
+            {title:"设备编号",value:report?.DeviceID},
             {title:"文件名",value:vin+"_"+report?.SamplingTime},
             {title:"采集时间",value:report?.SamplingTime},
         ]
@@ -64,8 +66,20 @@ export default function CarInfo({report,vin}){
         </Row>
         <Row>
             <Col span={2} />
+            <Col span={6} style={styleLabel} >项目编号</Col>
+            <Col span={14} style={styleContent} >{report?.ProjectNum}</Col>
+            <Col span={2} />
+        </Row>
+        <Row>
+            <Col span={2} />
             <Col span={6} style={styleLabel} >车辆代码</Col>
-            <Col span={14}  style={styleContent} ></Col>
+            <Col span={14}  style={styleContent} >{report?.VehicleManagementCode}</Col>
+            <Col span={2} />
+        </Row>
+        <Row>
+            <Col span={2} />
+            <Col span={6} style={styleLabel} >设备编号</Col>
+            <Col span={14}  style={styleContent} >{report?.DeviceID}</Col>
             <Col span={2} />
         </Row>
         <Row>
