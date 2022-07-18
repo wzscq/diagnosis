@@ -6,5 +6,5 @@ cd /diagnosis
 cd ../frame_service
 ./frame &
 
-cd ../DiagEngine
+cd ../diagnosis/DiagEngine
 java -jar ./DiagEngine.jar
