@@ -4,4 +4,7 @@ cd /diagnosis
 ./diagnosis_service &
 
 cd ../frame_service
-./frame
+./frame &
+
+cd ../DiagEngine
+java -jar ./DiagEngine.jar
