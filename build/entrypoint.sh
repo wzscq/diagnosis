@@ -1,10 +1,10 @@
 nginx
 
-cd /diagnosis
+cd /services/diagnosis
 ./diagnosis_service &
 
-cd ../frame_service
+cd /services/crvframe
 ./frame &
 
-cd ../diagnosis/DiagEngine
+cd /services/diagengine
 java -jar ./DiagEngine.jar
