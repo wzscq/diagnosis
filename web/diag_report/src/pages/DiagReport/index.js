@@ -1,14 +1,12 @@
 import { useDispatch,useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import useFrame from '../../hook/useFrame';
 import {createQueryDataMessage} from '../../utils/normalOperations';
 import PageLoading from './PageLoading';
 import ReportView from './ReportView';
 import { getReport } from '../../api';
 import {setFileName} from '../../redux/reportSlice';
 
-export default function DiagReport(){
-    const sendMessageToParent=useFrame();
+export default function DiagReport({sendMessageToParent}){
     const dispatch=useDispatch();
     const {origin,item}=useSelector(state=>state.frame);
     const dataLoaded=useSelector(state=>state.data.loaded);  
@@ -35,7 +33,7 @@ export default function DiagReport(){
                 sendMessageToParent(createQueryDataMessage(frameParams,queryParams));
             }
         }
-    },[dataLoaded,item,origin,dispatch,sendMessageToParent]);
+    },[dataLoaded,item,origin,sendMessageToParent]);
 
     //加载报告
     useEffect(()=>{
@@ -55,6 +53,6 @@ export default function DiagReport(){
                 dispatch(setFileName(id));
             }
         }
-    },[dataLoaded,reportLoaded,dataList]); 
+    },[dataLoaded,reportLoaded,dataList,dispatch]); 
     return((dataLoaded&&reportLoaded)?<ReportView sendMessageToParent={sendMessageToParent}/>:<PageLoading/>);
 }

@@ -62,4 +62,4 @@ GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 # 3. 官方
 GOPROXY=https://goproxy.io,direct
 
-docker run -p80:80 --name diagnosis -v /root/crvframe/appfile:/frame_service/appfile -v /root/crvframe/apps:/frame_service/apps -v /root/crvframe/conf:/frame_service/conf -v /root/diagnosis/conf:/diagnosis/conf -d digimatrix/diagnosis:0.1.0
+docker run -d -p80:80 --name diagnosis -v /root/crvframe/appfile:/services/crvframe/appfile -v /root/crvframe/apps:/services/crvframe/apps -v /root/crvframe/conf:/services/crvframe/conf -v /root/diagnosis/conf:/services/diagnosis/conf digimatrix/diagnosis:0.1.0
