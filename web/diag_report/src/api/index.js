@@ -18,7 +18,7 @@ export const getReport = createAsyncThunk(
         try{
             const response = await axios({
                 url:host+"/reports",
-                method:"get",
+                method:"post",
                 params:params
             });
             return response.data

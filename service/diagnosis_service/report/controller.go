@@ -177,6 +177,6 @@ func (controller *Controller) downloadReport (c *gin.Context){
 //Bind bind the controller function to url
 func (controller *Controller) Bind(router *gin.Engine) {
 	log.Println("Bind controller")
-	router.GET("/reports", controller.getReports)
+	router.POST("/reports", controller.getReports)
 	router.POST("/downloadReport",controller.downloadReport)
 }
