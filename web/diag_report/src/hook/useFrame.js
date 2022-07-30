@@ -2,7 +2,6 @@ import { useEffect,useCallback } from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 
 import {setParam} from '../redux/frameSlice';
-import { setDefinition } from '../redux/definitionSlice';
 import {setData,refreshData} from '../redux/dataSlice';
 import {setLocale} from '../redux/i18nSlice';
 
@@ -14,7 +13,9 @@ import {
 export default function useFrame(){
     const dispatch=useDispatch();
     const {origin}=useSelector(state=>state.frame);
-    const {forms} = useSelector(state=>state.definition);
+    //const {forms} = useSelector(state=>state.definition);
+    
+    console.log('useFrame',origin);
 
     const sendMessageToParent=useCallback((message)=>{
         if(origin){
@@ -26,7 +27,7 @@ export default function useFrame(){
         
     //这里在主框架窗口中挂载事件监听函数，负责和子窗口之间的操作交互
     const receiveMessageFromMainFrame=useCallback((event)=>{
-        console.log("crv_form receiveMessageFromMainFrame:",event);
+        console.log("diag_report receiveMessageFromMainFrame:",event);
         const {type,dataType,data}=event.data;
         if(type===FRAME_MESSAGE_TYPE.INIT){
             dispatch(setParam({origin:event.origin,item:event.data.data}));
@@ -49,9 +50,10 @@ export default function useFrame(){
             console.log("UPDATE_LOCALE",event.data)
             //dispatch(setLocale(event.data.i18n));
         }
-    },[dispatch,forms]);
+    },[dispatch]);
         
     useEffect(()=>{
+        console.log("add window message listener");
         window.addEventListener("message",receiveMessageFromMainFrame);
         return ()=>{
             window.removeEventListener("message",receiveMessageFromMainFrame);

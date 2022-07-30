@@ -63,7 +63,7 @@ const getRecord=(rec,index)=>{
     </Row>);
 }
 
-const getEmptyRecord=(index)=>{
+/*const getEmptyRecord=(index)=>{
     return (
     <Row>
         <Col span={2} />
@@ -74,21 +74,21 @@ const getEmptyRecord=(index)=>{
         <Col span={3} style={styleContent} ></Col>
         <Col span={2} />
     </Row>);
-}
+}*/
 
 export default function Records({report,vin}){
     const dispatch=useDispatch();
 
     const {Records,LogisticsInfo:logisticsInfo}=report;
     const ecuList={}
-    Records.map(rec=>{
+    Records.forEach(rec=>{
         if(!ecuList[rec.Ecu]){
             ecuList[rec.Ecu]={name:rec.Ecu,items:[]};
         }
         ecuList[rec.Ecu].items.push(rec);
     });
 
-    logisticsInfo.map(rec=>{
+    logisticsInfo.forEach(rec=>{
         if(!ecuList[rec.EcuName]){
             ecuList[rec.EcuName]={name:rec.EcuName,items:[]};
         }

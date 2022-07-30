@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"; 
-import {PageHeader,Button} from 'antd';
+import {PageHeader} from 'antd';
 import CarInfo from './CarInfo';
 import Records from './Records';
 import Analysis from './Analysis';
@@ -31,10 +31,6 @@ export default function ReportView({sendMessageToParent}){
             }
         };
         sendMessageToParent(message);
-    }
-
-    const downReportPic=()=>{
-
     }
 
     if(data&&report){

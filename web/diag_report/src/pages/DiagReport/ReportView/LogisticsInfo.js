@@ -1,4 +1,4 @@
-import {Row,Col,Divider} from 'antd';
+import {Row,Col} from 'antd';
 
 const styleTitle={
     textAlign:"left",

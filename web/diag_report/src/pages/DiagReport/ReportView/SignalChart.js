@@ -1,4 +1,4 @@
-import { useEffect,useRef,useState } from 'react';
+import { useEffect,useRef } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import * as echarts from 'echarts';
 
@@ -9,39 +9,40 @@ export default function SignalChart({keyIndex,chartIndex,signal}){
     const dispatch=useDispatch();
     const refChart=useRef();
     const { width,ref } = useResizeDetector();
-    const {SignalCoordinateValue,SignalName,SignalUint}=signal;
+    const {SignalCoordinateValue,SignalName}=signal;
     
     console.log("width:",width);
 
-    const option = {
-        title: {
-            text: SignalName,
-            left: '1%'
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        grid: {
-            left: '10%',
-            right: '5%',
-            bottom: '15%',
-            top:40
-        },
-        xAxis: {
-            data: SignalCoordinateValue.map(function (item) {
-                return item.Coordinate_X;
-            })
-        },
-        yAxis: {},
-        series: {
-        type: 'line',
-        data: SignalCoordinateValue.map(function (item) {
-            return parseInt(item.Coordinate_Y);
-        }),
-        }
-    };
-
     useEffect(()=>{
+
+        const option = {
+            title: {
+                text: SignalName,
+                left: '1%'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            grid: {
+                left: '10%',
+                right: '5%',
+                bottom: '15%',
+                top:40
+            },
+            xAxis: {
+                data: SignalCoordinateValue.map(function (item) {
+                    return item.Coordinate_X;
+                })
+            },
+            yAxis: {},
+            series: {
+            type: 'line',
+            data: SignalCoordinateValue.map(function (item) {
+                return parseInt(item.Coordinate_Y);
+            }),
+            }
+        };
+
         if(refChart&&refChart.current){
             console.log("chart width:",width);
             let chart=echarts.getInstanceByDom(refChart.current);        
@@ -56,7 +57,7 @@ export default function SignalChart({keyIndex,chartIndex,signal}){
             }
             dispatch(setAnalysisChart({keyIndex:keyIndex,chartIndex:chartIndex,chart:chart.getDataURL({type:'png'})}));
         }
-    },[option,refChart,width,keyIndex,chartIndex,dispatch]);
+    },[SignalCoordinateValue,SignalName,refChart,width,keyIndex,chartIndex,dispatch]);
 
     return (
         <>
