@@ -6,6 +6,7 @@ import (
 	"digimatrix.com/diagnosis/dashboard"
 	"digimatrix.com/diagnosis/common"
 	"digimatrix.com/diagnosis/report"
+	"digimatrix.com/diagnosis/send"
 )
 
 func main() {
@@ -36,6 +37,9 @@ func main() {
 		conf.Mongo.User,
         conf.Mongo.Password)
 	reportController.Bind(router)
+
+	sendController:=send.SendController{}
+	sendController.Bind(router)
 
 	router.Run(conf.Service.Port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

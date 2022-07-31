@@ -8,11 +8,11 @@ if [ ! -e package/web ]; then
 fi
 
 echo build the code ...
-cd ../web/diag_report
+cd ../diag_report
 npm install
 sed -i  's/host=\"*.*\"/host=\"\"/' ./public/index.html
 npm run build
-cd ../../build
+cd ../build
 
 echo remove last pacakge if exist
 if [ -e package/web/diag_report ]; then

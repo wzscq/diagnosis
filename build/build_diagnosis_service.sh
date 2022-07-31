@@ -5,10 +5,10 @@ if [ ! -e package ]; then
 fi
 
 echo build the code ...
-cd ../service/diagnosis_service
+cd ../service
 #添加参数CGO_ENABLED=0，关闭CGO,是为了是编译后的程序可以在alpine中运行
 CGO_ENABLED=0 go build
-cd ../../build
+cd ../build
 
 if [ ! -e package/service ]; then
   mkdir package/service
