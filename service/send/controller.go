@@ -104,8 +104,6 @@ var QueryDTCSignalFields = []map[string]interface{}{
 			{"field": "can_id"},
 			{"field": "start_addr"},
 			{"field": "pdu_id"},
-			{"field": "factor"},
-			{"field": "offset"},
 		},
 	},
 }
@@ -116,7 +114,7 @@ var QueryParameterFields = []map[string]interface{}{
 	{"field": "name"},
 	{"field": "platform_id"},
 	{"field": "time_offset"},
-	{"field": "use_triggercanid"},
+	{"field": "channel"},
 	/*{
 		"field": "domain_id",
 		"fieldType": "MANY_TO_ONE",
@@ -418,7 +416,7 @@ func (controller *SendController)convertDtcList(queryResult *CommonRsp)(*[]inter
 			sCanID,_:=signalItem["can_id"].(string)
 			sPduID,_:=signalItem["pdu_id"].(string)
 			sStartAddr,_:=signalItem["start_addr"].(string)
-			mapItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
+			signalItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
 			//signalItem["SignalID"]=signalItem["id"]
 			signalItem["SignalName"]=signalItem["name"]
 			delete(signalItem,"id")
@@ -463,7 +461,7 @@ func (controller *SendController)convertDiagParameter(qeuryResult *CommonRsp)(*m
 
 	diagParaList:=map[string]interface{}{}
 	diagParaList["TimeOffset"]=row["time_offset"]
-	diagParaList["Channel"]=row["use_triggercanid"]
+	diagParaList["Channel"]=row["channel"]
 	
 	ecuList,ok:=row["ecu_id"].(map[string]interface{})["list"].([]interface{})
 	if ok && len(ecuList)>0 {
