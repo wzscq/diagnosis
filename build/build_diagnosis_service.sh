@@ -18,6 +18,6 @@ if [ -e package/service/diagnosis_service ]; then
   rm -rf package/service/diagnosis_service
 fi
 
-mv ../service/diagnosis_service/diagnosis ./package/service/diagnosis_service
+mv ../service/diagnosis ./package/service/diagnosis_service
 
 echo diagnosis_service package build over.

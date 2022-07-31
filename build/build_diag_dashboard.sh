@@ -19,6 +19,6 @@ if [ -e package/web/diag_dashboard ]; then
   rm -rf package/web/diag_dashboard
 fi
 
-mv ../web/diag_dashboard/build package/web/diag_dashboard
+mv ../diag_dashboard/build package/web/diag_dashboard
 
 echo diag_dashboard package build over.
