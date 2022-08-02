@@ -24,10 +24,26 @@ type serviceConf struct {
 	Port string `json:"port"`
 }
 
+type mqttConf struct {
+	Broker string `json:"broker"`
+	User string `json:"user"`
+	Password string `json:"password"`
+	HeartbeatTopic string `json:"heartbeatTopic"`
+}
+
+type crvConf struct {
+	Server string `json:"server"`
+    User string `json:"user"`
+    Password string `json:"password"`
+    AppID string `json:"appID"`
+}
+
 type Config struct {
 	Mysql  mysqlConf  `json:"mysql"`
 	Service serviceConf `json:"service"`
 	Mongo mongoConf `json:"mongo"`
+	MQTT mqttConf `json:"mqtt"`
+	CRV crvConf `json:"crv"`
 }
 
 var gConfig Config

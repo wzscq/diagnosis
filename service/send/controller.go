@@ -529,7 +529,7 @@ func (controller *SendController)convertDiagParameter(qeuryResult *CommonRsp)(*m
 			log.Println("trigger value can not convert to float64")
 			return nil,-1
 		}
-		mapItem["Value"]=floatVal/floatFactor+floatOffset
+		mapItem["Value"]=fmt.Sprintf("%.f",floatVal/floatFactor+floatOffset)
 		delete(mapItem,"value")
 	}
 	
@@ -577,7 +577,9 @@ func (controller *SendController) mergPara(
 	projectNum interface{})(*map[string]interface{},int){
 	log.Println("start mergPara")
 	distPara:=*diagConf
-	distPara["DiagParaList"]=diagParaList
+	distPara["DiagParaList"]=[]interface{}{
+		diagParaList,
+	}
 	distPara["DtcList"]=dtcList
 
 	postJson,_:=json.Marshal(distPara)

@@ -7,6 +7,9 @@ import (
 	"digimatrix.com/diagnosis/common"
 	"digimatrix.com/diagnosis/report"
 	"digimatrix.com/diagnosis/send"
+	"digimatrix.com/diagnosis/mqtt"
+	"digimatrix.com/diagnosis/crv"
+	"digimatrix.com/diagnosis/busi"
 )
 
 func main() {
@@ -19,6 +22,29 @@ func main() {
     }))
 
 	conf:=common.InitConfig()
+
+	//crvClinet 用于到crvframeserver的请求
+	crvClinet:=crv.CRVClient{
+		Server:conf.CRV.Server,
+		User:conf.CRV.User,
+		Password:conf.CRV.Password,
+		AppID:conf.CRV.AppID,
+	}
+
+	//实际的业务处理模块
+	busiModule:=busi.Busi{
+		CrvClient:&crvClinet,
+	}
+
+	//mqttclient
+	mqttClient:=mqtt.MQTTClient{
+		Broker:conf.MQTT.Broker,
+		User:conf.MQTT.User,
+		Password:conf.MQTT.Password,
+		HeartbeatTopic:conf.MQTT.HeartbeatTopic,
+		Busi:&busiModule,
+	}
+	mqttClient.Init()
 	
 	repo:=&dashboard.DefatultRepository{}
     repo.Connect(

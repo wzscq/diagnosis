@@ -63,3 +63,10 @@ GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 GOPROXY=https://goproxy.io,direct
 
 docker run -d -p80:80 --name diagnosis -v /root/crvframe/appfile:/services/crvframe/appfile -v /root/crvframe/apps:/services/crvframe/apps -v /root/crvframe/conf:/services/crvframe/conf -v /root/diagnosis/conf:/services/diagnosis/conf digimatrix/diagnosis:0.1.0
+
+待处理问题列表
+1、通过mqtt接收设备心跳消息和下发参数接收成功的消息
+2、通过流程化配置实现勾选参数下发+选择下发车辆+参数下发
+3、车辆下发记录展示
+4、auto2.0登录协议实现
+5、错误处理的通用逻辑优化
