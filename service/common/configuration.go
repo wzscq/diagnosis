@@ -29,6 +29,7 @@ type mqttConf struct {
 	User string `json:"user"`
 	Password string `json:"password"`
 	HeartbeatTopic string `json:"heartbeatTopic"`
+	DiagResponseTopic string `json:"diagResponseTopic"`
 }
 
 type crvConf struct {
@@ -38,12 +39,19 @@ type crvConf struct {
     AppID string `json:"appID"`
 }
 
+type redisConf struct {
+	Server string `json:"server"`
+    SendRecordExpired string `json:"sendRecordExpired"`
+    DB int `json:"db"`
+}
+
 type Config struct {
 	Mysql  mysqlConf  `json:"mysql"`
 	Service serviceConf `json:"service"`
 	Mongo mongoConf `json:"mongo"`
 	MQTT mqttConf `json:"mqtt"`
 	CRV crvConf `json:"crv"`
+	Redis redisConf `json:"redis"`
 }
 
 var gConfig Config

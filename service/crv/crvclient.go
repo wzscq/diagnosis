@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"net/http"
+	"digimatrix.com/diagnosis/common"
 )
 
 type loginRep struct {
@@ -27,6 +28,8 @@ type loginRsp struct {
 	Result loginResult `json:"result"`
 }
 
+
+
 type CommonRsp struct {
 	ErrorCode int `json:"errorCode"`
 	Message string `json:"message"`
@@ -40,6 +43,9 @@ type CommonReq struct {
 	Filter *map[string]interface{} `json:"filter"`
 	List *[]map[string]interface{} `json:"list"`
 	Fields *[]map[string]interface{} `json:"fields"`
+	UserID string `json:"userID"`
+	AppDB string `json:"appDB"`
+	UserRoles string `json:"userRoles"`
 	//Sorter *[]sorter `json:"sorter"`
 	//SelectedRowKeys *[]string `json:"selectedRowKeys"`
 	//Pagination *pagination `json:"pagination"`
@@ -122,7 +128,7 @@ func (crv *CRVClient)Save(commonReq *CommonReq)(*CommonRsp,int){
 	req,err:=http.NewRequest("POST",crv.Server+URL_SAVE,postBody)
 	if err != nil {
 		log.Println("CRVClient save NewRequest error",err)
-		return nil,-1
+		return nil,common.ResultSaveDataError
 	}
 	req.Header.Set("token", crv.Token)
 	req.Header.Set("Content-Type","application/json")
@@ -130,13 +136,13 @@ func (crv *CRVClient)Save(commonReq *CommonReq)(*CommonRsp,int){
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
 		log.Println("CRVClient save Do request error",err)
-		return nil,-1
+		return nil,common.ResultSaveDataError
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 { 
 		log.Println("CRVClient save StatusCode error",resp)
-		return nil,-1
+		return nil,common.ResultSaveDataError
 	}
 
 	decoder := json.NewDecoder(resp.Body)
@@ -144,14 +150,14 @@ func (crv *CRVClient)Save(commonReq *CommonReq)(*CommonRsp,int){
 	err = decoder.Decode(&commonRsp)
 	if err != nil {
 		log.Println("CRVClient save result decode failed [Err:%s]", err.Error())
-		return nil,-1
+		return nil,common.ResultSaveDataError
 	}
 
 	resultJson,_:=json.Marshal(&commonRsp.Result)
 	log.Println(string(resultJson))
 
 	log.Println("end CRVClient save success")
-	return &commonRsp,0
+	return &commonRsp,common.ResultSuccess
 }
 
 func (crv *CRVClient)Query(commonReq *CommonReq)(*CommonRsp,int){
@@ -161,7 +167,7 @@ func (crv *CRVClient)Query(commonReq *CommonReq)(*CommonRsp,int){
 	req,err:=http.NewRequest("POST",crv.Server+URL_QUERY,postBody)
 	if err != nil {
 		log.Println("CRVClient query NewRequest error",err)
-		return nil,-1
+		return nil,common.ResultQueryRequestError
 	}
 	req.Header.Set("token", crv.Token)
 	req.Header.Set("Content-Type","application/json")
@@ -169,13 +175,13 @@ func (crv *CRVClient)Query(commonReq *CommonReq)(*CommonRsp,int){
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
 		log.Println("CRVClient query Do request error",err)
-		return nil,-1
+		return nil,common.ResultQueryRequestError
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 { 
 		log.Println("CRVClient query StatusCode error",resp)
-		return nil,-1
+		return nil,common.ResultQueryRequestError
 	}
 
 	decoder := json.NewDecoder(resp.Body)
@@ -183,14 +189,14 @@ func (crv *CRVClient)Query(commonReq *CommonReq)(*CommonRsp,int){
 	err = decoder.Decode(&commonRsp)
 	if err != nil {
 		log.Println("CRVClient query result decode failed [Err:%s]", err.Error())
-		return nil,-1
+		return nil,common.ResultQueryRequestError
 	}
 
 	resultJson,_:=json.Marshal(&commonRsp.Result)
 	log.Println(string(resultJson))
 
 	log.Println("end CRVClient query success")
-	return &commonRsp,0
+	return &commonRsp,common.ResultSuccess
 }
 
 

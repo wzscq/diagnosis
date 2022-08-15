@@ -1,0 +1,293 @@
+package send
+
+import (
+	"digimatrix.com/diagnosis/crv"
+	"digimatrix.com/diagnosis/common"
+	"log"
+	"fmt"
+	"strconv"
+)
+
+var QueryParameterFields = []map[string]interface{}{
+	{"field": "id"},
+	{"field": "version"},
+	{"field": "name"},
+	{"field": "platform_id"},
+	{"field": "time_offset"},
+	{"field": "channel"},
+	/*{
+		"field": "domain_id",
+		"fieldType": "MANY_TO_ONE",
+		"relatedModelID": "diag_domain",
+		"fields": []map[string]interface{}{
+			{"field": "id"},
+			{"field": "name"},
+		},
+	},*/
+	{
+		"field": "ecu_id",
+		"fieldType": "many2one",
+		"relatedModelID": "diag_ecu",
+		"fields": []map[string]interface{}{
+		  	{"field": "id"},
+		 	{"field": "name"},
+			{"field": "tx"},
+			{"field": "rx"},
+			{"field": "instruct"},
+			{"field": "trigger_can_id"},
+		},
+	},
+	{
+		"field": "logistics_did",
+		"fieldType": "many2many",
+		"relatedModelID": "diag_logistics",
+		"associationModelID": "diag_parameter_logistics_did",
+		"fields": []map[string]interface{}{
+			{"field": "id"},
+			{"field": "did"},
+		},
+	},
+	{
+		"field": "internal_did",
+		"fieldType": "many2many",
+		"relatedModelID": "diag_logistics",
+		"associationModelID": "diag_parameter_internal_did",
+		"fields": []map[string]interface{}{
+		  	{"field": "id"},
+		  	{"field": "did"},
+		},
+	},
+	{
+		"field": "triggers",
+		"fieldType": "one2many",
+		"relatedModelID": "diag_parameter_trigger",
+		"relatedField": "parameter_id",
+		"fields": []map[string]interface{}{
+		  	{"field": "id"},
+		  	{
+				"field": "diag_signal_id",
+				"fieldType": "many2one",
+				"relatedModelID": "diag_signal",
+				"fields": []map[string]interface{}{
+			  		{"field": "id"},
+			  		{"field": "name"},
+					{"field": "can_id"},
+					{"field": "start_addr"},
+					{"field": "pdu_id"},
+					{"field": "factor"},
+					{"field": "offset"},
+				},
+		  	},
+		  	{"field": "logic"},
+		  	{"field": "value"},
+		  	//{"field": "version"},
+		  	{"field": "parameter_id"},
+		},
+	},
+	//{"field": "remark"},
+}
+
+type diagParameter struct {
+	CRVClient *crv.CRVClient
+	Ids []string
+	Records []map[string]interface{}
+	Params []map[string]interface{}
+}
+
+func getDiagParams(ids []string,crvClient *crv.CRVClient)(*diagParameter,int){
+	dp:=&diagParameter{
+		CRVClient:crvClient,
+		Ids:ids,
+	}
+
+	//获取诊断参数配置数据
+	rsp,errorCode:=dp.queryDiagParameter()
+	if errorCode!=common.ResultSuccess {
+		return nil,errorCode
+	}
+	//将结果转换为map数组，存放在Records成员中
+	errorCode=dp.updateRecords(rsp.Result)
+	if errorCode!=common.ResultSuccess {
+		return nil,errorCode
+	}
+	//检查选择参数是否符合规则
+	errorCode=dp.isValid()
+	if errorCode!=common.ResultSuccess {
+		return nil,errorCode
+	}
+
+	dp.convertDiagParameters()
+	return dp,common.ResultSuccess
+}
+
+func (dp *diagParameter)updateRecords(result map[string]interface{})(int){
+	list,ok:=result["list"]
+	if !ok {
+		log.Println("getDiagParams queryResult no list")
+		return common.ResultNoParams
+	}
+
+	records,ok:=list.([]interface{})
+	if !ok || len(records)<=0 {
+		log.Println("getDiagParams queryResult no list")
+		return common.ResultNoParams
+	}
+
+	dp.Records=make([]map[string]interface{},len(records))
+	for index,row:=range(records){
+		dp.Records[index]=row.(map[string]interface{})
+	}
+	return common.ResultSuccess
+}
+
+func (dp *diagParameter)queryDiagParameter()(*crv.CommonRsp,int){
+	log.Println("start queryDiagParameter")
+	commonRep:=crv.CommonReq{
+		ModelID:"diag_parameter",
+		Filter:&map[string]interface{}{
+			"id":&map[string]interface{}{
+				"Op.in":dp.Ids,
+			},
+		},
+		Fields:&QueryParameterFields,
+	}
+
+	return dp.CRVClient.Query(&commonRep)
+}
+
+func (dp *diagParameter)isValid()(int){
+	//下发参数的项目号要求一致，ECU不能重复
+	mapProject:=map[string]interface{}{}
+	mapEcu:=map[string]interface{}{}
+	for _,record:=range(dp.Records){
+		prj,_:=record["platform_id"]
+		prjStr,_:=prj.(string)
+		mapProject[prjStr]=prj
+		
+		ecuList,ok:=record["ecu_id"].(map[string]interface{})["list"].([]interface{})
+		if !ok || len(ecuList)==0 {
+			return common.ResultParamWithoutEcu
+		}
+
+		ecu,_:=ecuList[0].(map[string]interface{})["id"]
+		ecuStr,_:=ecu.(string)
+		_,ok=mapEcu[ecuStr]
+		if ok {
+			return common.ResultRepeatedEcu
+		}
+		mapEcu[ecuStr]=ecu
+	}
+
+	if len(mapProject)!=1 {
+		return common.ResultMultiProject
+	}
+
+	return common.ResultSuccess
+}
+
+func (dp *diagParameter)convertDiagParameter(row map[string]interface{})(map[string]interface{}){
+	diagParaList:=map[string]interface{}{}
+	diagParaList["TimeOffset"]=row["time_offset"]
+	diagParaList["Channel"]=row["channel"]
+	
+	ecuList,ok:=row["ecu_id"].(map[string]interface{})["list"].([]interface{})
+	if ok && len(ecuList)>0 {
+		ecu,_:=ecuList[0].(map[string]interface{})
+		diagParaList["Ecu"]=ecu["id"]
+		diagParaList["TxId"]=ecu["tx"]
+		diagParaList["RxId"]=ecu["rx"]
+		diagParaList["TriggerCanId"]=ecu["trigger_can_id"]
+		diagParaList["DiagInstruct"]=ecu["instruct"]
+	}
+	
+	logistics,_:=row["logistics_did"].(map[string]interface{})["list"].([]interface{})
+	for _,item:=range logistics {
+		mapItem:=item.(map[string]interface{})
+		delete(mapItem,"id")
+		mapItem["DID"]=mapItem["did"]
+		delete(mapItem,"did")
+	}
+
+	internallogistics,_:=row["internal_did"].(map[string]interface{})["list"].([]interface{})
+	for _,item:=range internallogistics {
+		mapItem:=item.(map[string]interface{})
+		delete(mapItem,"id")
+		mapItem["DID"]=mapItem["did"]
+		delete(mapItem,"did")
+	}
+
+	triggerList,_:=row["triggers"].(map[string]interface{})["list"].([]interface{})
+	for _,item:=range triggerList {
+		mapItem:=item.(map[string]interface{})
+		delete(mapItem,"id")
+		delete(mapItem,"parameter_id")
+		signalList,ok:=mapItem["diag_signal_id"].(map[string]interface{})["list"].([]interface{})
+		var floatFactor,floatOffset float64
+		var err error
+		if ok && len(signalList)>0 {
+			signal,_:=signalList[0].(map[string]interface{})
+			mapItem["SignalName"]=signal["name"]
+			
+			sCanID,_:=signal["can_id"].(string)
+			sPduID,_:=signal["pdu_id"].(string)
+			sStartAddr,_:=signal["start_addr"].(string)
+			mapItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
+
+			sFactor,_:=signal["factor"].(string)
+			floatFactor, err = strconv.ParseFloat(sFactor, 64)
+			if err!=nil {
+				log.Println("trigger signal factor can not convert to float64")
+				log.Println("factor value is :"+sFactor)
+				return nil
+			}
+			sOffset,_:=signal["offset"].(string)
+			floatOffset, err= strconv.ParseFloat(sOffset, 64)
+			if err!=nil {
+				log.Println("trigger signal offset can not convert to float64")
+				return nil
+			}
+		}
+		delete(mapItem,"diag_signal_id")
+		mapItem["Logic"]=mapItem["logic"]
+		delete(mapItem,"logic")
+		sValue,_:=mapItem["value"].(string)
+		floatVal, err := strconv.ParseFloat(sValue, 64)
+		if err!=nil {
+			log.Println("trigger value can not convert to float64")
+			return nil
+		}
+		mapItem["Value"]=fmt.Sprintf("%.f",floatVal/floatFactor+floatOffset)
+		delete(mapItem,"value")
+	}
+	
+	diagParaList["Logistics"]=logistics
+	diagParaList["Internallogistics"]=internallogistics
+	diagParaList["TriggerList"]=triggerList
+
+	return diagParaList
+}
+
+func (dp *diagParameter)convertDiagParameters(){
+	log.Println("start convertDiagParameters")
+	dp.Params=make([]map[string]interface{},len(dp.Records))
+	
+	for index,row:=range(dp.Records){
+		dp.Params[index]=dp.convertDiagParameter(row)
+	}
+
+	log.Println("end convertDiagParameters")
+} 
+
+func (dp *diagParameter)getProjectNum()(interface{}){
+	return dp.Records[0]["platform_id"]
+}
+
+func (dp *diagParameter)getEcuIDs()([]string){
+	ids:=[]string{}
+	for _,param:=range(dp.Params){
+		id,_:=param["Ecu"]
+		strID,_:=id.(string)
+		ids=append(ids,strID)
+	}
+	return ids
+}

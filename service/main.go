@@ -10,9 +10,14 @@ import (
 	"digimatrix.com/diagnosis/mqtt"
 	"digimatrix.com/diagnosis/crv"
 	"digimatrix.com/diagnosis/busi"
+	"log"
+	"time"
 )
 
 func main() {
+	//设置log打印文件名和行号
+    log.SetFlags(log.Lshortfile | log.LstdFlags)
+
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
         AllowAllOrigins:true,
@@ -31,9 +36,18 @@ func main() {
 		AppID:conf.CRV.AppID,
 	}
 
+	//下发参数缓存，对应一个设备一个记录
+	duration, _ := time.ParseDuration(conf.Redis.SendRecordExpired)
+	sendRecordCache:=send.SendRecordCache{}
+	sendRecordCache.Init(
+		conf.Redis.Server,
+		conf.Redis.DB,
+		duration)
+
 	//实际的业务处理模块
 	busiModule:=busi.Busi{
 		CrvClient:&crvClinet,
+		SendRecordCache:&sendRecordCache,
 	}
 
 	//mqttclient
@@ -42,7 +56,8 @@ func main() {
 		User:conf.MQTT.User,
 		Password:conf.MQTT.Password,
 		HeartbeatTopic:conf.MQTT.HeartbeatTopic,
-		Busi:&busiModule,
+		DiagResponseTopic:conf.MQTT.DiagResponseTopic,
+		Handler:&busiModule,
 	}
 	mqttClient.Init()
 	
@@ -64,7 +79,11 @@ func main() {
         conf.Mongo.Password)
 	reportController.Bind(router)
 
-	sendController:=send.SendController{}
+	sendController:=send.SendController{
+		CRVClient:&crvClinet,
+		MQTTClient:&mqttClient,
+		SendRecordCache:&sendRecordCache,
+	}
 	sendController.Bind(router)
 
 	router.Run(conf.Service.Port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

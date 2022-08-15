@@ -4,21 +4,28 @@ import (
 	"log"
 	"strings"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"digimatrix.com/diagnosis/busi"
+	"digimatrix.com/diagnosis/common"
 )
+
+type eventHandler interface {
+	DealDeviceHeartbeat(deviceID,vin string)
+	DealDiagResponse(deviceID string)
+}
 
 type MQTTClient struct {
 	Broker string
 	User string
 	Password string
 	HeartbeatTopic string
-	Busi *busi.Busi
+	DiagResponseTopic string
+	Handler eventHandler
+	Client mqtt.Client
 }
 
-func (mqc *MQTTClient) getClient()(*mqtt.Client){
+func (mqc *MQTTClient) getClient()(mqtt.Client){
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(mqc.Broker)
-	opts.SetClientID("diagonsis_mqtt_subscribe_client")
+	opts.SetClientID("diagonsis_mqtt_subscribe_client_1")
 	opts.SetUsername(mqc.User)
 	opts.SetPassword(mqc.Password)
 	opts.SetAutoReconnect(true)
@@ -33,7 +40,7 @@ func (mqc *MQTTClient) getClient()(*mqtt.Client){
 		log.Println(token.Error)
 		return nil
 	}
-	return &client
+	return client
 }
 
 func (mqc *MQTTClient) connectHandler(client mqtt.Client){
@@ -52,7 +59,7 @@ func (mqc *MQTTClient) reconnectingHandler(Client mqtt.Client,opts *mqtt.ClientO
 	log.Println("MQTTClient reconnectingHandler ")
 }
 
-func (mqc *MQTTClient) onHeartbeat(Client mqtt.Client, msg mqtt.Message){
+func (mqc *MQTTClient)onHeartbeat(Client mqtt.Client, msg mqtt.Message){
 	log.Println("MQTTClient onHeartbeat ",msg.Topic())
 	strTopic:=msg.Topic()[len(mqc.HeartbeatTopic)-1:]
 	log.Println("MQTTClient onHeartbeat strTopic ",strTopic)
@@ -61,10 +68,31 @@ func (mqc *MQTTClient) onHeartbeat(Client mqtt.Client, msg mqtt.Message){
 	vin:=strTopic[idx+1:]
 	log.Printf("MQTTClient onHeartbeat deviceID:%s,vin:%s",deviceID,vin)
 	//更新心跳记录
-	mqc.Busi.DealDeviceHeartbeat(deviceID,vin)
+	mqc.Handler.DealDeviceHeartbeat(deviceID,vin)
+}
+
+func (mqc *MQTTClient)onDiagResponse(Client mqtt.Client, msg mqtt.Message){
+	log.Println("MQTTClient onDiagResponse ",msg.Topic())
+	strTopic:=msg.Topic()[len(mqc.DiagResponseTopic)-1:]
+	log.Println("MQTTClient onDiagResponse strTopic ",strTopic)
+	deviceID:=strTopic
+	log.Printf("MQTTClient onDiagResponse deviceID:%s",deviceID)
+	//更新下发状态
+	mqc.Handler.DealDiagResponse(deviceID)
+}
+
+func (mqc *MQTTClient)Publish(topic,content string)(int){
+	if mqc.Client == nil {
+		return common.ResultMqttClientError
+	}
+	log.Println("MQTTClient Publish topic:"+topic+" content:"+content)
+	token:=mqc.Client.Publish(topic,0,false,content)
+	token.Wait()
+	return common.ResultSuccess
 }
 
 func (mqc *MQTTClient) Init(){
-	client:=mqc.getClient()
-	(*client).Subscribe(mqc.HeartbeatTopic,0,mqc.onHeartbeat)
+	mqc.Client=mqc.getClient()
+	mqc.Client.Subscribe(mqc.HeartbeatTopic,0,mqc.onHeartbeat)
+	mqc.Client.Subscribe(mqc.DiagResponseTopic,0,mqc.onDiagResponse)
 }

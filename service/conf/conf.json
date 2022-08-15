@@ -18,12 +18,18 @@
         "broker":"tcp://49.4.3.226:1983",
         "password":"123456",
         "user":"mosquitto",
-        "heartbeatTopic":"MQB/Status/+"
+        "heartbeatTopic":"MQB/Status/+",
+        "diagResponseTopic":"MQB/ReciveAck/+"
     },
     "crv":{
         "server":"http://127.0.0.1:8200",
         "user":"carapi",
         "password":"a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
         "appID":"diagnosis"
+    },
+    "redis":{
+        "server":"49.4.3.226:6479",
+        "sendRecordExpired":"6000s",
+        "db":5
     }
 }
