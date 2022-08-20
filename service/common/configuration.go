@@ -30,6 +30,8 @@ type mqttConf struct {
 	Password string `json:"password"`
 	HeartbeatTopic string `json:"heartbeatTopic"`
 	DiagResponseTopic string `json:"diagResponseTopic"`
+	DBCUploadTopic string `json:"dbcUploadTopic"`
+	ClientID string `json:"clientID"`
 }
 
 type crvConf struct {
@@ -52,6 +54,7 @@ type Config struct {
 	MQTT mqttConf `json:"mqtt"`
 	CRV crvConf `json:"crv"`
 	Redis redisConf `json:"redis"`
+	FilePath string `json:"filePath"`
 }
 
 var gConfig Config

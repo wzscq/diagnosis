@@ -19,7 +19,9 @@
         "password":"123456",
         "user":"mosquitto",
         "heartbeatTopic":"MQB/Status/+",
-        "diagResponseTopic":"MQB/ReciveAck/+"
+        "diagResponseTopic":"MQB/ReciveAck/+",
+        "dbcUploadTopic":"upload/dbcFile",
+        "clientID":"diagonsis_mqtt_subscribe_client_2"
     },
     "crv":{
         "server":"http://127.0.0.1:8200",
@@ -31,5 +33,6 @@
         "server":"49.4.3.226:6479",
         "sendRecordExpired":"6000s",
         "db":5
-    }
+    },
+    "filePath":"./"
 }

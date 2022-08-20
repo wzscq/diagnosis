@@ -16,6 +16,9 @@ type CommonError struct {
 const (
 	ResultSuccess = 10000000
 	ResultWrongRequest = 10000001
+	ResultCreateDirError=10000027
+	ResultBase64DecodeError=10000028
+	ResultCreateFileError=10000029
 	ResultCannotLoginCRV = 10100002
 	ResultNoParams = 10100003
 	ResultNoDtcList = 10100004
@@ -99,6 +102,21 @@ var errMsg = map[int]CommonRsp{
 	ResultParamWithoutEcu:CommonRsp{
 		ErrorCode:ResultParamWithoutEcu,
 		Message:"下发参数中未指定ECU信息，请检查选择参数正确后重新尝试",
+		Error:true,
+	},
+	ResultCreateDirError:CommonRsp{
+		ErrorCode:ResultCreateDirError,
+		Message:"保存文件时创建文件夹失败，请与管理员联系处理",
+		Error:true,
+	},
+	ResultBase64DecodeError:CommonRsp{
+		ErrorCode:ResultBase64DecodeError,
+		Message:"保存文件时文件内容Base64解码失败，请与管理员联系处理",
+		Error:true,
+	},
+	ResultCreateFileError:CommonRsp{
+		ErrorCode:ResultBase64DecodeError,
+		Message:"创建文件失败，请与管理员联系处理",
 		Error:true,
 	},
 }

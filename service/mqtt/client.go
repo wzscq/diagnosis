@@ -18,6 +18,7 @@ type MQTTClient struct {
 	Password string
 	HeartbeatTopic string
 	DiagResponseTopic string
+	ClientID string
 	Handler eventHandler
 	Client mqtt.Client
 }
@@ -25,7 +26,7 @@ type MQTTClient struct {
 func (mqc *MQTTClient) getClient()(mqtt.Client){
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(mqc.Broker)
-	opts.SetClientID("diagonsis_mqtt_subscribe_client_1")
+	opts.SetClientID(mqc.ClientID)
 	opts.SetUsername(mqc.User)
 	opts.SetPassword(mqc.Password)
 	opts.SetAutoReconnect(true)
@@ -75,7 +76,8 @@ func (mqc *MQTTClient)onDiagResponse(Client mqtt.Client, msg mqtt.Message){
 	log.Println("MQTTClient onDiagResponse ",msg.Topic())
 	strTopic:=msg.Topic()[len(mqc.DiagResponseTopic)-1:]
 	log.Println("MQTTClient onDiagResponse strTopic ",strTopic)
-	deviceID:=strTopic
+	idx:=strings.Index(strTopic,":")
+	deviceID:=strTopic[:idx]
 	log.Printf("MQTTClient onDiagResponse deviceID:%s",deviceID)
 	//更新下发状态
 	mqc.Handler.DealDiagResponse(deviceID)

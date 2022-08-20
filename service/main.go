@@ -58,6 +58,7 @@ func main() {
 		HeartbeatTopic:conf.MQTT.HeartbeatTopic,
 		DiagResponseTopic:conf.MQTT.DiagResponseTopic,
 		Handler:&busiModule,
+		ClientID:conf.MQTT.ClientID,
 	}
 	mqttClient.Init()
 	
@@ -83,6 +84,8 @@ func main() {
 		CRVClient:&crvClinet,
 		MQTTClient:&mqttClient,
 		SendRecordCache:&sendRecordCache,
+		FilePath:conf.FilePath,
+		DBCUploadTopic:conf.MQTT.DBCUploadTopic,
 	}
 	sendController.Bind(router)
 
