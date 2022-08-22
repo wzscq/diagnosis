@@ -8,6 +8,7 @@ import (
 	"digimatrix.com/diagnosis/common"
 	"digimatrix.com/diagnosis/crv"
 	"digimatrix.com/diagnosis/mqtt"
+	"bytes"
 )
 
 type SendController struct {
@@ -52,8 +53,12 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		return
 	}
 	log.Println(parameter)
-	paraJson,_:=json.Marshal(parameter)
-	
+	bf := bytes.NewBuffer([]byte{})
+    jsonEncoder := json.NewEncoder(bf)
+    jsonEncoder.SetEscapeHTML(false)
+    jsonEncoder.Encode(parameter)
+	strParam:=bf.String()
+
 	//获取下发车辆列表
 	sv:=&sendVehicle{
 		CRVClient:controller.CRVClient,
@@ -72,7 +77,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		controller.SendRecordCache,
 		vehicles,
 		rep.UserID,
-		string(paraJson))
+		strParam)
 
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
@@ -81,7 +86,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 	}
 	//log.Println(*saveRsp)
 	//执行参数下发
-	errorCode=sendByMqtt(controller.MQTTClient,vehicles,string(paraJson))
+	errorCode=sendByMqtt(controller.MQTTClient,vehicles,strParam)
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)

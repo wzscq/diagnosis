@@ -6,6 +6,7 @@ import (
 	"log"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 var QueryParameterFields = []map[string]interface{}{
@@ -265,6 +266,16 @@ func (dp *diagParameter)convertDiagParameter(row map[string]interface{})(map[str
 	diagParaList["TriggerList"]=triggerList
 
 	return diagParaList
+}
+
+func (dp *diagParameter)getLogic(logic interface{})(string){
+	strLogic,_:=logic.(string)
+	log.Println("diagParameter getLogic strLogic before replace:"+strLogic)
+	//替换<,>符号
+	strLogic=strings.Replace(strLogic,"\u003e",">",1)
+	strLogic=strings.Replace(strLogic,"\u003c","<",1)
+	log.Println("diagParameter getLogic strLogic after replace:"+strLogic)
+	return strLogic
 }
 
 func (dp *diagParameter)convertDiagParameters(){
