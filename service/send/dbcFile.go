@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"os"
 	"strings"
+	"github.com/rs/xid"
 )
 
 const (
@@ -44,6 +45,9 @@ func createFileRow(path string,row map[string]interface{})(string,int){
 	log.Println("createFileRow ... ")
 	nameCol,_:=row[CC_FILENAME]
 	name,_:= nameCol.(string)
+
+	guid := xid.New().String()
+	name=guid+"_"+name
 	
 	contentCol,_:=row[CC_FILECONTENT]
 	contentBase64,_:= contentCol.(string)
