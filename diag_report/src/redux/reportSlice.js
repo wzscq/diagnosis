@@ -13,10 +13,7 @@ const initialState = {
     ],
     ecuList:[],
     analysisItems:{
-        "1":{
-            item:{},
-            signalChart:{},
-        }
+        
     },
     fileName:"",
     pending:false

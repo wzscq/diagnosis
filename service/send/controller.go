@@ -137,9 +137,84 @@ func (controller *SendController)uploadDBC(c *gin.Context){
 	c.IndentedJSON(http.StatusOK, rsp)
 }
 
+func (controller *SendController)sendEventParameter (c *gin.Context){
+	log.Println("start sendEventParameter")
+	var rep crv.CommonReq
+	if err := c.BindJSON(&rep); err != nil {
+		log.Println(err)
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+    }	
+
+	if rep.List==nil || len(*rep.List)==0 {
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+
+	//生成下发参数
+	errorCode:=controller.CRVClient.Login()
+	if errorCode!=0 {
+		rsp:=common.CreateResponse(common.CreateError(common.ResultCannotLoginCRV,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+
+	sp:=&SendEventParameter{
+		CRVClient:controller.CRVClient,
+	}
+	parameter,errorCode:=sp.getSendParameter((*rep.List)[0])
+	if errorCode!=common.ResultSuccess {
+		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+	log.Println(parameter)
+	bf := bytes.NewBuffer([]byte{})
+    jsonEncoder := json.NewEncoder(bf)
+    jsonEncoder.SetEscapeHTML(false)
+    jsonEncoder.Encode(parameter)
+	strParam:=bf.String()
+	log.Println(strParam)
+	//获取下发车辆列表
+	sv:=&sendVehicle{
+		CRVClient:controller.CRVClient,
+	}
+	vehicles,errorCode:=sv.getSendVehicle((*rep.List)[0])
+	if errorCode!=common.ResultSuccess {
+		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+	log.Println(vehicles)
+
+	//创建下发记录
+	_,errorCode=createSendEventRecords(
+		controller.CRVClient,
+		controller.SendRecordCache,
+		vehicles,
+		rep.UserID,
+		strParam)
+
+	if errorCode!=common.ResultSuccess {
+		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+	//log.Println(*saveRsp)
+	//执行参数下发
+	//errorCode=sendEventByMqtt(controller.MQTTClient,vehicles,strParam)
+
+	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+	c.IndentedJSON(http.StatusOK, rsp)
+	log.Println("end sendEventParameter")
+}
+
 //Bind bind the controller function to url
 func (controller *SendController) Bind(router *gin.Engine) {
 	log.Println("Bind controller")
 	router.POST("/sendParameter1", controller.sendParameter1)
 	router.POST("/uploadDBC",controller.uploadDBC)
+	router.POST("/sendEventParameter",controller.sendEventParameter)
 }

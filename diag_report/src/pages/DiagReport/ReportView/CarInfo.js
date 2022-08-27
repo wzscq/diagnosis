@@ -45,7 +45,7 @@ export default function CarInfo({report,vin}){
             {title:"项目编号",value:report?.ProjectNum},
             {title:"车辆代码",value:report?.VehicleManagementCode},
             {title:"设备编号",value:report?.DeviceID},
-            {title:"文件名",value:vin+"_"+report?.SamplingTime},
+            {title:"文件名",value:report?.DeviceID+"_"+report?.SamplingTime},
             {title:"采集时间",value:report?.SamplingTime},
         ]
         dispatch(setCarInfo(carInfo));
@@ -85,7 +85,7 @@ export default function CarInfo({report,vin}){
         <Row>
             <Col span={2} />
             <Col span={6} style={styleLabel} >文件名</Col>
-            <Col span={14} style={styleContent} >{vin+"_"+report?.SamplingTime}</Col>
+            <Col span={14} style={styleContent} >{report?.DeviceID+"_"+report?.SamplingTime}</Col>
             <Col span={2} />
         </Row>
         <Row>

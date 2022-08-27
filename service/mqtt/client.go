@@ -7,9 +7,15 @@ import (
 	"digimatrix.com/diagnosis/common"
 )
 
+const (
+	MSG_TYPE_DIAG="Diag"
+	MSG_TYPE_EVENT="Event"
+)
+
 type eventHandler interface {
 	DealDeviceHeartbeat(deviceID,vin string)
 	DealDiagResponse(deviceID string)
+	DealEventResponse(deviceID string)
 }
 
 type MQTTClient struct {
@@ -78,9 +84,16 @@ func (mqc *MQTTClient)onDiagResponse(Client mqtt.Client, msg mqtt.Message){
 	log.Println("MQTTClient onDiagResponse strTopic ",strTopic)
 	idx:=strings.Index(strTopic,":")
 	deviceID:=strTopic[:idx]
-	log.Printf("MQTTClient onDiagResponse deviceID:%s",deviceID)
+	strType:=strTopic[idx+1:]
+	log.Printf("MQTTClient onDiagResponse deviceID:%s,type:%s",deviceID,strType)
 	//更新下发状态
-	mqc.Handler.DealDiagResponse(deviceID)
+	if strType==MSG_TYPE_DIAG {
+		mqc.Handler.DealDiagResponse(deviceID)
+	}
+
+	if strType==MSG_TYPE_EVENT {
+		mqc.Handler.DealEventResponse(deviceID)
+	}
 }
 
 func (mqc *MQTTClient)Publish(topic,content string)(int){

@@ -31,6 +31,7 @@ const (
 	ResultRepeatedEcu = 10100012
 	ResultMultiProject = 10100013
 	ResultParamWithoutEcu = 10100014
+	ResultWrongDiagConf = 10100015
 )
 
 var errMsg = map[int]CommonRsp{
@@ -117,6 +118,11 @@ var errMsg = map[int]CommonRsp{
 	ResultCreateFileError:CommonRsp{
 		ErrorCode:ResultBase64DecodeError,
 		Message:"创建文件失败，请与管理员联系处理",
+		Error:true,
+	},
+	ResultWrongDiagConf:CommonRsp{
+		ErrorCode:ResultWrongDiagConf,
+		Message:"下发参数时诊断配置信息不完整，请确认诊断信息正确配置后重新尝试",
 		Error:true,
 	},
 }

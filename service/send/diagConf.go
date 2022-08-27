@@ -97,15 +97,21 @@ func (dc *diagConf)convertDiagConf(queryResult *crv.CommonRsp)(map[string]interf
 		return nil,common.ResultNoDiagConf
 	}
 
+	ecuMachine,ok:=row["ecu_state_machine"].(map[string]interface{})
+	if !ok {
+		log.Println("convertDiagConf convert ecu_state_machine to map error")
+		return nil,common.ResultNoDiagConf
+	}
+
 	conf:=map[string]interface{}{}
 	//conf["TriggerCanId"]=row["trigger_can_id"]
-	ecuMachineLst,ok:=row["ecu_state_machine"].(map[string]interface{})["list"].([]interface{})
+	ecuMachineLst,ok:=ecuMachine["list"].([]interface{})
 	if ok && len(ecuMachineLst)>0 {
 		ecuMachine,_:=ecuMachineLst[0].(map[string]interface{})
 		executionPara:=map[string]interface{}{}
 		executionPara["StateValue"]=row["state_value"]
 		executionPara["WaitTime"]=row["wait_time"]
-		executionPara["EcuStateMachine"]=ecuMachine["id"]
+		executionPara["EcuStateMachine"]=ecuMachine["name"]
 		
 		executionPara["CanID"]=ecuMachine["can_id"]
 		executionPara["ByteOrder"]=ecuMachine["byte_order"]
@@ -116,12 +122,17 @@ func (dc *diagConf)convertDiagConf(queryResult *crv.CommonRsp)(map[string]interf
 		executionPara["PduID"]=ecuMachine["pdu_id"]
 		conf["ExecutionPara"]=executionPara
 	}
-	
-	mileageLst,ok:=row["mileage_name"].(map[string]interface{})["list"].([]interface{})
+
+	mileage,ok:=row["mileage_name"].(map[string]interface{})
+	if !ok {
+		log.Println("convertDiagConf convert mileage_name to map error")
+		return nil,common.ResultNoDiagConf
+	}
+	mileageLst,ok:=mileage["list"].([]interface{})
 	if ok && len(mileageLst)>0 {
 		mileage,_:=mileageLst[0].(map[string]interface{})
 		mileagePara:=map[string]interface{}{}
-		mileagePara["MileageName"]=mileage["id"]
+		mileagePara["MileageName"]=mileage["name"]
 
 		mileagePara["CanID"]=mileage["can_id"]
 		mileagePara["ByteOrder"]=mileage["byte_order"]

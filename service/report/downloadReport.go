@@ -24,6 +24,8 @@ type ecuRecord struct {
 	Mileage string `json:"Mileage"`
 	OtherInfo []otherItem `json:"OtherInfo"`
 	Time string  `json:"Time"`
+	PossibleCauses string `json:"PossibleCauses"`
+	RecommendedRecovery string `json:"RecommendedRecovery"`
 }
 
 type logisticsItem struct {
@@ -78,12 +80,12 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		{Type: "right", Color: "888888", Style: 1},
 	}
 
-	borderSubStyle:=[]excelize.Border{
+	/*borderSubStyle:=[]excelize.Border{
 		{Type: "left", Color: "888888", Style: 1},
 		{Type: "top", Color: "888888", Style: 1},
 		{Type: "bottom", Color: "888888", Style: 1},
 		{Type: "right", Color: "888888", Style: 1},
-	}
+	}*/
 
 	//Create style
 	styleMainTitle, _ := f.NewStyle(&excelize.Style{
@@ -158,7 +160,7 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		},
 	})
 
-	styleSubLabel,_:=f.NewStyle(&excelize.Style{
+	/*styleSubLabel,_:=f.NewStyle(&excelize.Style{
 		Border: borderStyle,
 		Alignment:&excelize.Alignment{
 			Horizontal:"right",
@@ -174,7 +176,7 @@ func (repo *ReportContent)getReport()(*excelize.File){
 			Color:[]string{"eeeeee",},
 			Type:"pattern",
 		},
-	})
+	})*/
 
 	styleNormal, _ := f.NewStyle(&excelize.Style{
 		Border: borderStyle,
@@ -189,7 +191,7 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		},
 	})
 
-	styleSubNormal, _ := f.NewStyle(&excelize.Style{
+	/*styleSubNormal, _ := f.NewStyle(&excelize.Style{
 		Border: borderSubStyle,
 		Alignment:&excelize.Alignment{
 			Horizontal:"left",
@@ -201,7 +203,7 @@ func (repo *ReportContent)getReport()(*excelize.File){
 			Size:12,
 			Bold:false,
 		},
-	})
+	})*/
 
 	styleYellow, _ := f.NewStyle(&excelize.Style{
 		Border: borderStyle,
@@ -491,7 +493,33 @@ func (repo *ReportContent)getReport()(*excelize.File){
 
 		row++
 
-		for _,otItem:=range alyItem.Item.OtherInfo {
+		cellStart,_=excelize.CoordinatesToCellName(1, row)
+		cellEnd,_=excelize.CoordinatesToCellName(1, row)
+		//f.MergeCell(sheetName,cellStart,cellEnd)
+		f.SetCellStr(sheetName, cellStart, "故障原因")
+		f.SetCellStyle(sheetName,cellStart,cellEnd,styleLabel)
+
+		cellStart,_=excelize.CoordinatesToCellName(2, row)
+		cellEnd,_=excelize.CoordinatesToCellName(8, row)
+		f.MergeCell(sheetName,cellStart,cellEnd)
+		f.SetCellStr(sheetName, cellStart, alyItem.Item.PossibleCauses)
+		f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
+
+		row++
+
+		cellStart,_=excelize.CoordinatesToCellName(1, row)
+		cellEnd,_=excelize.CoordinatesToCellName(1, row)
+		//f.MergeCell(sheetName,cellStart,cellEnd)
+		f.SetCellStr(sheetName, cellStart, "修复建议")
+		f.SetCellStyle(sheetName,cellStart,cellEnd,styleLabel)
+
+		cellStart,_=excelize.CoordinatesToCellName(2, row)
+		cellEnd,_=excelize.CoordinatesToCellName(8, row)
+		f.MergeCell(sheetName,cellStart,cellEnd)
+		f.SetCellStr(sheetName, cellStart, alyItem.Item.RecommendedRecovery)
+		f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
+
+		/*for _,otItem:=range alyItem.Item.OtherInfo {
 			cellStart,_=excelize.CoordinatesToCellName(1, row)
 			cellEnd,_=excelize.CoordinatesToCellName(1, row)
 			//f.MergeCell(sheetName,cellStart,cellEnd)
@@ -557,7 +585,7 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		f.MergeCell(sheetName,cellStart,cellEnd)
 		f.SetRowHeight(sheetName,row,25)
 		f.SetCellStr(sheetName,cellStart,"")		
-		f.SetCellStyle(sheetName,cellStart,cellEnd,styleTitle)
+		f.SetCellStyle(sheetName,cellStart,cellEnd,styleTitle)*/
 		row++
 	} 	
 	

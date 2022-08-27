@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import {useDispatch,useSelector} from 'react-redux';
 import { Button,PageHeader } from 'antd';
+import {DatabaseFilled,ProfileFilled} from '@ant-design/icons';
 import useFrame from '../../hook/useFrame';
 import PageLoading from './PageLoading';
 import EventReportView from './EventReportView';
@@ -13,6 +14,9 @@ import {
     createQueryDataMessage
 } from '../../utils/normalOperations';
 
+const activeButton={margin:2,border:"1px solid #40a9ff",color:"#40a9ff"};
+const normalButton={margin:2};
+
 export default function DiagEventReport(){
     const sendMessageToParent=useFrame();
     const dispatch=useDispatch();
@@ -20,7 +24,7 @@ export default function DiagEventReport(){
     const dataLoaded=useSelector(state=>state.data.loaded);  
     const dataList=useSelector(state=>state.data.data?.list);  
     const reportLoaded=useSelector(state=>state.reportList.loaded);
-
+    const [chartType,setChartType]=useState(0);
     //console.log(dataList);
     //加载数据
     useEffect(()=>{
@@ -90,11 +94,15 @@ export default function DiagEventReport(){
             className="site-page-header-responsive"
             title="场景分析"
             subTitle={subTitle}
-            extra={[<Button type='primary' onClick={closeReport} key="close">关闭</Button>]}
+            extra={[
+                <Button size='small' onClick={()=>setChartType(0)} style={chartType===0?activeButton:normalButton}><ProfileFilled /></Button>,
+                <Button size='small' onClick={()=>setChartType(1)} style={chartType===0?normalButton:activeButton}><DatabaseFilled /></Button>,
+                <Button type='primary' onClick={closeReport} key="close">关闭</Button>
+            ]}
         >
             {
                 (dataLoaded&&reportLoaded)?
-                <EventReportView sendMessageToParent={sendMessageToParent}/>:
+                <EventReportView chartType={chartType} sendMessageToParent={sendMessageToParent}/>:
                 <PageLoading/>
             }
         </PageHeader>

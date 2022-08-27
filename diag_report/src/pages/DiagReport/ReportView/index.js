@@ -35,7 +35,7 @@ export default function ReportView({sendMessageToParent}){
 
     if(data&&report){
         const id=data.diag_report;
-        const vin=data.id;
+        const vin=data.vin;
         return (
             <div>
                 <PageHeader 
