@@ -45,9 +45,8 @@ export const reportSlice = createSlice({
             state.ecuList=action.payload;
         },
         setAnalysisItem:(state,action)=>{
-            console.log('setAnalysisItem',action.payload);
             const {itmeIndex,item}=action.payload;
-            if(!state.analysisItems[itmeIndex]){
+            if(state.analysisItems[itmeIndex]===undefined){
                 state.analysisItems[itmeIndex]={
                     item:{},
                     signalChart:{}
@@ -56,8 +55,9 @@ export const reportSlice = createSlice({
             state.analysisItems[itmeIndex].item=item
         },
         setAnalysisChart:(state,action)=>{
+            console.log('setAnalysisChart',action.payload);
             const {itmeIndex,chartIndex,chart}=action.payload;
-            if(!state.analysisItems[itmeIndex]){
+            if(state.analysisItems[itmeIndex]===undefined){
                 state.analysisItems[itmeIndex]={
                     item:{},
                     signalChart:{}

@@ -2,6 +2,10 @@ package report
 
 import (
 	"github.com/xuri/excelize/v2"
+	"strings"
+	"encoding/base64"
+	"log"
+	_ "image/png"
 )
 
 type carInfoItem struct {
@@ -519,6 +523,21 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		f.SetCellStr(sheetName, cellStart, alyItem.Item.RecommendedRecovery)
 		f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
 
+		row++
+		cellStart,_=excelize.CoordinatesToCellName(1, row)
+		cellEnd,_=excelize.CoordinatesToCellName(8, row+20)
+		f.MergeCell(sheetName,cellStart,cellEnd)
+		f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
+		//保存图片并插入到Excel中
+		chartPic:=repo.getChartImage(alyItem.SignalChart)
+		if chartPic!=nil {
+			// Insert a picture.
+			format:=`{"autofit":true}`
+			if err := f.AddPictureFromBytes(sheetName, cellStart,format ,"Chart Pic", ".jpg",*chartPic); err != nil {
+				log.Println(err)
+			}
+		}
+		row=row+20
 		/*for _,otItem:=range alyItem.Item.OtherInfo {
 			cellStart,_=excelize.CoordinatesToCellName(1, row)
 			cellEnd,_=excelize.CoordinatesToCellName(1, row)
@@ -590,4 +609,27 @@ func (repo *ReportContent)getReport()(*excelize.File){
 	} 	
 	
     return f
+}
+
+func (repo *ReportContent)getChartImage(signalChart map[string]string)(*[]byte){
+	contentBase64,ok:=signalChart["0"]
+	if !ok {
+		return nil
+	}
+
+	//Base64转码
+	//去掉url头信息
+	typeIndex:=strings.Index(contentBase64, "base64,")
+	if typeIndex>0 {
+		contentBase64=contentBase64[typeIndex+7:]
+	}
+	fileContent := make([]byte, base64.StdEncoding.DecodedLen(len(contentBase64)))
+	n, err := base64.StdEncoding.Decode(fileContent, []byte(contentBase64))
+	if err != nil {
+		log.Println("decode error:", err)
+		return nil
+	}
+	fileContent = fileContent[:n]
+
+	return &fileContent
 }

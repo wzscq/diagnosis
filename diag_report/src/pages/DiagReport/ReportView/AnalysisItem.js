@@ -1,10 +1,12 @@
-import {Button,Row,Col} from 'antd';
+import {Button,Row,Col,Input} from 'antd';
 import {DatabaseFilled,ProfileFilled} from '@ant-design/icons';
 import SignalChart from "./SignalChartNew";
 import SignalChartSplit from './SignalChartSplit';
 import { setAnalysisItem } from '../../../redux/reportSlice';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
+
+const { TextArea } = Input;
 
 const styleLabel={
     borderRight:"1px solid #888",
@@ -69,6 +71,9 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
         return time.substr(0,4)+'-'+time.substr(4,2)+'-'+time.substr(6,2)+' '+time.substr(8,2)+':'+time.substr(10,2)+':'+time.substr(12,2);
     }
 
+    let possibleCauses=rec?.PossibleCauses
+    possibleCauses=possibleCauses.split(/\n/g)
+
     return (
         <div style={{width:"100%",height:"auto",margin:"auto",marginBottom:30}}>
             <Row>
@@ -112,7 +117,9 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
             <Row>
                 <Col span={2} />
                 <Col span={4} style={styleLabel}>故障原因</Col>
-                <Col span={16} style={styleContent}>{rec?.PossibleCauses}</Col>
+                <Col span={16} style={styleContent}>
+                  {possibleCauses.map(item=>(<>{item}<br/></>))}  
+                </Col>
                 <Col span={2} />
             </Row>
             <Row>
@@ -135,7 +142,7 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
                 <Col span={2} />
                 <Col span={20} style={styleSignalChartCell} >
                     <div style={styleSignalChart}>
-                        {chartType===0?<SignalChart itmeIndex={itmeIndex} signalList={signalList}/>:<SignalChartSplit keyIndex={itmeIndex} signalList={signalList}/>}
+                        {chartType===0?<SignalChart itmeIndex={itmeIndex} signalList={signalList}/>:<SignalChartSplit itmeIndex={itmeIndex} signalList={signalList}/>}
                     </div>
                 </Col>
                 <Col span={2} />
