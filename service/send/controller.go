@@ -15,6 +15,7 @@ type SendController struct {
 	CRVClient *crv.CRVClient
 	MQTTClient *mqtt.MQTTClient
 	SendRecordCache *SendRecordCache
+	DeviceSignalCache *DeviceSignalCache
 	FilePath string
 	DBCUploadTopic string
 }
@@ -45,6 +46,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 
 	sp:=&SendParameter{
 		CRVClient:controller.CRVClient,
+		SignalList:&map[string]interface{}{},
 	}
 	parameter,errorCode:=sp.getSendParameter((*rep.List)[0])
 	if errorCode!=common.ResultSuccess {
@@ -87,6 +89,13 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 	//log.Println(*saveRsp)
 	//执行参数下发
 	errorCode=sendByMqtt(controller.MQTTClient,vehicles,strParam)
+	if errorCode!=common.ResultSuccess {
+		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+
+	errorCode=sendDiagSignalByMqtt(controller.MQTTClient,vehicles,sp.SignalList,controller.DeviceSignalCache)
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)
@@ -163,6 +172,7 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 
 	sp:=&SendEventParameter{
 		CRVClient:controller.CRVClient,
+		SignalList:&map[string]interface{}{},
 	}
 	parameter,errorCode:=sp.getSendParameter((*rep.List)[0])
 	if errorCode!=common.ResultSuccess {
@@ -204,7 +214,13 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 	}
 	//log.Println(*saveRsp)
 	//执行参数下发
-	//errorCode=sendEventByMqtt(controller.MQTTClient,vehicles,strParam)
+	errorCode=sendEventByMqtt(controller.MQTTClient,vehicles,strParam)
+	if errorCode!=common.ResultSuccess {
+		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+	errorCode=sendEventSignalByMqtt(controller.MQTTClient,vehicles,sp.SignalList,controller.DeviceSignalCache)	
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)

@@ -45,6 +45,7 @@ type redisConf struct {
 	Server string `json:"server"`
     SendRecordExpired string `json:"sendRecordExpired"`
     DB int `json:"db"`
+	DeviceSignalCacheDB int `json:"deviceSignalCacheDB"`
 }
 
 type Config struct {

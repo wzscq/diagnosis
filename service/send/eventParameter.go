@@ -17,6 +17,7 @@ var QueryEventParameterFields = []map[string]interface{}{
 	{"field": "last_time"},
 	{"field": "next_time"},
 	{"field": "domain_id"},
+	{"field": "channel"},
 	{
 		"field": "triggers",
 		"fieldType": "one2many",
@@ -36,6 +37,8 @@ var QueryEventParameterFields = []map[string]interface{}{
 					{"field": "pdu_id"},
 					{"field": "factor"},
 					{"field": "offset"},
+					{"field":"byte_order"},
+					{"field":"len"},
 				},
 		  	},
 		  	{"field": "logic"},
@@ -56,6 +59,8 @@ var QueryEventParameterFields = []map[string]interface{}{
 			{"field": "pdu_id"},
 			{"field": "factor"},
 			{"field": "offset"},
+			{"field":"byte_order"},
+			{"field":"len"},
 		},
 	},
 	//{"field": "remark"},
@@ -68,7 +73,10 @@ type eventParameter struct {
 	Params []map[string]interface{}
 }
 
-func getEventParams(ids []string,crvClient *crv.CRVClient)(*eventParameter,int){
+func getEventParams(
+	ids []string,
+	crvClient *crv.CRVClient,
+	sendSignalList *map[string]interface{})(*eventParameter,int){
 	dp:=&eventParameter{
 		CRVClient:crvClient,
 		Ids:ids,
@@ -90,7 +98,7 @@ func getEventParams(ids []string,crvClient *crv.CRVClient)(*eventParameter,int){
 		return nil,errorCode
 	}
 
-	dp.convertDiagParameters()
+	dp.convertDiagParameters(sendSignalList)
 	return dp,common.ResultSuccess
 }
 
@@ -145,7 +153,9 @@ func (dp *eventParameter)isValid()(int){
 	return common.ResultSuccess
 }
 
-func (dp *eventParameter)convertDiagParameter(row map[string]interface{})(map[string]interface{}){
+func (dp *eventParameter)convertDiagParameter(
+	row map[string]interface{},
+	sendSignalList *map[string]interface{})(map[string]interface{}){
 	diagParaList:=map[string]interface{}{}
 	diagParaList["EventID"]=row["id"]
 	diagParaList["EventName"]=row["name"]
@@ -170,7 +180,22 @@ func (dp *eventParameter)convertDiagParameter(row map[string]interface{})(map[st
 				sCanID,_:=signal["can_id"].(string)
 				sPduID,_:=signal["pdu_id"].(string)
 				sStartAddr,_:=signal["start_addr"].(string)
-				mapItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
+
+				signalID:=fmt.Sprintf("%s:%s:%s:%s",sCanID,sPduID,sStartAddr,row["channel"])
+				mapItem["SignalID"]=signalID
+				//判断并添加signal
+				_,ok:=(*sendSignalList)[signalID]
+				if !ok {
+					(*sendSignalList)[signalID]=map[string]interface{}{
+						"Channel":row["channel"],
+						"CanID":sCanID,
+						"Type":signal["byte_order"],
+						"SignalName":signal["name"],
+						"PduId":sPduID,
+						"startAddr":sStartAddr,
+						"len":signal["len"],
+					}
+				}
 
 				sFactor,_:=signal["factor"].(string)
 				floatFactor, err = strconv.ParseFloat(sFactor, 64)
@@ -212,7 +237,24 @@ func (dp *eventParameter)convertDiagParameter(row map[string]interface{})(map[st
 			sCanID,_:=signalItem["can_id"].(string)
 			sPduID,_:=signalItem["pdu_id"].(string)
 			sStartAddr,_:=signalItem["start_addr"].(string)
-			signalItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
+			
+			
+			signalID:=fmt.Sprintf("%s:%s:%s:%s",sCanID,sPduID,sStartAddr,row["channel"])
+			signalItem["SignalID"]=signalID
+			//判断并添加signal
+			_,ok:=(*sendSignalList)[signalID]
+			if !ok {
+				(*sendSignalList)[signalID]=map[string]interface{}{
+					"Channel":row["channel"],
+					"CanID":sCanID,
+					"Type":signalItem["byte_order"],
+					"SignalName":signalItem["name"],
+					"PduId":sPduID,
+					"startAddr":sStartAddr,
+					"len":signalItem["len"],
+				}
+			}
+			
 			//signalItem["SignalID"]=signalItem["id"]
 			signalItem["SignalName"]=signalItem["name"]
 			delete(signalItem,"id")
@@ -220,6 +262,8 @@ func (dp *eventParameter)convertDiagParameter(row map[string]interface{})(map[st
 			delete(signalItem,"can_id")
 			delete(signalItem,"pdu_id")
 			delete(signalItem,"start_addr")
+			delete(signalItem,"byte_order")
+			delete(signalItem,"len")
 		}
 		diagParaList["CorrelationSignal"]=signals
 	} else {
@@ -239,12 +283,12 @@ func (dp *eventParameter)getLogic(logic interface{})(string){
 	return strLogic
 }
 
-func (dp *eventParameter)convertDiagParameters(){
+func (dp *eventParameter)convertDiagParameters(sendSignalList *map[string]interface{}){
 	log.Println("start convertDiagParameters")
 	dp.Params=make([]map[string]interface{},len(dp.Records))
 	
 	for index,row:=range(dp.Records){
-		dp.Params[index]=dp.convertDiagParameter(row)
+		dp.Params[index]=dp.convertDiagParameter(row,sendSignalList)
 	}
 
 	log.Println("end convertDiagParameters")

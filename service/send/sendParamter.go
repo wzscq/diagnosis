@@ -11,6 +11,7 @@ import (
 
 type SendParameter struct {
 	CRVClient *crv.CRVClient
+	SignalList *map[string]interface{}
 }
 
 func (sp *SendParameter)getParameterIDs(row map[string]interface{})([]string){
@@ -53,7 +54,7 @@ func (sp *SendParameter)getSendParameter(row map[string]interface{})(map[string]
 	ids:=sp.getParameterIDs(row)
 	//获取参数记录
 	log.Println("getSendParameter getDiagParams ...")
-	dp,errorCode:=getDiagParams(ids,sp.CRVClient)
+	dp,errorCode:=getDiagParams(ids,sp.CRVClient,sp.SignalList)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDiagParams error")
 		return nil,errorCode
@@ -61,7 +62,7 @@ func (sp *SendParameter)getSendParameter(row map[string]interface{})(map[string]
 
 	//获取DTC
 	log.Println("getSendParameter getDtcList ...")
-	dtc,errorCode:=getDtcList(dp.getEcuIDs(),sp.CRVClient)
+	dtc,errorCode:=getDtcList(dp.getEcuIDs(),dp.getEcuChannelMap(),sp.CRVClient,sp.SignalList)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDtcList error")
 		return nil,errorCode

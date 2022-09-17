@@ -10,6 +10,7 @@ import (
 var QueryDTCSignalFields = []map[string]interface{}{
 	{"field": "id"},
 	{"field": "dtc_id"},
+	{"field": "ecu_id"},
 	{
 		"field": "signals",
 		"fieldType": "many2many",
@@ -20,6 +21,8 @@ var QueryDTCSignalFields = []map[string]interface{}{
 			{"field": "can_id"},
 			{"field": "start_addr"},
 			{"field": "pdu_id"},
+			{"field":"byte_order"},
+			{"field":"len"},
 		},
 	},
 }
@@ -27,13 +30,19 @@ var QueryDTCSignalFields = []map[string]interface{}{
 type dtcList struct {
 	CRVClient *crv.CRVClient
 	Ecus []string
+	EcuChannelMap map[string]interface{}
 	DtcList []interface{}
 }
 
-func getDtcList(ecus []string,crvClient *crv.CRVClient)(*dtcList,int){
+func getDtcList(
+	ecus []string,
+	channelMap map[string]interface{},
+	crvClient *crv.CRVClient,
+	signalList *map[string]interface{})(*dtcList,int){
 	dtc:=&dtcList{
 		CRVClient:crvClient,
 		Ecus:ecus,
+		EcuChannelMap:channelMap,
 	}
 
 	log.Println("getDtcList",ecus)
@@ -43,7 +52,7 @@ func getDtcList(ecus []string,crvClient *crv.CRVClient)(*dtcList,int){
 		return nil,errorCode
 	}
 
-	dtc.DtcList,errorCode=dtc.convertDtcList(rsp)
+	dtc.DtcList,errorCode=dtc.convertDtcList(rsp,signalList)
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
@@ -66,7 +75,9 @@ func (dtc *dtcList)queryDtcList()(*crv.CommonRsp,int){
 	return dtc.CRVClient.Query(&commonRep)
 }
 
-func (dtc *dtcList)convertDtcList(queryResult *crv.CommonRsp)([]interface{},int){
+func (dtc *dtcList)convertDtcList(
+	queryResult *crv.CommonRsp,
+	signalList *map[string]interface{})([]interface{},int){
 	log.Println("start convertDtcList")
 	list,ok:=queryResult.Result["list"]
 	if !ok {
@@ -83,13 +94,32 @@ func (dtc *dtcList)convertDtcList(queryResult *crv.CommonRsp)([]interface{},int)
 	for _,item:=range dtcList {
 		mapItem:=item.(map[string]interface{})
 		mapItem["DtcNum"]=mapItem["dtc_id"]
+		ecuID,_:=mapItem["ecu_id"].(string)
+		channel,_:=dtc.EcuChannelMap[ecuID]
 		signals,_:=mapItem["signals"].(map[string]interface{})["list"].([]interface{})
 		for _,signal:=range signals {
 			signalItem:=signal.(map[string]interface{})
 			sCanID,_:=signalItem["can_id"].(string)
 			sPduID,_:=signalItem["pdu_id"].(string)
+			sType,_:=signalItem["byte_order"].(string)
 			sStartAddr,_:=signalItem["start_addr"].(string)
-			signalItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
+			signalID:=fmt.Sprintf("%s:%s:%s:%s",sCanID,sPduID,sStartAddr,channel)
+			signalItem["SignalID"]=	signalID		
+		
+			//判断并添加signal
+			_,ok:=(*signalList)[signalID]
+			if !ok {
+				(*signalList)[signalID]=map[string]interface{}{
+					"Channel":channel,
+					"CanID":sCanID,
+					"Type":sType,
+					"SignalName":signalItem["name"],
+					"PduId":sPduID,
+					"startAddr":sStartAddr,
+					"len":signalItem["len"],
+				}
+			}
+			
 			//signalItem["SignalID"]=signalItem["id"]
 			signalItem["SignalName"]=signalItem["name"]
 			delete(signalItem,"id")
@@ -97,11 +127,14 @@ func (dtc *dtcList)convertDtcList(queryResult *crv.CommonRsp)([]interface{},int)
 			delete(signalItem,"can_id")
 			delete(signalItem,"pdu_id")
 			delete(signalItem,"start_addr")
+			delete(signalItem,"len")
+			delete(signalItem,"byte_order")
 		}
 		mapItem["CorrelationSignal"]=signals
 		delete(mapItem,"id")
 		delete(mapItem,"dtc_id")
 		delete(mapItem,"signals")
+		delete(mapItem,"ecu_id")
 	}	
 
 	return dtcList,common.ResultSuccess

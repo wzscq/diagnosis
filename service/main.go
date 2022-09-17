@@ -44,6 +44,12 @@ func main() {
 		conf.Redis.DB,
 		duration)
 
+	deviceSignalCache:=send.DeviceSignalCache{}
+	deviceSignalCache.Init(
+		conf.Redis.Server,
+		conf.Redis.DeviceSignalCacheDB,
+		0)
+
 	//实际的业务处理模块
 	busiModule:=busi.Busi{
 		CrvClient:&crvClinet,
@@ -84,6 +90,7 @@ func main() {
 		CRVClient:&crvClinet,
 		MQTTClient:&mqttClient,
 		SendRecordCache:&sendRecordCache,
+		DeviceSignalCache:&deviceSignalCache,
 		FilePath:conf.FilePath,
 		DBCUploadTopic:conf.MQTT.DBCUploadTopic,
 	}

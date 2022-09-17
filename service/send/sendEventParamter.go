@@ -11,6 +11,7 @@ import (
 
 type SendEventParameter struct {
 	CRVClient *crv.CRVClient
+	SignalList *map[string]interface{}
 }
 
 func (sp *SendEventParameter)getParameterIDs(row map[string]interface{})([]string){
@@ -49,7 +50,7 @@ func (sp *SendEventParameter)getSendParameter(row map[string]interface{})(map[st
 	ids:=sp.getParameterIDs(row)
 	//获取参数记录
 	log.Println("getSendParameter getEventParams ...")
-	dp,errorCode:=getEventParams(ids,sp.CRVClient)
+	dp,errorCode:=getEventParams(ids,sp.CRVClient,sp.SignalList)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getEventParams error")
 		return nil,errorCode

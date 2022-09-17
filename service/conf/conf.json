@@ -32,7 +32,8 @@
     "redis":{
         "server":"49.4.3.226:6479",
         "sendRecordExpired":"6000s",
-        "db":5
+        "db":5,
+        "deviceSignalCacheDB":10
     },
     "filePath":"/services/crvframe/appfile/"
 }

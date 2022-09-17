@@ -77,6 +77,8 @@ var QueryParameterFields = []map[string]interface{}{
 					{"field": "pdu_id"},
 					{"field": "factor"},
 					{"field": "offset"},
+					{"field":"byte_order"},
+					{"field":"len"},
 				},
 		  	},
 		  	{"field": "logic"},
@@ -95,7 +97,10 @@ type diagParameter struct {
 	Params []map[string]interface{}
 }
 
-func getDiagParams(ids []string,crvClient *crv.CRVClient)(*diagParameter,int){
+func getDiagParams(
+	ids []string,
+	crvClient *crv.CRVClient,
+	signalList *map[string]interface{})(*diagParameter,int){
 	dp:=&diagParameter{
 		CRVClient:crvClient,
 		Ids:ids,
@@ -117,7 +122,7 @@ func getDiagParams(ids []string,crvClient *crv.CRVClient)(*diagParameter,int){
 		return nil,errorCode
 	}
 
-	dp.convertDiagParameters()
+	dp.convertDiagParameters(signalList)
 	return dp,common.ResultSuccess
 }
 
@@ -186,7 +191,9 @@ func (dp *diagParameter)isValid()(int){
 	return common.ResultSuccess
 }
 
-func (dp *diagParameter)convertDiagParameter(row map[string]interface{})(map[string]interface{}){
+func (dp *diagParameter)convertDiagParameter(
+	row map[string]interface{},
+	sendSignalList *map[string]interface{})(map[string]interface{}){
 	diagParaList:=map[string]interface{}{}
 	diagParaList["TimeOffset"]=row["time_offset"]
 	diagParaList["Channel"]=row["channel"]
@@ -231,9 +238,23 @@ func (dp *diagParameter)convertDiagParameter(row map[string]interface{})(map[str
 			
 			sCanID,_:=signal["can_id"].(string)
 			sPduID,_:=signal["pdu_id"].(string)
+			sType,_:=signal["byte_order"].(string)
 			sStartAddr,_:=signal["start_addr"].(string)
-			mapItem["SignalID"]=fmt.Sprintf("%s:%s:%s",sCanID,sPduID,sStartAddr)
-
+			signalID:=fmt.Sprintf("%s:%s:%s:%s",sCanID,sPduID,sStartAddr,diagParaList["Channel"])
+			mapItem["SignalID"]=signalID
+			//判断并添加signal
+			_,ok:=(*sendSignalList)[signalID]
+			if !ok {
+				(*sendSignalList)[signalID]=map[string]interface{}{
+					"Channel":diagParaList["Channel"],
+					"CanID":sCanID,
+					"Type":sType,
+					"SignalName":signal["name"],
+					"PduId":sPduID,
+					"startAddr":sStartAddr,
+					"len":signal["len"],
+				}
+			}
 			sFactor,_:=signal["factor"].(string)
 			floatFactor, err = strconv.ParseFloat(sFactor, 64)
 			if err!=nil {
@@ -278,12 +299,12 @@ func (dp *diagParameter)getLogic(logic interface{})(string){
 	return strLogic
 }
 
-func (dp *diagParameter)convertDiagParameters(){
+func (dp *diagParameter)convertDiagParameters(signalList *map[string]interface{}){
 	log.Println("start convertDiagParameters")
 	dp.Params=make([]map[string]interface{},len(dp.Records))
 	
 	for index,row:=range(dp.Records){
-		dp.Params[index]=dp.convertDiagParameter(row)
+		dp.Params[index]=dp.convertDiagParameter(row,signalList)
 	}
 
 	log.Println("end convertDiagParameters")
@@ -301,4 +322,14 @@ func (dp *diagParameter)getEcuIDs()([]string){
 		ids=append(ids,strID)
 	}
 	return ids
+}
+
+func (dp *diagParameter)getEcuChannelMap()(map[string]interface{}){
+	ecuChanelMap:=map[string]interface{}{}
+	for _,param:=range(dp.Params){
+		id,_:=param["Ecu"]
+		strID,_:=id.(string)
+		ecuChanelMap[strID]=param["Channel"]
+	}
+	return ecuChanelMap
 }
