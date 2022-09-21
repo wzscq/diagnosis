@@ -10,12 +10,14 @@ import (
 const (
 	MSG_TYPE_DIAG="Diag"
 	MSG_TYPE_EVENT="Event"
+	MSG_TYPE_SIGNAL="SignalFilter"
 )
 
 type eventHandler interface {
 	DealDeviceHeartbeat(deviceID,vin string)
 	DealDiagResponse(deviceID string)
 	DealEventResponse(deviceID string)
+	DealSignalResponse(deviceID string)
 }
 
 type MQTTClient struct {
@@ -93,6 +95,10 @@ func (mqc *MQTTClient)onDiagResponse(Client mqtt.Client, msg mqtt.Message){
 
 	if strType==MSG_TYPE_EVENT {
 		mqc.Handler.DealEventResponse(deviceID)
+	}
+
+	if strType==MSG_TYPE_SIGNAL {
+		mqc.Handler.DealSignalResponse(deviceID)
 	}
 }
 

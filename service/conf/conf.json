@@ -31,7 +31,7 @@
     },
     "redis":{
         "server":"49.4.3.226:6479",
-        "sendRecordExpired":"6000s",
+        "sendRecordExpired":"60000s",
         "db":5,
         "deviceSignalCacheDB":10
     },

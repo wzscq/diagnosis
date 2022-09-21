@@ -95,7 +95,15 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		return
 	}
 
-	errorCode=sendDiagSignalByMqtt(controller.MQTTClient,vehicles,sp.SignalList,controller.DeviceSignalCache)
+	errorCode=sendSignalByMqtt(
+		controller.MQTTClient,
+		vehicles,
+		sp.SignalList,
+		controller.DeviceSignalCache,
+		"diag",
+		controller.CRVClient,
+		controller.SendRecordCache,
+		rep.UserID)
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)
@@ -220,7 +228,15 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 		c.IndentedJSON(http.StatusOK, rsp)
 		return
 	}
-	errorCode=sendEventSignalByMqtt(controller.MQTTClient,vehicles,sp.SignalList,controller.DeviceSignalCache)	
+	errorCode=sendSignalByMqtt(
+		controller.MQTTClient,
+		vehicles,
+		sp.SignalList,
+		controller.DeviceSignalCache,
+		"event",
+		controller.CRVClient,
+		controller.SendRecordCache,
+		rep.UserID)	
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)
