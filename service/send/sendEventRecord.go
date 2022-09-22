@@ -55,7 +55,7 @@ func getSendEventRecords(
 	}
 	log.Println(ids)
 	commonRep:=crv.CommonReq{
-		ModelID:"diag_param_sendrecord",
+		ModelID:"diag_event_sendrecord",
 		Filter:&map[string]interface{}{
 			"id":&map[string]interface{}{
 				"Op.in":ids,
