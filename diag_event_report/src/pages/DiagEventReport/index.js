@@ -60,8 +60,9 @@ export default function DiagEventReport(){
                     page:0,
                     count:1,
                     collection:params[0],
-                    startDate:params[1],
-                    endDate:params[1]
+                    dtc:params[1],
+                    startDate:params[2],
+                    endDate:params[2]
                 }
                 dispatch(getEventReport(searchParams));
             }

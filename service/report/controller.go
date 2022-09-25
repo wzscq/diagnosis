@@ -88,7 +88,8 @@ func (controller *Controller) getReports(c *gin.Context){
 	var err = error(nil)
 	countDocument=0
 	collectionName:=c.Query("collection")
-	if(collectionName!=""){
+	dtc:=c.Query("dtc")
+	if(collectionName!=""&&dtc!=""){
 		controller.Init()
 		defer controller.Release()
 
@@ -112,6 +113,9 @@ func (controller *Controller) getReports(c *gin.Context){
 			filter:=bson.D{
 				{"SamplingTime",
 					bson.D{{"$gte", startDate},{"$lte", endDate}},
+				},
+				{
+				    "ReportID",dtc,
 				},
 			}
 
