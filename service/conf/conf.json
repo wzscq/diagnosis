@@ -21,7 +21,7 @@
         "heartbeatTopic":"MQB/Status/+",
         "diagResponseTopic":"MQB/ReciveAck/+",
         "dbcUploadTopic":"upload/dbcFile",
-        "clientID":"diagonsis_mqtt_subscribe_client_1"
+        "clientID":"diagonsis_mqtt_subscribe_client_2"
     },
     "crv":{
         "server":"http://127.0.0.1:8200",

@@ -11,6 +11,9 @@ export default function MultiYAxisChart({signalList}){
     
     let maxX=-1;
     let minX=-1;
+
+    let mapAxisValue={};
+
     const seriesData= signalList.map((item,index)=>{     
         return ({
             name:item.SignalName+(item.SignalUint?'('+item.SignalUint+')':''),
@@ -23,6 +26,7 @@ export default function MultiYAxisChart({signalList}){
             },
             data:item.SignalCoordinateValue.map(valueItem=>{
                 const x=parseFloat(valueItem.Coordinate_X);
+                //mapAxisValue[x]=x;
                 if(minX===-1||minX>x){
                     minX=x;
                 }
@@ -34,6 +38,22 @@ export default function MultiYAxisChart({signalList}){
             })
         });
     });
+    /*console.log(mapAxisValue);
+    const mapLabelValues={};
+    Object.keys(mapAxisValue).forEach(axisValue=>{
+        const values = seriesData.map(element => {
+            return {
+                label:element.name,
+                value:element.data.reduce((prev,current)=>{
+                        if(prev&&current[0]>axisValue){
+                            return prev;
+                        }
+                        return current[1];
+                    },false)
+                }
+        });
+        mapLabelValues[axisValue]=values;
+    });*/
 
     const grid= {
         left: (signalList.length*40+'px'),
@@ -46,7 +66,7 @@ export default function MultiYAxisChart({signalList}){
         max:Math.ceil(maxX)
     };
 
-    const yAxis=signalList.map((item,index)=>{
+    const yAxis=signalList.map((_,index)=>{
         return {
             type: 'value',
             name: "",
@@ -77,6 +97,7 @@ export default function MultiYAxisChart({signalList}){
                     },false)
                 }
         });
+        //const values =mapLabelValues[axisValue];
 
         return values.reduce((prev,current,index)=>{
             return `${prev}
@@ -132,14 +153,17 @@ export default function MultiYAxisChart({signalList}){
 
     useEffect(()=>{
         if(refChart&&refChart.current){
+            
             let chart=echarts.getInstanceByDom(refChart.current);        
             if(chart){
+                console.log("resize");
                 chart.resize({width:width,height:height});     
             } else {
                 chart=echarts.init(refChart.current,'',{
                     width: width,
                     height: height
                 });
+                console.log("setOption");
                 chart.setOption(option);   
             }
         }

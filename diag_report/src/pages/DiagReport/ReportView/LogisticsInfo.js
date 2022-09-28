@@ -63,6 +63,7 @@ export default function LogisticsInfo({title,logistics,vin}){
             })
             
         }
+        
     </div>
     )
 }

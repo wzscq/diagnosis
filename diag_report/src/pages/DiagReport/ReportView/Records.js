@@ -1,5 +1,6 @@
 import {Row,Col} from 'antd';
 import LogisticsInfo from './LogisticsInfo';
+import SpecialLogisticsInfo from './SpecialLogisticsInfo';
 
 import {setECUList} from '../../../redux/reportSlice';
 import { useDispatch } from 'react-redux';
@@ -79,11 +80,11 @@ const getRecord=(rec,index)=>{
 export default function Records({report,vin}){
     const dispatch=useDispatch();
 
-    const {Records,LogisticsInfo:logisticsInfo}=report;
+    const {Records,LogisticsInfo:logisticsInfo,SpecialLogisticsInfo:specialLogisticsInfo}=report;
     const ecuList={}
     Records.forEach(rec=>{
         if(!ecuList[rec.Ecu]){
-            ecuList[rec.Ecu]={name:rec.Ecu,items:[]};
+            ecuList[rec.Ecu]={name:rec.Ecu,items:[],specialLogisticsInfo:specialLogisticsInfo};
         }
         ecuList[rec.Ecu].items.push(rec);
     });
@@ -104,6 +105,7 @@ export default function Records({report,vin}){
         ecuControlList.push(
             <>
                 <LogisticsInfo title={ecuItem.name} logistics={ecuItem.logistics} vin={vin} />
+                <SpecialLogisticsInfo title={ecuItem.name} logistics={ecuItem.specialLogisticsInfo} vin={vin} />
                 <RecordsHeader title={ecuItem.name}/>
                 {ecuRecords}
                 <div style={{height:20,width:"100%"}}/>
