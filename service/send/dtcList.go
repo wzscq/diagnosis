@@ -15,6 +15,10 @@ var QueryDTCSignalFields = []map[string]interface{}{
 		"field": "signals",
 		"fieldType": "many2many",
 		"relatedModelID": "diag_signal",
+		"pagination":map[string]interface{}{
+			"pageSize":10000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 		  	{"field": "id"},
 		 	{"field": "name"},
@@ -68,6 +72,10 @@ func (dtc *dtcList)queryDtcList()(*crv.CommonRsp,int){
 			"ecu_id":&map[string]interface{}{
 				"Op.in":dtc.Ecus,
 			},
+		},
+		Pagination:&crv.Pagination{
+			PageSize:5000,
+			Current:1,
 		},
 		Fields:&QueryDTCSignalFields,
 	}

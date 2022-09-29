@@ -23,12 +23,20 @@ var QueryEventParameterFields = []map[string]interface{}{
 		"fieldType": "one2many",
 		"relatedModelID": "diag_event_parameter_trigger",
 		"relatedField": "event_parameter_id",
+		"pagination":map[string]interface{}{
+			"pageSize":5000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 		  	{"field": "id"},
 		  	{
 				"field": "diag_signal_id",
 				"fieldType": "many2one",
 				"relatedModelID": "diag_signal",
+				"pagination":map[string]interface{}{
+					"pageSize":5000,
+					"current":1,
+				},
 				"fields": []map[string]interface{}{
 			  		{"field": "id"},
 			  		{"field": "name"},
@@ -51,6 +59,10 @@ var QueryEventParameterFields = []map[string]interface{}{
 		"field": "correlation_signals",
 		"fieldType": "many2many",
 		"relatedModelID": "diag_signal",
+		"pagination":map[string]interface{}{
+			"pageSize":5000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 			{"field": "id"},
 			{"field": "name"},

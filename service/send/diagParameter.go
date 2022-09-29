@@ -29,6 +29,10 @@ var QueryParameterFields = []map[string]interface{}{
 		"field": "ecu_id",
 		"fieldType": "many2one",
 		"relatedModelID": "diag_ecu",
+		"pagination":map[string]interface{}{
+			"pageSize":5000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 		  	{"field": "id"},
 		 	{"field": "name"},
@@ -43,6 +47,10 @@ var QueryParameterFields = []map[string]interface{}{
 		"fieldType": "many2many",
 		"relatedModelID": "diag_logistics",
 		"associationModelID": "diag_parameter_logistics_did",
+		"pagination":map[string]interface{}{
+			"pageSize":5000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 			{"field": "id"},
 			{"field": "did"},
@@ -53,6 +61,10 @@ var QueryParameterFields = []map[string]interface{}{
 		"fieldType": "many2many",
 		"relatedModelID": "diag_logistics",
 		"associationModelID": "diag_parameter_internal_did",
+		"pagination":map[string]interface{}{
+			"pageSize":5000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 		  	{"field": "id"},
 		  	{"field": "did"},
@@ -63,12 +75,20 @@ var QueryParameterFields = []map[string]interface{}{
 		"fieldType": "one2many",
 		"relatedModelID": "diag_parameter_trigger",
 		"relatedField": "parameter_id",
+		"pagination":map[string]interface{}{
+			"pageSize":5000,
+			"current":1,
+		},
 		"fields": []map[string]interface{}{
 		  	{"field": "id"},
 		  	{
 				"field": "diag_signal_id",
 				"fieldType": "many2one",
 				"relatedModelID": "diag_signal",
+				"pagination":map[string]interface{}{
+					"pageSize":5000,
+					"current":1,
+				},
 				"fields": []map[string]interface{}{
 			  		{"field": "id"},
 			  		{"field": "name"},

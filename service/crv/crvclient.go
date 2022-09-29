@@ -37,6 +37,11 @@ type CommonRsp struct {
 	Result map[string]interface{} `json:"result"`
 }
 
+type Pagination struct {
+    Current int `json:"current"` 
+    PageSize int `json:"pageSize"` 
+}
+
 type CommonReq struct {
 	ModelID string `json:"modelID"`
 	ViewID *string `json:"viewID"`
@@ -48,7 +53,7 @@ type CommonReq struct {
 	UserRoles string `json:"userRoles"`
 	//Sorter *[]sorter `json:"sorter"`
 	//SelectedRowKeys *[]string `json:"selectedRowKeys"`
-	//Pagination *pagination `json:"pagination"`
+	Pagination *Pagination `json:"pagination"`
 }
 
 type CRVClient struct {
