@@ -1,8 +1,8 @@
 import {Row,Col} from 'antd';
 
 const styleLabel={
-    textAlign:"right",
-    paddingRight:20,
+    textAlign:"center",
+    paddingRight:0,
     backgroundColor:"#BBBBBB",
     borderLeft:"1px solid #888",
     borderBottom:"1px solid #888",
@@ -33,10 +33,12 @@ export default function SpecialLogisticsInfo({title,logistics,vin}){
     <>
         {
             Object.keys(logistics).map(key=>{
+                let paddingTop=(Object.keys(logistics[key]).length-1)*11.5
+
                 return (
                     <Row>
                         <Col span={2} />
-                        <Col span={3} style={styleLabel}>
+                        <Col span={3} style={{...styleLabel,paddingTop:paddingTop}}>
                             {key}
                         </Col>
                         <Col span={3}>

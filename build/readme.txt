@@ -70,5 +70,5 @@ docker run -d -p80:80 --name diagnosis -v /root/crvframe/appfile:/services/crvfr
 3、车辆下发记录展示  ok
 4、auto2.0登录协议实现
 5、错误处理的通用逻辑优化  ok
-6、Excel图片导出
-7、故障内容换行显示
+6、Excel图片导出  ok
+7、故障内容换行显示  ok
