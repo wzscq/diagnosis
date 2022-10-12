@@ -11,7 +11,7 @@ export default function SignalChart({keyIndex,chartIndex,signal}){
     const { width,ref } = useResizeDetector();
     const {SignalCoordinateValue,SignalName}=signal;
     
-    console.log("width:",width);
+    console.log("width:",width,SignalCoordinateValue);
 
     useEffect(()=>{
 

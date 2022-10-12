@@ -72,7 +72,9 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
     }
 
     let possibleCauses=rec?.PossibleCauses
-    possibleCauses=possibleCauses.split(/\n/g)
+    if(possibleCauses){
+        possibleCauses=possibleCauses.split(/\n/g)
+    }
 
     return (
         <div style={{width:"100%",height:"auto",margin:"auto",marginBottom:30}}>
@@ -118,7 +120,7 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
                 <Col span={2} />
                 <Col span={4} style={styleLabel}>故障原因</Col>
                 <Col span={16} style={styleContent}>
-                  {possibleCauses.map(item=>(<>{item}<br/></>))}  
+                  {possibleCauses?.map(item=>(<>{item}<br/></>))}  
                 </Col>
                 <Col span={2} />
             </Row>
@@ -142,7 +144,7 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
                 <Col span={2} />
                 <Col span={20} style={styleSignalChartCell} >
                     <div style={styleSignalChart}>
-                        {chartType===0?<SignalChart itmeIndex={itmeIndex} signalList={signalList}/>:<SignalChartSplit itmeIndex={itmeIndex} signalList={signalList}/>}
+                        {signalList.length>0?(chartType===0?<SignalChart itmeIndex={itmeIndex} signalList={signalList}/>:<SignalChartSplit itmeIndex={itmeIndex} signalList={signalList}/>):null}
                     </div>
                 </Col>
                 <Col span={2} />
