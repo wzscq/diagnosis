@@ -51,6 +51,7 @@ type ecuItem struct {
 	Name string `json:"name"`
 	Items []ecuRecord  `json:"items"`
 	Logistics logistics `json:"logistics"`
+	SpecialLogisticsInfo map[string]map[string]string `json:"specialLogisticsInfo"`
 }
 
 type ReportContent struct {
@@ -349,6 +350,30 @@ func (repo *ReportContent)getReport()(*excelize.File){
 			f.SetCellStr(sheetName, cellStart, lgsItem.Value)
 			f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
 			row++
+		}
+
+		for itemName,specialLogistic:=range ecu.SpecialLogisticsInfo {
+			startRow:=row
+			for valueLabel,value:=range specialLogistic {
+				cellStart,_:=excelize.CoordinatesToCellName(2, row)
+				cellEnd,_:=excelize.CoordinatesToCellName(3, row)
+				f.MergeCell(sheetName,cellStart,cellEnd)
+				f.SetCellStr(sheetName, cellStart, valueLabel)
+				f.SetCellStyle(sheetName,cellStart,cellEnd,styleLabel)
+
+				cellStart,_=excelize.CoordinatesToCellName(4, row)
+				cellEnd,_=excelize.CoordinatesToCellName(8, row)
+				f.MergeCell(sheetName,cellStart,cellEnd)
+				f.SetCellStr(sheetName, cellStart, value)
+				f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
+
+				row++
+			}
+			cellStart,_:=excelize.CoordinatesToCellName(1, startRow)
+			cellEnd,_:=excelize.CoordinatesToCellName(1, row-1)
+			f.MergeCell(sheetName,cellStart,cellEnd)
+			f.SetCellStr(sheetName, cellStart, itemName)
+			f.SetCellStyle(sheetName,cellStart,cellEnd,styleLabel)
 		}
 		
 		cellStart,_=excelize.CoordinatesToCellName(1, row)
