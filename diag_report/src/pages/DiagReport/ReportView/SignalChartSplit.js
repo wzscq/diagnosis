@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { getColor } from '../../../utils/colorPalette';
 import { setAnalysisChart } from '../../../redux/reportSlice';
 
-export default function SignalChartSplit({itmeIndex,signalList}){
+export default function SignalChartSplit({report,itmeIndex,signalList}){
     const dispatch=useDispatch();
     const refChart=useRef();
     const { width,height,ref } = useResizeDetector();
@@ -46,6 +46,14 @@ export default function SignalChartSplit({itmeIndex,signalList}){
                 right: '10px',
             }
         });
+
+        const {xLimitValue}=report;
+        if(xLimitValue){
+            const xLimit=parseFloat(xLimitValue);
+            if(maxX<xLimit){
+                maxX=xLimit;
+            }
+        }
 
         const xAxis=signalList.map((item,index)=>{
             return {

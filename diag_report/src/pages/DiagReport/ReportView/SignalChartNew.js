@@ -5,11 +5,12 @@ import { useResizeDetector } from 'react-resize-detector';
 import { getColor } from '../../../utils/colorPalette';
 import { setAnalysisChart } from '../../../redux/reportSlice';
 
-export default function SignalChart({itmeIndex,signalList}){
+export default function SignalChart({report,itmeIndex,signalList}){
     const dispatch=useDispatch();
     const refChart=useRef();
     const { width,height,ref } = useResizeDetector();
-    
+    const {xLimitValue}=report;
+
     const option=useMemo(()=>{
         //数据收敛
         const legendData=signalList.map(item=>item.SignalName+(item.SignalUint?'('+item.SignalUint+')':''));
@@ -44,6 +45,13 @@ export default function SignalChart({itmeIndex,signalList}){
             left: (signalList.length*40+'px'),
             right: '10px'
         };
+
+        if(xLimitValue){
+            const xLimit=parseFloat(xLimitValue);
+            if(maxX<xLimit){
+                maxX=xLimit;
+            }
+        }
                 
         const xAxis={
             type: 'value',

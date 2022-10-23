@@ -72,8 +72,11 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
     }
 
     let possibleCauses=rec?.PossibleCauses
-    if(possibleCauses){
+    console.log('wzstest',possibleCauses);
+    if(possibleCauses.length>0){
         possibleCauses=possibleCauses.split(/\n/g)
+    } else {
+        possibleCauses=[];
     }
 
     return (
@@ -144,7 +147,7 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
                 <Col span={2} />
                 <Col span={20} style={styleSignalChartCell} >
                     <div style={styleSignalChart}>
-                        {signalList.length>0?(chartType===0?<SignalChart itmeIndex={itmeIndex} signalList={signalList}/>:<SignalChartSplit itmeIndex={itmeIndex} signalList={signalList}/>):null}
+                        {signalList.length>0?(chartType===0?<SignalChart report={report} itmeIndex={itmeIndex} signalList={signalList}/>:<SignalChartSplit report={report} itmeIndex={itmeIndex} signalList={signalList}/>):null}
                     </div>
                 </Col>
                 <Col span={2} />
