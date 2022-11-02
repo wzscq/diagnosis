@@ -49,12 +49,12 @@ func (sp *SendParameter)generateSendObject(
 	return distPara
 }
 
-func (sp *SendParameter)getSendParameter(row map[string]interface{})(map[string]interface{},int){
+func (sp *SendParameter)getSendParameter(row map[string]interface{},token string)(map[string]interface{},int){
 	log.Println("getSendParameter start")
 	ids:=sp.getParameterIDs(row)
 	//获取参数记录
 	log.Println("getSendParameter getDiagParams ...")
-	dp,errorCode:=getDiagParams(ids,sp.CRVClient,sp.SignalList)
+	dp,errorCode:=getDiagParams(ids,sp.CRVClient,sp.SignalList,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDiagParams error")
 		return nil,errorCode
@@ -62,14 +62,14 @@ func (sp *SendParameter)getSendParameter(row map[string]interface{})(map[string]
 
 	//获取DTC
 	log.Println("getSendParameter getDtcList ...")
-	dtc,errorCode:=getDtcList(dp.getEcuIDs(),dp.getEcuChannelMap(),sp.CRVClient,sp.SignalList)
+	dtc,errorCode:=getDtcList(dp.getEcuIDs(),dp.getEcuChannelMap(),sp.CRVClient,sp.SignalList,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDtcList error")
 		return nil,errorCode
 	}
 	//获取配置信息
 	log.Println("getSendParameter getDiagConf ...")
-	dc,errorCode:=getDiagConf(sp.CRVClient)
+	dc,errorCode:=getDiagConf(sp.CRVClient,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDiagConf error")
 		return nil,errorCode

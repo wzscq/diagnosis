@@ -29,19 +29,21 @@ func getSaveRecord(
 
 func saveSendRecords(
 	crvClient *crv.CRVClient,
- 	rows []map[string]interface{})(*crv.CommonRsp,int){
+ 	rows []map[string]interface{},
+	 token string)(*crv.CommonRsp,int){
 	
 	commonRep:=crv.CommonReq{
 		ModelID:"diag_param_sendrecord",
 		List:&rows,
 	}
 
-	return crvClient.Save(&commonRep)
+	return crvClient.Save(&commonRep,token)
 }
 
 func getSendRecords(
 	crvClient *crv.CRVClient,
-	sendRsp *crv.CommonRsp)(*crv.CommonRsp,int){
+	sendRsp *crv.CommonRsp,
+	token string)(*crv.CommonRsp,int){
 
 	list,_:=sendRsp.Result["list"]
 	records,_:=list.([]interface{})
@@ -64,7 +66,7 @@ func getSendRecords(
 		Fields:&QuerySendRecordFields,
 	}
 
-	return crvClient.Query(&commonRep)
+	return crvClient.Query(&commonRep,token)
 }
 
 func cacheSendRecords(
@@ -93,19 +95,20 @@ func createSendRecords(
 	sendRecordCache *SendRecordCache,
 	vehicles []sendVehicleItem,
 	sendUser string,
-	parameter string)(*crv.CommonRsp,int){
+	parameter string,
+	token string)(*crv.CommonRsp,int){
 	
 	saveList:=make([]map[string]interface{},len(vehicles))
 	for index,vehicle:=range(vehicles){
 		saveList[index]=getSaveRecord(vehicle,sendUser,parameter)
 	}
 
-	rsp,errorCode:=saveSendRecords(crvClient,saveList)
+	rsp,errorCode:=saveSendRecords(crvClient,saveList,token)
 	if errorCode!=common.ResultSuccess {
 		return rsp,errorCode
 	}
 
-	rsp,errorCode=getSendRecords(crvClient,rsp)
+	rsp,errorCode=getSendRecords(crvClient,rsp,token)
 	if errorCode!=common.ResultSuccess {
 		return rsp,errorCode
 	}

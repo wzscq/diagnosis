@@ -22,6 +22,16 @@ type SendController struct {
 
 func (controller *SendController) sendParameter1 (c *gin.Context){
 	log.Println("start sendParameter")
+
+	var header crv.CommonHeader
+	if err := c.ShouldBindHeader(&header); err != nil {
+		log.Println(err)
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		log.Println("end redirect with error")
+		return
+	}	
+
 	var rep crv.CommonReq
 	if err := c.BindJSON(&rep); err != nil {
 		log.Println(err)
@@ -36,19 +46,20 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		return
 	}
 
+	//controller.CRVClient.Token=header.Token
 	//生成下发参数
-	errorCode:=controller.CRVClient.Login()
+	/*errorCode:=controller.CRVClient.Login()
 	if errorCode!=0 {
 		rsp:=common.CreateResponse(common.CreateError(common.ResultCannotLoginCRV,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
 		return
-	}
+	}*/
 
 	sp:=&SendParameter{
 		CRVClient:controller.CRVClient,
 		SignalList:&map[string]interface{}{},
 	}
-	parameter,errorCode:=sp.getSendParameter((*rep.List)[0])
+	parameter,errorCode:=sp.getSendParameter((*rep.List)[0],header.Token)
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
@@ -65,7 +76,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 	sv:=&sendVehicle{
 		CRVClient:controller.CRVClient,
 	}
-	vehicles,errorCode:=sv.getSendVehicle((*rep.List)[0])
+	vehicles,errorCode:=sv.getSendVehicle((*rep.List)[0],header.Token)
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
@@ -79,7 +90,8 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		controller.SendRecordCache,
 		vehicles,
 		rep.UserID,
-		strParam)
+		strParam,
+		header.Token)
 
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
@@ -103,7 +115,8 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		"diag",
 		controller.CRVClient,
 		controller.SendRecordCache,
-		rep.UserID)
+		rep.UserID,
+		header.Token)
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)
@@ -156,6 +169,16 @@ func (controller *SendController)uploadDBC(c *gin.Context){
 
 func (controller *SendController)sendEventParameter (c *gin.Context){
 	log.Println("start sendEventParameter")
+	
+	var header crv.CommonHeader
+	if err := c.ShouldBindHeader(&header); err != nil {
+		log.Println(err)
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		log.Println("end redirect with error")
+		return
+	}	
+	
 	var rep crv.CommonReq
 	if err := c.BindJSON(&rep); err != nil {
 		log.Println(err)
@@ -170,19 +193,20 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 		return
 	}
 
+	//controller.CRVClient.Token=header.Token
 	//生成下发参数
-	errorCode:=controller.CRVClient.Login()
+	/*errorCode:=controller.CRVClient.Login()
 	if errorCode!=0 {
 		rsp:=common.CreateResponse(common.CreateError(common.ResultCannotLoginCRV,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
 		return
-	}
+	}*/
 
 	sp:=&SendEventParameter{
 		CRVClient:controller.CRVClient,
 		SignalList:&map[string]interface{}{},
 	}
-	parameter,errorCode:=sp.getSendParameter((*rep.List)[0])
+	parameter,errorCode:=sp.getSendParameter((*rep.List)[0],header.Token)
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
@@ -199,7 +223,7 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 	sv:=&sendVehicle{
 		CRVClient:controller.CRVClient,
 	}
-	vehicles,errorCode:=sv.getSendVehicle((*rep.List)[0])
+	vehicles,errorCode:=sv.getSendVehicle((*rep.List)[0],header.Token)
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
@@ -213,7 +237,8 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 		controller.SendRecordCache,
 		vehicles,
 		rep.UserID,
-		strParam)
+		strParam,
+		header.Token)
 
 	if errorCode!=common.ResultSuccess {
 		rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
@@ -236,7 +261,8 @@ func (controller *SendController)sendEventParameter (c *gin.Context){
 		"event",
 		controller.CRVClient,
 		controller.SendRecordCache,
-		rep.UserID)	
+		rep.UserID,
+		header.Token)	
 
 	rsp:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp)

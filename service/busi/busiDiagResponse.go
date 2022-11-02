@@ -29,6 +29,6 @@ func (busi *Busi)DealDiagResponse(deviceID string){
 			},
 		}
 		log.Println(saveReq)
-		busi.CrvClient.Save(saveReq)
+		busi.CrvClient.Save(saveReq,"")
 	}
 }

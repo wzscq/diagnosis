@@ -120,14 +120,15 @@ type diagParameter struct {
 func getDiagParams(
 	ids []string,
 	crvClient *crv.CRVClient,
-	signalList *map[string]interface{})(*diagParameter,int){
+	signalList *map[string]interface{},
+	token string)(*diagParameter,int){
 	dp:=&diagParameter{
 		CRVClient:crvClient,
 		Ids:ids,
 	}
 
 	//获取诊断参数配置数据
-	rsp,errorCode:=dp.queryDiagParameter()
+	rsp,errorCode:=dp.queryDiagParameter(token)
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
@@ -166,7 +167,7 @@ func (dp *diagParameter)updateRecords(result map[string]interface{})(int){
 	return common.ResultSuccess
 }
 
-func (dp *diagParameter)queryDiagParameter()(*crv.CommonRsp,int){
+func (dp *diagParameter)queryDiagParameter(token string)(*crv.CommonRsp,int){
 	log.Println("start queryDiagParameter")
 	commonRep:=crv.CommonReq{
 		ModelID:"diag_parameter",
@@ -178,7 +179,7 @@ func (dp *diagParameter)queryDiagParameter()(*crv.CommonRsp,int){
 		Fields:&QueryParameterFields,
 	}
 
-	return dp.CRVClient.Query(&commonRep)
+	return dp.CRVClient.Query(&commonRep,token)
 }
 
 func (dp *diagParameter)isValid()(int){

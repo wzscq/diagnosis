@@ -42,7 +42,8 @@ func getDtcList(
 	ecus []string,
 	channelMap map[string]interface{},
 	crvClient *crv.CRVClient,
-	signalList *map[string]interface{})(*dtcList,int){
+	signalList *map[string]interface{},
+	token string)(*dtcList,int){
 	dtc:=&dtcList{
 		CRVClient:crvClient,
 		Ecus:ecus,
@@ -51,7 +52,7 @@ func getDtcList(
 
 	log.Println("getDtcList",ecus)
 
-	rsp,errorCode:=dtc.queryDtcList()
+	rsp,errorCode:=dtc.queryDtcList(token)
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
@@ -64,7 +65,7 @@ func getDtcList(
 	return dtc,common.ResultSuccess
 }
 
-func (dtc *dtcList)queryDtcList()(*crv.CommonRsp,int){
+func (dtc *dtcList)queryDtcList(token string)(*crv.CommonRsp,int){
 	log.Println("start queryDtcList")
 	commonRep:=crv.CommonReq{
 		ModelID:"diag_manual_fault",
@@ -80,7 +81,7 @@ func (dtc *dtcList)queryDtcList()(*crv.CommonRsp,int){
 		Fields:&QueryDTCSignalFields,
 	}
 
-	return dtc.CRVClient.Query(&commonRep)
+	return dtc.CRVClient.Query(&commonRep,token)
 }
 
 func (dtc *dtcList)convertDtcList(

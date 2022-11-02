@@ -31,19 +31,21 @@ func getSaveSignalRecord(
 
 func saveSendSignalRecord(
 	crvClient *crv.CRVClient,
- 	rows []map[string]interface{})(*crv.CommonRsp,int){
+ 	rows []map[string]interface{},
+	 token string)(*crv.CommonRsp,int){
 	
 	commonRep:=crv.CommonReq{
 		ModelID:"diag_signal_sendrecord",
 		List:&rows,
 	}
 
-	return crvClient.Save(&commonRep)
+	return crvClient.Save(&commonRep,token)
 }
 
 func getSendSignalRecord(
 	crvClient *crv.CRVClient,
-	sendRsp *crv.CommonRsp)(*crv.CommonRsp,int){
+	sendRsp *crv.CommonRsp,
+	token string)(*crv.CommonRsp,int){
 
 	list,_:=sendRsp.Result["list"]
 	records,_:=list.([]interface{})
@@ -66,7 +68,7 @@ func getSendSignalRecord(
 		Fields:&QuerySendSignalRecordFields,
 	}
 
-	return crvClient.Query(&commonRep)
+	return crvClient.Query(&commonRep,token)
 }
 
 func cacheSendSignalRecord(
@@ -95,18 +97,19 @@ func createSendSignalRecord(
 	sendRecordCache *SendRecordCache,
 	vehicle sendVehicleItem,
 	sendUser string,
-	parameter string)(*crv.CommonRsp,int){
+	parameter string,
+	token string)(*crv.CommonRsp,int){
 	
 	saveList:=make([]map[string]interface{},1)
 	saveList[0]=getSaveSignalRecord(vehicle,sendUser,parameter)
 	
-	rsp,errorCode:=saveSendSignalRecord(crvClient,saveList)
+	rsp,errorCode:=saveSendSignalRecord(crvClient,saveList,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("createSendSignalRecord saveSendSignalRecord error")
 		return rsp,errorCode
 	}
 
-	rsp,errorCode=getSendSignalRecord(crvClient,rsp)
+	rsp,errorCode=getSendSignalRecord(crvClient,rsp,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("createSendSignalRecord getSendSignalRecord error")
 		return rsp,errorCode
@@ -211,7 +214,8 @@ func sendSignalByMqtt(
 	busi string,
 	crvClient *crv.CRVClient,
 	sendRecordCache *SendRecordCache,
-	sendUser string)(int){
+	sendUser string,
+	token string)(int){
 	
 	log.Println("start sendSignalByMqtt")
 	for _,vehicle:=range(vehicles){
@@ -228,7 +232,8 @@ func sendSignalByMqtt(
 			sendRecordCache,
 			vehicle,
 			sendUser,
-			parameter)
+			parameter,
+			token)
 	}
 
 	log.Println("end sendSignalByMqtt")

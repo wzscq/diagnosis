@@ -45,12 +45,12 @@ func (sp *SendEventParameter)generateSendObject(
 	return distPara
 }
 
-func (sp *SendEventParameter)getSendParameter(row map[string]interface{})(map[string]interface{},int){
+func (sp *SendEventParameter)getSendParameter(row map[string]interface{},token string)(map[string]interface{},int){
 	log.Println("getSendParameter start")
 	ids:=sp.getParameterIDs(row)
 	//获取参数记录
 	log.Println("getSendParameter getEventParams ...")
-	dp,errorCode:=getEventParams(ids,sp.CRVClient,sp.SignalList)
+	dp,errorCode:=getEventParams(ids,sp.CRVClient,sp.SignalList,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getEventParams error")
 		return nil,errorCode

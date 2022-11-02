@@ -88,14 +88,15 @@ type eventParameter struct {
 func getEventParams(
 	ids []string,
 	crvClient *crv.CRVClient,
-	sendSignalList *map[string]interface{})(*eventParameter,int){
+	sendSignalList *map[string]interface{},
+	token string)(*eventParameter,int){
 	dp:=&eventParameter{
 		CRVClient:crvClient,
 		Ids:ids,
 	}
 
 	//获取诊断参数配置数据
-	rsp,errorCode:=dp.queryEventParameter()
+	rsp,errorCode:=dp.queryEventParameter(token)
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
@@ -134,7 +135,7 @@ func (dp *eventParameter)updateRecords(result map[string]interface{})(int){
 	return common.ResultSuccess
 }
 
-func (dp *eventParameter)queryEventParameter()(*crv.CommonRsp,int){
+func (dp *eventParameter)queryEventParameter(token string)(*crv.CommonRsp,int){
 	log.Println("start queryEventParameter")
 	commonRep:=crv.CommonReq{
 		ModelID:"diag_event_parameter",
@@ -146,7 +147,7 @@ func (dp *eventParameter)queryEventParameter()(*crv.CommonRsp,int){
 		Fields:&QueryEventParameterFields,
 	}
 
-	return dp.CRVClient.Query(&commonRep)
+	return dp.CRVClient.Query(&commonRep,token)
 }
 
 func (dp *eventParameter)isValid()(int){

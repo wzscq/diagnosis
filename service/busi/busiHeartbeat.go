@@ -77,17 +77,17 @@ func (busi *Busi)DealDeviceHeartbeat(deviceID,vin string){
 	if busi.CrvClient.Login() ==0 {
 		//添加心跳记录到记录表
 		saveReq:=getDeviceHeartbeatSaveReq(deviceID,vin)
-		busi.CrvClient.Save(saveReq)
+		busi.CrvClient.Save(saveReq,"")
 
 		//查询车辆信息
 		queryReq:=getQueryVinReq(vin)
-		rsp,err:=busi.CrvClient.Query(queryReq)
+		rsp,err:=busi.CrvClient.Query(queryReq,"")
 		if err==0 && rsp.Error==false {
 			version:=getVersion(rsp.Result)
 			if version != nil {
 				//更新车辆对应设备信息
 				saveReq=getUpdateVinDeviceReq(deviceID,vin,version)
-				busi.CrvClient.Save(saveReq)
+				busi.CrvClient.Save(saveReq,"")
 			}
 		} else {
 			log.Printf("Query vin info error %s,%d",rsp.Message,err)

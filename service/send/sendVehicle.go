@@ -32,9 +32,9 @@ func (sv *sendVehicle)getVehicleIDs(row map[string]interface{})([]string){
 	return ids
 }
 
-func (sv *sendVehicle)getSendVehicle(row map[string]interface{})([]sendVehicleItem,int){
+func (sv *sendVehicle)getSendVehicle(row map[string]interface{},token string)([]sendVehicleItem,int){
 	carIDs:=sv.getVehicleIDs(row)
-	rsp,errorCode:=sv.queryVehicleList(carIDs)
+	rsp,errorCode:=sv.queryVehicleList(carIDs,token)
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
@@ -42,7 +42,7 @@ func (sv *sendVehicle)getSendVehicle(row map[string]interface{})([]sendVehicleIt
 	return sv.convertVehicleList(rsp)
 }
 
-func (sv *sendVehicle)queryVehicleList(carIDs []string)(*crv.CommonRsp,int){
+func (sv *sendVehicle)queryVehicleList(carIDs []string,token string)(*crv.CommonRsp,int){
 	log.Println("start queryDtcList")
 	commonRep:=crv.CommonReq{
 		ModelID:"vehiclemanagement",
@@ -54,7 +54,7 @@ func (sv *sendVehicle)queryVehicleList(carIDs []string)(*crv.CommonRsp,int){
 		Fields:&QueryVehicleFields,
 	}
 
-	return sv.CRVClient.Query(&commonRep)
+	return sv.CRVClient.Query(&commonRep,token)
 } 
 
 func (sv *sendVehicle)convertVehicleList(queryResult *crv.CommonRsp)([]sendVehicleItem,int){

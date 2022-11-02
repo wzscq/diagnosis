@@ -28,7 +28,12 @@ type loginRsp struct {
 	Result loginResult `json:"result"`
 }
 
-
+type CommonHeader struct {
+	Token     string  `json:"token"`
+	UserID    string  `json:"userID"`
+	AppDB     string  `json:"appDB"`
+	UserRoles string  `json:"userRoles"`
+}
 
 type CommonRsp struct {
 	ErrorCode int `json:"errorCode"`
@@ -126,7 +131,7 @@ func (crv *CRVClient) Login()(int) {
 	return 0
 }
 
-func (crv *CRVClient)Save(commonReq *CommonReq)(*CommonRsp,int){
+func (crv *CRVClient)Save(commonReq *CommonReq,token string)(*CommonRsp,int){
 	log.Println("start CRVClient save ...")
 	postJson,_:=json.Marshal(*commonReq)
 	postBody:=bytes.NewBuffer(postJson)
@@ -135,7 +140,13 @@ func (crv *CRVClient)Save(commonReq *CommonReq)(*CommonRsp,int){
 		log.Println("CRVClient save NewRequest error",err)
 		return nil,common.ResultSaveDataError
 	}
-	req.Header.Set("token", crv.Token)
+
+	if len(token)==0 {
+		req.Header.Set("token", crv.Token)
+	} else {
+		req.Header.Set("token", token)
+	}
+	
 	req.Header.Set("Content-Type","application/json")
 	
 	resp, err := (&http.Client{}).Do(req)
@@ -165,7 +176,7 @@ func (crv *CRVClient)Save(commonReq *CommonReq)(*CommonRsp,int){
 	return &commonRsp,common.ResultSuccess
 }
 
-func (crv *CRVClient)Query(commonReq *CommonReq)(*CommonRsp,int){
+func (crv *CRVClient)Query(commonReq *CommonReq,token string)(*CommonRsp,int){
 	log.Println("start CRVClient query ...")
 	postJson,_:=json.Marshal(*commonReq)
 	postBody:=bytes.NewBuffer(postJson)
@@ -174,7 +185,13 @@ func (crv *CRVClient)Query(commonReq *CommonReq)(*CommonRsp,int){
 		log.Println("CRVClient query NewRequest error",err)
 		return nil,common.ResultQueryRequestError
 	}
-	req.Header.Set("token", crv.Token)
+
+	if len(token)==0 {
+		req.Header.Set("token", crv.Token)
+	} else {
+		req.Header.Set("token", token)
+	}
+
 	req.Header.Set("Content-Type","application/json")
 	
 	resp, err := (&http.Client{}).Do(req)
