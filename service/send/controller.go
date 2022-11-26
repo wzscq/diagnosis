@@ -150,6 +150,7 @@ func (controller *SendController)uploadDBC(c *gin.Context){
 		c.IndentedJSON(http.StatusOK, rsp)
 		return	
 	}
+
 	//发送消息到后台解析程序
 	//构造发送结构
 	content:=map[string]interface{}{
