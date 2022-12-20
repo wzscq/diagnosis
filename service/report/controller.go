@@ -89,7 +89,7 @@ func (controller *Controller) getReports(c *gin.Context){
 	countDocument=0
 	collectionName:=c.Query("collection")
 	dtc:=c.Query("dtc")
-	if(collectionName!=""&&dtc!=""){
+	if(collectionName!=""){
 		controller.Init()
 		defer controller.Release()
 
@@ -114,9 +114,17 @@ func (controller *Controller) getReports(c *gin.Context){
 				{"SamplingTime",
 					bson.D{{"$gte", startDate},{"$lte", endDate}},
 				},
-				{
-				    "ReportID",dtc,
-				},
+			}
+
+			if dtc!="" {
+				filter=bson.D{
+					{"SamplingTime",
+						bson.D{{"$gte", startDate},{"$lte", endDate}},
+					},
+					{
+						"ReportID",dtc,
+					},
+				}	
 			}
 
 			log.Println("getReports count documents ...")
@@ -131,7 +139,7 @@ func (controller *Controller) getReports(c *gin.Context){
 			} else {
 				countDocument=resultCount
 				log.Println("getReports find documents ...")
-				ctxFind, cancelFind := context.WithTimeout(context.Background(), 20*time.Second)
+				ctxFind, cancelFind := context.WithTimeout(context.Background(), 200*time.Second)
 				defer cancelFind()
 				cur, errFind := collection.Find(ctxFind, filter,opts)
 				defer cur.Close(ctxFind)
