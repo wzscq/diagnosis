@@ -57,15 +57,15 @@ type CommonReq struct {
 	AppDB string `json:"appDB"`
 	UserRoles string `json:"userRoles"`
 	//Sorter *[]sorter `json:"sorter"`
-	//SelectedRowKeys *[]string `json:"selectedRowKeys"`
+	SelectedRowKeys *[]string `json:"selectedRowKeys"`
 	Pagination *Pagination `json:"pagination"`
 }
 
 type CRVClient struct {
 	Server string `json:"server"`
-    User string `json:"user"`
-    Password string `json:"password"`
-    AppID string `json:"appID"`
+  User string `json:"user"`
+  Password string `json:"password"`
+  AppID string `json:"appID"`
 	Token string `json:"token"`
 }
 

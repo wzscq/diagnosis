@@ -83,7 +83,9 @@ func main() {
 		conf.Mongo.Server, 
 		conf.Mongo.DBName,
 		conf.Mongo.User,
-        conf.Mongo.Password)
+    conf.Mongo.Password,
+		conf.FilePath,
+		&crvClinet)
 	reportController.Bind(router)
 
 	sendController:=send.SendController{

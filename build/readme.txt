@@ -87,3 +87,8 @@ docker run -d -p80:80 --name diagnosis -v /root/crvframe/appfile:/services/crvfr
 5、修改查询报告数据的后台逻辑 ok
 6、修改下载报告逻辑，支持多个测试记录合并展示 
 7、增加修改报告的后台逻辑，可通过数据流配置
+
+2023-01-31 增加原始数据下载功能
+1、模型diag_result，增加字段raw_data,数据行上增加下载原始文件按钮
+2、模型diag_event，增加字段raw_data,数据行上增加下载原始文件按钮
+3、模型diag_view_result，增加字段raw_data,数据行上增加下载原始文件按钮

@@ -32,6 +32,7 @@ const (
 	ResultMultiProject = 10100013
 	ResultParamWithoutEcu = 10100014
 	ResultWrongDiagConf = 10100015
+	ResultOpenFileError = 10100016
 )
 
 var errMsg = map[int]CommonRsp{
@@ -39,6 +40,11 @@ var errMsg = map[int]CommonRsp{
 		ErrorCode:ResultSuccess,
 		Message:"操作成功",
 		Error:false,
+	},
+	ResultOpenFileError:CommonRsp{
+		ErrorCode:ResultOpenFileError,
+		Message:"打开文件时发生错误，请与管理员联系处理",
+		Error:true,
 	},
 	ResultWrongRequest:CommonRsp{
 		ErrorCode:ResultWrongRequest,

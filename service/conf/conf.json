@@ -35,5 +35,6 @@
         "db":5,
         "deviceSignalCacheDB":10
     },
-    "filePath":"/services/crvframe/appfile/"
+    "filePath1":"services/diagnosis/data/",
+    "filePath":"D:/self/crvframe/testdata"
 }
