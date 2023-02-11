@@ -68,7 +68,7 @@ GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 # 3. 官方
 GOPROXY=https://goproxy.io,direct
 
-docker run -d -p80:80 --name diagnosis -v /root/crvframe/appfile:/services/crvframe/appfile -v /root/crvframe/apps:/services/crvframe/apps -v /root/crvframe/conf:/services/crvframe/conf -v /root/diagnosis/conf:/services/diagnosis/conf digimatrix/diagnosis:0.1.0
+docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalData/data:/services/diagnosis/data -v /root/crvframe/appfile:/services/crvframe/appfile -v /root/crvframe/apps:/services/crvframe/apps -v /root/crvframe/conf:/services/crvframe/conf -v /root/diagnosis/conf:/services/diagnosis/conf digimatrix/diagnosis:0.1.0
 
 待处理问题列表
 1、通过mqtt接收设备心跳消息和下发参数接收成功的消息  ok
