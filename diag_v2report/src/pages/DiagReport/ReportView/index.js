@@ -43,7 +43,28 @@ export default function ReportView({sendMessageToParent}){
     if(data&&reports&&reports.length>0){
         const id=data.diag_report;
         const vin=data.vin;
-        const report=reports[0];
+        const report={...reports[0]};
+        const ecuList={}
+
+        reports.forEach(report=>{
+            const {Records,LogisticsInfo:logisticsInfo,SpecialLogisticsInfo:specialLogisticsInfo}=report;
+        
+            Records.forEach(rec=>{
+                if(!ecuList[rec.Ecu]){
+                    ecuList[rec.Ecu]={name:rec.Ecu,items:[],specialLogisticsInfo:specialLogisticsInfo};
+                }
+                ecuList[rec.Ecu].items.push(rec);
+            });
+
+            logisticsInfo.forEach(rec=>{
+                if(!ecuList[rec.EcuName]){
+                    ecuList[rec.EcuName]={name:rec.EcuName,items:[]};
+                }
+                ecuList[rec.EcuName].logistics=rec;
+            });
+        });
+        
+        console.log("ecuList",ecuList);
         console.log('report',report);
         return (
             <div>
@@ -68,13 +89,13 @@ export default function ReportView({sendMessageToParent}){
                         <Col span={20} style={styleTitle}>2、故障码概览</Col>
                         <Col span={2} />
                     </Row>
-                    {reports.map(item=><Records report={item} vin={vin} />)}
+                    <Records ecuList={ecuList} report={report} vin={vin} />
                     <Row>
                         <Col span={2} />
                         <Col span={20} style={styleTitle}>3、DTC解析</Col>
                         <Col span={2} />
                     </Row>
-                    {reports.map(item=><Analysis report={item} vin={vin} />)}
+                    {reports.map((item,index)=><Analysis itemIndex={index} report={item} vin={vin} />)}
                 </div>
                 <div style={{width:"100%",height:50}}/>
             </div>

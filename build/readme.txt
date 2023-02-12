@@ -92,3 +92,8 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 1、模型diag_result，增加字段raw_data,数据行上增加下载原始文件按钮
 2、模型diag_event，增加字段raw_data,数据行上增加下载原始文件按钮
 3、模型diag_view_result，增加字段raw_data,数据行上增加下载原始文件按钮
+
+2023-02-11 完善综合分析功能
+1、修改diag_v2report，合并相同ECU物流和故障信息
+2、修改diag_result和diag_view_result模型配置，支持综合分析页面的关闭功能
+3、增加综合导出接口，导出合并的分析报告

@@ -77,10 +77,10 @@ const getRecord=(rec,index)=>{
     </Row>);
 }*/
 
-export default function Records({report,vin}){
+export default function Records({ecuList,report,vin}){
     const dispatch=useDispatch();
 
-    const {Records,LogisticsInfo:logisticsInfo,SpecialLogisticsInfo:specialLogisticsInfo}=report;
+    /*const {Records,LogisticsInfo:logisticsInfo,SpecialLogisticsInfo:specialLogisticsInfo}=report;
     const ecuList={}
     Records.forEach(rec=>{
         if(!ecuList[rec.Ecu]){
@@ -94,7 +94,7 @@ export default function Records({report,vin}){
             ecuList[rec.EcuName]={name:rec.EcuName,items:[]};
         }
         ecuList[rec.EcuName].logistics=rec;
-    });
+    });*/
 
     console.log("ecuList",ecuList);
 

@@ -9,10 +9,10 @@ const styleTitle={
     borderBottom:"0px solid #888"
 }
 
-export default function Analysis({report,vin}){
+export default function Analysis({report,vin,itemIndex}){
     const {Records}=report;
     const items=Records.map((rec,index)=>{
-        return (<AnalysisItem itmeIndex={index+''} report={report} rec={rec} vin={vin} />);
+        return (<AnalysisItem itmeIndex={itemIndex+''} report={report} rec={rec} vin={vin} />);
     });
 
     return (
