@@ -299,7 +299,8 @@ func (dp *diagParameter)convertDiagParameter(
 			log.Println("trigger value can not convert to float64")
 			return nil
 		}
-		mapItem["Value"]=fmt.Sprintf("%.f",floatVal/floatFactor+floatOffset)
+		//mapItem["Value"]=fmt.Sprintf("%.f",floatVal/floatFactor+floatOffset)
+		mapItem["Value"]=fmt.Sprintf("%.f",(floatVal-floatOffset)/floatFactor)
 		delete(mapItem,"value")
 	}
 	
