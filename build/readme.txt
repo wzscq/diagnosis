@@ -97,3 +97,10 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 1、修改diag_v2report，合并相同ECU物流和故障信息
 2、修改diag_result和diag_view_result模型配置，支持综合分析页面的关闭功能
 3、增加综合导出接口，导出合并的分析报告
+
+2023-03-05 DTC维护页面中ECU改为多选
+1、中间表diag_dtc_diag_ecu
+2、修改diag_dtc的配置，ecu字段改为many2many类型，编辑使用穿梭框，listview中对多个ECU用逗号拼接显示
+3、listview修改，增加many2many字段的显示，控制many2many字段不允许过滤和排序操作
+4、formview修改，修改many2many字段级联下拉选择逻辑
+5、修改diag_manual_fault配置，dtc的级联过滤配置更新
