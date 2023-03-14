@@ -90,7 +90,7 @@ export default function MultiYAxisChart({signalList}){
             return {
                 label:element.name,
                 value:element.data.reduce((prev,current)=>{
-                        if(prev&&current[0]>axisValue){
+                        if(prev!==false&&current[0]>axisValue){
                             return prev;
                         }
                         return current[1];
