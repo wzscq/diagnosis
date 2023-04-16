@@ -9,11 +9,7 @@ const initialState = {
         openCount:0,
         closedCount:0,
     },
-    faultCountByType: {
-        epsCount: 0,
-        escCount: 0,
-        ibsCount: 0
-    },
+    faultCountByType: [],
     faultList: [],
     projectcarCount:[],
     pending:false
