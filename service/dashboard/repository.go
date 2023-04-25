@@ -6,12 +6,6 @@ import (
 	"log"
 )
 
-type FaultTypeCount struct {
-	EpsCount int `json:"epsCount"`
-	EscCount int `json:"escCount"`
-	IbsCount int `json:"ibsCount"`
-}
-
 type FaultStatusCount struct {
 	OpenCount int `json:"openCount"`
 	ClosedCount int `json:"closedCount"`
@@ -20,7 +14,7 @@ type FaultStatusCount struct {
 type Repository interface {
 	getCarCount()(int,error)
 	getCarCountByProject()([]map[string]interface{},error)
-	getFaultCountByType()(*FaultTypeCount,error)
+	getFaultCountByType()([]map[string]interface{},error)
 	getFaultCountByStatus()(*FaultStatusCount,error)
 	getFaultList()([]map[string]interface{},error)
 	query(sql string)([]map[string]interface{},error)
@@ -105,14 +99,16 @@ func (repo *DefatultRepository)getCarCountByProject()([]map[string]interface{},e
 	return repo.toMap(rows) 
 }
 
-func (repo *DefatultRepository)getFaultCountByType()(*FaultTypeCount,error){
-	var typeCount FaultTypeCount
-	row:= repo.DB.QueryRow("select sum(eps) as epsCount,sum(ibs) as ibsCount,sum(esc) as escCount from diag_result")
-	if err := row.Scan(&typeCount.EpsCount, &typeCount.IbsCount, &typeCount.EscCount); err != nil {
-        log.Println("getFaultCountByType error")
+func (repo *DefatultRepository)getFaultCountByType()([]map[string]interface{},error){
+	rows,err:= repo.DB.Query("select type,count(1) as count from diag_result group by type")
+	if err!=nil {
 		log.Println(err)
-    } 
-	return &typeCount, nil
+		return nil,nil
+	}
+
+	defer rows.Close()
+
+	return repo.toMap(rows)
 }
 
 func (repo *DefatultRepository)getFaultCountByStatus()(*FaultStatusCount,error){

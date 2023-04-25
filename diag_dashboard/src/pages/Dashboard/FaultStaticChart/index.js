@@ -9,11 +9,8 @@ export default function FaultStaticChart({data}){
     console.log(data)
 
     const tmpData=useMemo(()=>{
-        return [
-        {type:"EPS",count:data.epsCount},
-        {type:"ESC",count:data.escCount},
-        {type:"IBS",count:data.ibsCount},
-    ]},[data]);
+        return data;
+    },[data]);
 
     console.log(tmpData)
     
