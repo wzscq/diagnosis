@@ -18,8 +18,8 @@
         "broker":"tcp://49.4.3.226:1983",
         "password":"123456",
         "user":"mosquitto",
-        "heartbeatTopic":"MQB/Status/+",
-        "diagResponseTopic":"MQB/ReciveAck/+",
+        "heartbeatTopic":"MQB1/Status/+",
+        "diagResponseTopic":"MQB1/ReciveAck/+",
         "dbcUploadTopic":"upload/dbcFile",
         "clientID":"diagonsis_mqtt_subscribe_client_2"
     },

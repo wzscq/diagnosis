@@ -186,6 +186,7 @@ func (crv *CRVClient)Query(commonReq *CommonReq,token string)(*CommonRsp,int){
 		return nil,common.ResultQueryRequestError
 	}
 
+	log.Println(token)
 	if len(token)==0 {
 		req.Header.Set("token", crv.Token)
 	} else {

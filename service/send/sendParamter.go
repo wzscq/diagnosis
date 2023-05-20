@@ -62,7 +62,7 @@ func (sp *SendParameter)getSendParameter(row map[string]interface{},token string
 
 	//获取DTC
 	log.Println("getSendParameter getDtcList ...")
-	dtc,errorCode:=getDtcList(dp.getEcuIDs(),dp.getEcuChannelMap(),sp.CRVClient,sp.SignalList,token)
+	dtc,errorCode:=getDtcList(dp.PlatformID,dp.getEcuIDs(),dp.getEcuChannelMap(),sp.CRVClient,sp.SignalList,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDtcList error")
 		return nil,errorCode

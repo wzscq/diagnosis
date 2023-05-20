@@ -34,11 +34,13 @@ var QueryDTCSignalFields = []map[string]interface{}{
 type dtcList struct {
 	CRVClient *crv.CRVClient
 	Ecus []string
+	PlatformID string
 	EcuChannelMap map[string]interface{}
 	DtcList []interface{}
 }
 
 func getDtcList(
+	platformID string,
 	ecus []string,
 	channelMap map[string]interface{},
 	crvClient *crv.CRVClient,
@@ -48,6 +50,7 @@ func getDtcList(
 		CRVClient:crvClient,
 		Ecus:ecus,
 		EcuChannelMap:channelMap,
+		PlatformID:platformID,
 	}
 
 	log.Println("getDtcList",ecus)
@@ -73,6 +76,7 @@ func (dtc *dtcList)queryDtcList(token string)(*crv.CommonRsp,int){
 			"ecu_id":&map[string]interface{}{
 				"Op.in":dtc.Ecus,
 			},
+			"platform_id":dtc.PlatformID,
 		},
 		Pagination:&crv.Pagination{
 			PageSize:5000,

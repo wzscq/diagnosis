@@ -115,6 +115,7 @@ type diagParameter struct {
 	Ids []string
 	Records []map[string]interface{}
 	Params []map[string]interface{}
+	PlatformID string
 }
 
 func getDiagParams(
@@ -189,6 +190,7 @@ func (dp *diagParameter)isValid()(int){
 	for _,record:=range(dp.Records){
 		prj,_:=record["platform_id"]
 		prjStr,_:=prj.(string)
+		dp.PlatformID=prjStr
 		mapProject[prjStr]=prj
 		
 		ecuList,ok:=record["ecu_id"].(map[string]interface{})["list"].([]interface{})

@@ -72,6 +72,11 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
     jsonEncoder.Encode(parameter)
 	strParam:=bf.String()
 
+	log.Println(strParam)
+	rsp1:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
+	c.IndentedJSON(http.StatusOK, rsp1)
+	return
+
 	//获取下发车辆列表
 	sv:=&sendVehicle{
 		CRVClient:controller.CRVClient,
