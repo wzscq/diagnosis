@@ -104,3 +104,6 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 3、listview修改，增加many2many字段的显示，控制many2many字段不允许过滤和排序操作
 4、formview修改，修改many2many字段级联下拉选择逻辑
 5、修改diag_manual_fault配置，dtc的级联过滤配置更新
+
+2023-05-20 修改诊断参数下发逻辑
+1、查询dtclist时原来没有按照platformid做过滤，这次增加了这个过滤条件
