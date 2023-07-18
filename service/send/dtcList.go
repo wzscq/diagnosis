@@ -16,7 +16,7 @@ var QueryDTCSignalFields = []map[string]interface{}{
 		"fieldType": "many2many",
 		"relatedModelID": "diag_signal",
 		"pagination":map[string]interface{}{
-			"pageSize":10000,
+			"pageSize":100000,
 			"current":1,
 		},
 		"fields": []map[string]interface{}{

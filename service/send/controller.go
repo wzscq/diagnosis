@@ -72,8 +72,8 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
     jsonEncoder.Encode(parameter)
 	strParam:=bf.String()
 
-	/*
-	log.Println(strParam)
+	
+	/*log.Println(strParam)
 	rsp1:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp1)
 	return*/
