@@ -31,6 +31,12 @@ var QueryDTCSignalFields = []map[string]interface{}{
 	},
 }
 
+type DtcItem struct {
+	index int
+	DtcNum string
+	SingalMap map[string]interface{}
+}
+
 type dtcList struct {
 	CRVClient *crv.CRVClient
 	Ecus []string
@@ -65,7 +71,56 @@ func getDtcList(
 		return nil,errorCode
 	}
 
+	dtc.DtcList=dtc.mergeSameDTC(dtc.DtcList);
+
 	return dtc,common.ResultSuccess
+}
+
+func (dtc *dtcList)mergeSameDTC(dtcList []interface{})([]interface{}){
+	//建一个DTCmap
+	dtcMap:=make(map[string]DtcItem)
+	for index,item:=range dtcList {
+		itemMap:=item.(map[string]interface{})
+		dtcNum,_:=itemMap["DtcNum"].(string)
+		//判断并添加dtc
+		var dtcItem DtcItem
+		dtcItem,ok:=dtcMap[dtcNum]
+		if !ok {
+			dtcItem=DtcItem{
+				index:index,
+				DtcNum:dtcNum,
+				SingalMap:make(map[string]interface{}),
+			}
+			//添加signal
+			signals,_:=itemMap["CorrelationSignal"]
+			for _,signal:=range signals.([]interface{}) {
+				signalItem:=signal.(map[string]interface{})
+				signalID,_:=signalItem["SignalID"].(string)
+				//判断并添加signal
+				_,ok:=dtcItem.SingalMap[signalID]
+				if !ok {	
+					dtcItem.SingalMap[signalID]=signalItem
+				}
+			}
+			dtcMap[dtcNum]=dtcItem
+		} else {
+			signalsFirst,_:=dtcList[dtcItem.index].(map[string]interface{})["CorrelationSignal"].([]interface{})
+			//添加signal
+			signals,_:=itemMap["CorrelationSignal"]
+			for _,signal:=range signals.([]interface{}) {
+				signalItem:=signal.(map[string]interface{})
+				signalID,_:=signalItem["SignalID"].(string)
+				//判断并添加signal
+				_,ok:=dtcItem.SingalMap[signalID]
+				if !ok {	
+					dtcItem.SingalMap[signalID]=signalID
+					signalsFirst=append(signalsFirst,signal)
+				}
+			}
+			dtcList[dtcItem.index].(map[string]interface{})["CorrelationSignal"]=signalsFirst
+		}
+	}
+	return dtcList
 }
 
 func (dtc *dtcList)queryDtcList(token string)(*crv.CommonRsp,int){
