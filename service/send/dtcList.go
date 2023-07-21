@@ -70,9 +70,9 @@ func getDtcList(
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
-
+	//log.Println("dtcList count:",len(dtc.DtcList))
 	dtc.DtcList=dtc.mergeSameDTC(dtc.DtcList);
-
+	//log.Println("dtcList count:",len(dtc.DtcList))
 	return dtc,common.ResultSuccess
 }
 
@@ -120,7 +120,18 @@ func (dtc *dtcList)mergeSameDTC(dtcList []interface{})([]interface{}){
 			dtcList[dtcItem.index].(map[string]interface{})["CorrelationSignal"]=signalsFirst
 		}
 	}
-	return dtcList
+	//从原来的dtcList中删除重复的dtc
+	dtcListNew:=make([]interface{},0)
+	for index,item:=range dtcList {
+		itemMap:=item.(map[string]interface{})
+		dtcNum,_:=itemMap["DtcNum"].(string)
+		//如果dtcMap中存在dtcNum，则对应的item添加到dtcListNew中
+		dtcItem,ok:=dtcMap[dtcNum]
+		if ok && dtcItem.index==index {
+			dtcListNew=append(dtcListNew,item)
+		}
+	}
+	return dtcListNew
 }
 
 func (dtc *dtcList)queryDtcList(token string)(*crv.CommonRsp,int){

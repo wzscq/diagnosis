@@ -65,7 +65,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		c.IndentedJSON(http.StatusOK, rsp)
 		return
 	}
-	log.Println(parameter)
+	//log.Println(parameter)
 	bf := bytes.NewBuffer([]byte{})
     jsonEncoder := json.NewEncoder(bf)
     jsonEncoder.SetEscapeHTML(false)
@@ -88,7 +88,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		c.IndentedJSON(http.StatusOK, rsp)
 		return
 	}
-	log.Println(vehicles)
+	//log.Println(vehicles)
 
 	//创建下发记录
 	_,errorCode=createSendRecords(
