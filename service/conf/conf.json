@@ -35,6 +35,13 @@
         "db":5,
         "deviceSignalCacheDB":10
     },
+    "kafka":{
+        "brokers":["121.37.185.248:9092"],
+        "topic_pdpm_project":"ISDC_PDPM_PROJECT_INFO",
+        "topic_evdms_veihcle":"ISDC_EVDMS_VEIHCLE2EXD",
+        "topic_evdms_device":"ISDC_EVDMS_RECORD2EXD",
+        "groupID":"diag_group_1"
+    },
     "filePath1":"services/diagnosis/data/",
     "filePath":"D:/self/crvframe/testdata"
 }

@@ -10,6 +10,7 @@ import (
 	"digimatrix.com/diagnosis/mqtt"
 	"digimatrix.com/diagnosis/crv"
 	"digimatrix.com/diagnosis/busi"
+	"digimatrix.com/diagnosis/saicinterface"
 	"log"
 	"time"
 )
@@ -67,6 +68,9 @@ func main() {
 		ClientID:conf.MQTT.ClientID,
 	}
 	mqttClient.Init()
+
+	//kafka consumer
+	saicinterface.StartConsumer(conf.Kafka)
 	
 	repo:=&dashboard.DefatultRepository{}
     repo.Connect(

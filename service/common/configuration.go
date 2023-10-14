@@ -48,6 +48,14 @@ type redisConf struct {
 	DeviceSignalCacheDB int `json:"deviceSignalCacheDB"`
 }
 
+type KafkaConf struct {
+	Brokers []string `json:"brokers"`
+	TopicPDPMProject string `json:"topic_pdpm_project"`
+	TopicEVDMSVeihcle string `json:"topic_evdms_veihcle"`
+	TopicEVDMSDevice string `json:"topic_evdms_device"`
+	GroupID string `json:"groupID"`
+}
+
 type Config struct {
 	Mysql  mysqlConf  `json:"mysql"`
 	Service serviceConf `json:"service"`
@@ -56,6 +64,7 @@ type Config struct {
 	CRV crvConf `json:"crv"`
 	Redis redisConf `json:"redis"`
 	FilePath string `json:"filePath"`
+	Kafka KafkaConf `json:"kafka"`
 }
 
 var gConfig Config
