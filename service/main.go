@@ -70,7 +70,7 @@ func main() {
 	mqttClient.Init()
 
 	//kafka consumer
-	saicinterface.StartConsumer(conf.Kafka)
+	saicinterface.StartConsumer(conf.Kafka,&crvClinet)
 	
 	repo:=&dashboard.DefatultRepository{}
     repo.Connect(
