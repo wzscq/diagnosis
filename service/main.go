@@ -43,13 +43,15 @@ func main() {
 	sendRecordCache.Init(
 		conf.Redis.Server,
 		conf.Redis.DB,
-		duration)
+		duration,
+		conf.Redis.Password)
 
 	deviceSignalCache:=send.DeviceSignalCache{}
 	deviceSignalCache.Init(
 		conf.Redis.Server,
 		conf.Redis.DeviceSignalCacheDB,
-		0)
+		0,
+		conf.Redis.Password)
 
 	//实际的业务处理模块
 	busiModule:=busi.Busi{

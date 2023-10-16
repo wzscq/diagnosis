@@ -36,16 +36,17 @@ type mqttConf struct {
 
 type crvConf struct {
 	Server string `json:"server"`
-    User string `json:"user"`
-    Password string `json:"password"`
-    AppID string `json:"appID"`
+  User string `json:"user"`
+  Password string `json:"password"`
+  AppID string `json:"appID"`
 }
 
 type redisConf struct {
 	Server string `json:"server"`
-    SendRecordExpired string `json:"sendRecordExpired"`
-    DB int `json:"db"`
+  SendRecordExpired string `json:"sendRecordExpired"`
+  DB int `json:"db"`
 	DeviceSignalCacheDB int `json:"deviceSignalCacheDB"`
+	Password string `json:"password"`
 }
 
 type KafkaConf struct {

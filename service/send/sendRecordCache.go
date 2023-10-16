@@ -12,10 +12,10 @@ type SendRecordCache struct {
 	expire time.Duration
 }
 
-func (repo *SendRecordCache)Init(url string,db int,expire time.Duration){
+func (repo *SendRecordCache)Init(url string,db int,expire time.Duration,passwd string){
 	repo.client=redis.NewClient(&redis.Options{
         Addr:     url,
-        Password: "", // no password set
+        Password: passwd, 
         DB:       db,  // use default DB
     })
 	repo.expire=expire
