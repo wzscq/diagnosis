@@ -220,7 +220,7 @@ func sendSignalByMqtt(
 	log.Println("start sendSignalByMqtt")
 	for _,vehicle:=range(vehicles){
 		parameter:=getVehicleSignals(vehicle.DeviceID,signalList,deviceSignalCache,busi)
-		topic:="MQB/"+vehicle.DeviceID+"/SignalFilter"
+		topic:="project/"+vehicle.DeviceID+"/SignalFilter"
 		log.Println(topic)
 		log.Println(parameter)
 		errorCode:=mqttClient.Publish(topic,parameter)

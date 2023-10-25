@@ -13,7 +13,7 @@ func sendByMqtt(
 	
 	log.Println("start sendByMqtt")
 	for _,vehicle:=range(vehicles){
-		topic:="MQB/"+vehicle.DeviceID+"/Diag"
+		topic:="project/"+vehicle.DeviceID+"/Diag"
 		log.Println(topic)
 		errorCode:=mqttClient.Publish(topic,parameter)
 		if errorCode!=common.ResultSuccess {

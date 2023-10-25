@@ -3,8 +3,7 @@ package saicinterface
 import (
 	"digimatrix.com/diagnosis/common"
 	"digimatrix.com/diagnosis/crv"
-	kafka "github.com/segmentio/kafka-go"
-	"context"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"log"
 	"encoding/json"
 )
@@ -16,6 +15,7 @@ type PDPMProject struct {
 	ProductPlatform string `json:"productPlatform"`
 	ProjectType string `json:"projectType"`
 }
+
 
 type EVDMSVeihcle struct {
 	VhicleNo string `json:"vhicleNo"`
@@ -35,8 +35,14 @@ type EVDMSDevice struct {
 	UntieDate string `json:"untieDate"`
 }
 
+type EVDMSDeviceMsg struct {
+	DataType string `json:"dataType"`
+	Detail []EVDMSDevice `json:"detail"`
+	Number int `json:"number"`
+}
+
 type KafkaConsumer struct {
-	KafkaConf common.KafkaConf
+	KafkaConf *common.KafkaConfig
 	CRVClient *crv.CRVClient
 }
 
@@ -45,17 +51,14 @@ const (
 	MODEL_DEVICE = "vehiclemanagement"
 )
 
-func getKafkaReader(brokers []string, topic, groupID string) *kafka.Reader {
-	return kafka.NewReader(kafka.ReaderConfig{
-			Brokers:  brokers,
-			GroupID:  groupID,
-			Topic:    topic,
-			MinBytes: 10e3, // 10KB
-			MaxBytes: 10e6, // 10MB
-	})
-}
+func (kc *KafkaConsumer)SaveProject(projectString string){
+	pdpmPrj:=&PDPMProject{}
+	err:=json.Unmarshal([]byte(projectString),pdpmPrj)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-func (kc *KafkaConsumer)SaveProject(pdpmPrj *PDPMProject){
 	//登录
 	if kc.CRVClient.Login() ==0 {
 		rec:=map[string]interface{}{}
@@ -78,104 +81,128 @@ func (kc *KafkaConsumer)SaveVeichle(vehicle *EVDMSVeihcle){
 	
 }
 
-func (kc *KafkaConsumer)SaveDevice(device *EVDMSDevice){
+func (kc *KafkaConsumer)SaveDevice(deviceString string){
+	device:=&EVDMSDeviceMsg{}
+	err:=json.Unmarshal([]byte(deviceString),device)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if len(device.Detail)==0 {
+		log.Println("no device detail")
+		return
+	}
+
 	//登录
 	if kc.CRVClient.Login() ==0 {
-		rec:=map[string]interface{}{}
-		rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_CREATE
-		rec["VehicleManagementCode"]=device.VehicleNo
-		rec["VIN"]=device.Vin
-		rec["ProjectNum"]=device.ProjectNo
-		rec["TestSpecification"]=device.Standard
-		rec["DeviceNumber"]=device.DeviceCode
-		rec["id"]=device.BindingDate
-
+		reclst:=[]map[string]interface{}{}
+		for _,deviceItem:=range device.Detail {
+			rec:=map[string]interface{}{}
+			rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_CREATE
+			rec["VehicleManagementCode"]=deviceItem.VehicleNo
+			rec["VIN"]=deviceItem.Vin
+			rec["ProjectNum"]=deviceItem.ProjectNo
+			rec["TestSpecification"]=deviceItem.Standard
+			rec["DeviceNumber"]=deviceItem.DeviceCode
+			rec["id"]=deviceItem.DeviceCode+"_"+deviceItem.BindingDate
+			rec["BindingDate"]=deviceItem.BindingDate
+			rec["UntieDate"]=deviceItem.UntieDate
+			reclst=append(reclst,rec)
+		}
 		//添加心跳记录到记录表
 		saveReq:=&crv.CommonReq{
 			ModelID:MODEL_DEVICE,
-			List:&[]map[string]interface{}{
-				rec,
-			},
+			List:&reclst,
 		}
 		log.Println(saveReq)
 		kc.CRVClient.Save(saveReq,"")
+		
 	}
 }
 
-func (kc *KafkaConsumer)ConsumePDPMProject(){
-	//{"projectNo":"prjno","projectSN":"prjsn","currentPhase":"currentphase","productPlatform":"productPlatform","projectType":"projectType"}
-	log.Println("start ConsumePDPMProject ... ")
-	reader := getKafkaReader(kc.KafkaConf.Brokers, kc.KafkaConf.TopicPDPMProject, kc.KafkaConf.GroupID)
-	defer reader.Close()
-	pdpmPrj:=&PDPMProject{}
+func (kc *KafkaConsumer)doInitConsumer() *kafka.Consumer {
+	log.Print("init kafka consumer, it may take a few seconds to init the connection\n")
+	//common arguments
+	var kafkaconf = &kafka.ConfigMap{
+			"api.version.request": "true",
+			"auto.offset.reset": "latest",
+			"heartbeat.interval.ms": 3000,
+			"session.timeout.ms": 30000,
+			"max.poll.interval.ms": 120000,
+			"fetch.max.bytes": 1024000,
+			"max.partition.fetch.bytes": 256000}
+	kafkaconf.SetKey("bootstrap.servers", kc.KafkaConf.BootstrapServers);
+	kafkaconf.SetKey("group.id", kc.KafkaConf.GroupId)
+
+	switch kc.KafkaConf.SecurityProtocol {
+	case "PLAINTEXT" :
+			kafkaconf.SetKey("security.protocol", "plaintext");
+	case "SASL_SSL":
+			kafkaconf.SetKey("security.protocol", "sasl_ssl");
+			kafkaconf.SetKey("ssl.ca.location", "./conf/ca-cert.pem");
+			kafkaconf.SetKey("sasl.username", kc.KafkaConf.SaslUsername);
+			kafkaconf.SetKey("sasl.password", kc.KafkaConf.SaslPassword);
+			kafkaconf.SetKey("sasl.mechanism", kc.KafkaConf.SaslMechanism)
+	case "SASL_PLAINTEXT":
+			kafkaconf.SetKey("security.protocol", "sasl_plaintext");
+			kafkaconf.SetKey("sasl.username", kc.KafkaConf.SaslUsername);
+			kafkaconf.SetKey("sasl.password", kc.KafkaConf.SaslPassword);
+			kafkaconf.SetKey("sasl.mechanism", kc.KafkaConf.SaslMechanism)
+
+	default:
+		  log.Println("init kafka consumer error:","unknown protocol")
+			//panic(kafka.NewError(kafka.ErrUnknownProtocol, "unknown protocol", true))
+			return nil
+	}
+
+	consumer, err := kafka.NewConsumer(kafkaconf)
+	if err != nil {
+		log.Println("init kafka consumer error:",err)
+		return nil
+	}
+	log.Print("init kafka consumer success\n")
+	return consumer;
+}
+
+func (kc *KafkaConsumer)Start(){
+	log.Println("KafkaConsumer start ... ")	
+	consumer := kc.doInitConsumer()
+	if consumer == nil {
+		return
+	}
+
+	consumer.SubscribeTopics([]string{kc.KafkaConf.TopicPDPMProject,kc.KafkaConf.TopicEVDMSDevice}, nil)
 	for {
-		m, err := reader.ReadMessage(context.Background())
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		log.Printf("message at topic:%v partition:%v offset:%v  %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
-		err=json.Unmarshal(m.Value, &pdpmPrj)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		kc.SaveProject(pdpmPrj)
+			msg, err := consumer.ReadMessage(-1)
+			if err == nil {
+				log.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
+				switch *msg.TopicPartition.Topic {
+				case kc.KafkaConf.TopicPDPMProject:
+					kc.SaveProject(string(msg.Value))
+				case kc.KafkaConf.TopicEVDMSDevice:
+					kc.SaveDevice(string(msg.Value))
+				}
+			} else {
+				// The client will automatically try to recover from all errors.
+				log.Printf("KafkaConsumer error: %v (%v)\n", err, msg)
+			}
 	}
+	consumer.Close()
+	log.Println("KafkaConsumer Closed")
 }
 
-func (kc *KafkaConsumer)ConsumeEVDMSVeihcle(){
-	//{"vhicleNo":"vhicleNo","phase":"Phase","projectNo":"projectNo","vin":"Vin"}
-	log.Println("start ConsumeEVDMSVeihcle ... ")
-	reader := getKafkaReader(kc.KafkaConf.Brokers, kc.KafkaConf.TopicEVDMSVeihcle, kc.KafkaConf.GroupID)
-	defer reader.Close()
-	veihcle:=&EVDMSVeihcle{}
-	for {
-		m, err := reader.ReadMessage(context.Background())
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		log.Printf("message at topic:%v partition:%v offset:%v  %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
-		err=json.Unmarshal(m.Value, &veihcle)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		kc.SaveVeichle(veihcle)
-	}
-}
-
-func (kc *KafkaConsumer)ConsumeEVDMSDevice(){
-	//{"deviceCode":"deviceCode","vehicleNo":"vehicleNo","vin":"vin","projectNo":"projectNo","standard":"standard","developPhase":"developPhase","bindingDate":"bindingDate","untieDate":"untieDate"}
-	log.Println("start ConsumeEVDMSDevice ... ")
-	reader := getKafkaReader(kc.KafkaConf.Brokers, kc.KafkaConf.TopicEVDMSDevice, kc.KafkaConf.GroupID)
-	defer reader.Close()
-	device:=&EVDMSDevice{}
-	for {
-		m, err := reader.ReadMessage(context.Background())
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		log.Printf("message at topic:%v partition:%v offset:%v  %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
-		err=json.Unmarshal(m.Value, &device)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		kc.SaveDevice(device)
-	}
-}
-
-func StartConsumer(kafkaConf common.KafkaConf,crvClient *crv.CRVClient){
+func StartConsumer(kafkaConf *common.KafkaConfig,crvClient *crv.CRVClient){
 	
 	kafkaConsumer:=KafkaConsumer{
 		KafkaConf:kafkaConf,
 		CRVClient:crvClient,
 	}
 
-	go kafkaConsumer.ConsumePDPMProject()
+	go kafkaConsumer.Start()
+	//go kafkaConsumer.ConnectToKafa()
+	//go kafkaConsumer.ConsumePDPMProject()
 	//go kafkaConsumer.ConsumeEVDMSVeihcle()
 	//go kafkaConsumer.ConsumeEVDMSDevice() 
 }
+

@@ -49,12 +49,17 @@ type redisConf struct {
 	Password string `json:"password"`
 }
 
-type KafkaConf struct {
+type KafkaConfig struct {
 	Brokers []string `json:"brokers"`
-	TopicPDPMProject string `json:"topic_pdpm_project"`
-	TopicEVDMSVeihcle string `json:"topic_evdms_veihcle"`
-	TopicEVDMSDevice string `json:"topic_evdms_device"`
-	GroupID string `json:"groupID"`
+	TopicPDPMProject string `json:"topic.pdpm.project"`
+	TopicEVDMSVeihcle string `json:"topic.evdms.veihcle"`
+	TopicEVDMSDevice string `json:"topic.evdms.device"`
+	GroupId    string `json:"group.id"`
+	BootstrapServers    string `json:"bootstrap.servers"`
+	SecurityProtocol string `json:"security.protocol"`
+	SaslMechanism string `json:"sasl.mechanism"`
+	SaslUsername string `json:"sasl.username"`
+	SaslPassword string `json:"sasl.password"`
 }
 
 type Config struct {
@@ -65,7 +70,7 @@ type Config struct {
 	CRV crvConf `json:"crv"`
 	Redis redisConf `json:"redis"`
 	FilePath string `json:"filePath"`
-	Kafka KafkaConf `json:"kafka"`
+	Kafka KafkaConfig `json:"kafka"`
 }
 
 var gConfig Config

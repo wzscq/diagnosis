@@ -114,6 +114,9 @@ func (mqc *MQTTClient)Publish(topic,content string)(int){
 
 func (mqc *MQTTClient) Init(){
 	mqc.Client=mqc.getClient()
+	if mqc.Client == nil {
+		return
+	}
 	mqc.Client.Subscribe(mqc.HeartbeatTopic,0,mqc.onHeartbeat)
 	mqc.Client.Subscribe(mqc.DiagResponseTopic,0,mqc.onDiagResponse)
 }

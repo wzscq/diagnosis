@@ -37,11 +37,15 @@
         "deviceSignalCacheDB":10
     },
     "kafka":{
-        "brokers":["121.37.185.248:9092"],
-        "topic_pdpm_project":"ISDC_PDPM_PROJECT_INFO",
-        "topic_evdms_veihcle":"ISDC_EVDMS_VEIHCLE2EXD",
-        "topic_evdms_device":"ISDC_EVDMS_RECORD2EXD",
-        "groupID":"diag_group_1"
+        "topic.pdpm.project":"ISDC_PDPM_PROJECT_INFO",
+        "topic.evdms.veihcle":"ISDC_EVDMS_VEIHCLE2EXD",
+        "topic.evdms.device":"ISDC_EVDMS_RECORD2EXD",
+        "group.id": "diagnosis_group_1",
+        "bootstrap.servers" : "121.37.185.248:9092",
+        "security.protocol" : "sasl_plaintext",
+        "sasl.mechanism" : "SCRAM-SHA-256",
+        "sasl.username" : "oggtest",
+        "sasl.password" : "ogg123456"
     },
     "filePath1":"services/diagnosis/data/",
     "filePath":"D:/self/crvframe/testdata"
