@@ -18,7 +18,7 @@ func (busi *Busi)DealDiagResponse(deviceID string){
 	}
 
 	//登录
-	if busi.CrvClient.Login() ==0 {
+	//if busi.CrvClient.Login() ==0 {
 		rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_UPDATE
 		rec["status"]="1"
 		//添加心跳记录到记录表
@@ -30,5 +30,5 @@ func (busi *Busi)DealDiagResponse(deviceID string){
 		}
 		log.Println(saveReq)
 		busi.CrvClient.Save(saveReq,"")
-	}
+	//}
 }

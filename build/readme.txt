@@ -114,3 +114,44 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 
 2023-05-20 修改诊断参数下发逻辑
 1、查询dtclist时原来没有按照platformid做过滤，这次增加了这个过滤条件
+
+2023-10-28 修改页面配置
+1、修改菜单配置中的菜单名称：menu
+1、项目数据库：diag_platform，
+   a、修改配置
+2、总线数据库：diag_domain
+3、控制器数据库：diag_ecu
+4、信号数据库： diag_signal   遗留问题，主键基于目前的逻辑存在冲突风险
+5、故障码数据库：diag_dtc
+   a、创建数据库视图：view_diag_dtc，这里注意修改了关联表的排序规则设置
+   b、增加view_diag_dtc对应的相关配置
+6、关联信号数据库：diag_manual_fault
+7、诊断服务数据库：diag_logistics
+8、诊断参数配置：diag_parameter
+   a、数据表 vehiclemanagement 增加字段developPhase
+   b、kafka接收车辆设备信息修改逻辑，对developPhase字段做处理
+   c、修改了流程sendparameter配置
+9、诊断下发记录：diag_param_sendrecord
+   a、数据库增加字段: platform_id、test_specification
+   b、后台下发逻辑中补充对platform_id和test_specification字段的处理
+   c、数据库增加视图：view_vehicle
+   d、增加相应的配置：view_vehicle
+   e、修改diag_select_cars配置，关联到view_vehicle进行车辆先择
+10、触发回传配置：diag_event_parameter
+11、触发回传下发记录：diag_event_sendrecord
+   a、数据库增加字段: platform_id、test_specification
+   b、后台下发逻辑中补充对platform_id和test_specification字段的处理
+12、车辆信息：vehiclemanagement   
+13、设备上报记录：diag_device_heartbeat,目前上报信息中是否携带项目信息、试验规范和试验阶段信息
+14、故障仪表盘：
+      a、页面展示效果修改
+      b、查询逻辑修改
+15、智能诊断分析：diag_result，部分字段目前数据库中没有 SAE故障码，需要诊断程序填充部分信息。
+16、智能诊断综合分析：diag_view_result
+17、触发回传信号分析：diag_event  数据中缺少车辆编号字段、
+18、用户管理：core_user
+    修改数据表，增加字段：email、department、job_number、dimission、disable
+19、角色管理：core_role
+20、访问统计：
+    数据库中增加表：core_operation_log
+    配置报表模块:reports/access_statics

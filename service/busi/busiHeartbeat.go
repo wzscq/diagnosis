@@ -74,7 +74,7 @@ func getVersion(result map[string]interface{})(interface{}){
 
 func (busi *Busi)DealDeviceHeartbeat(deviceID,vin string){
 	//登录
-	if busi.CrvClient.Login() ==0 {
+	//if busi.CrvClient.Login() ==0 {
 		//添加心跳记录到记录表
 		saveReq:=getDeviceHeartbeatSaveReq(deviceID,vin)
 		busi.CrvClient.Save(saveReq,"")
@@ -92,5 +92,5 @@ func (busi *Busi)DealDeviceHeartbeat(deviceID,vin string){
 		} else {
 			log.Printf("Query vin info error %s,%d",rsp.Message,err)
 		}
-	}
+	//}
 }

@@ -19,6 +19,8 @@ func getSaveRecord(
 	row:=map[string]interface{}{
 		"device_number":vehicle.DeviceID,
 		"vin":vehicle.Vin,
+		"test_specification":vehicle.TestSpecification,
+		"platform_id":vehicle.ProjectNum,
 		"status":"0",
 		"paramter":parameter,
 		"send_user":sendUser,

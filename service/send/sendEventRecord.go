@@ -20,6 +20,8 @@ func getSaveEventRecord(
 		"device_number":vehicle.DeviceID,
 		"vin":vehicle.Vin,
 		"status":"0",
+		"test_specification":vehicle.TestSpecification,
+		"platform_id":vehicle.ProjectNum,
 		"paramter":parameter,
 		"send_user":sendUser,
 		crv.SAVE_TYPE_COLUMN:crv.SAVE_CREATE,

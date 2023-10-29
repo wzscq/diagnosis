@@ -25,8 +25,7 @@
     },
     "crv":{
         "server":"http://127.0.0.1:8200",
-        "user":"carapi",
-        "password":"a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+        "token":"carapi",
         "appID":"diagnosis"
     },
     "redis":{
@@ -46,6 +45,9 @@
         "sasl.mechanism" : "SCRAM-SHA-256",
         "sasl.username" : "oggtest",
         "sasl.password" : "ogg123456"
+    },
+    "oauth":{
+        "url":"https://sso-qa.saicmotortest.com/idp/oauth2/authorize?redirect_uri=http%3A%2F%2Fdiagnosis.csp2gccsjcj.shjq-uat-a.sxc.sh%2Fmainframe%2F%23%2FOAuthBack%2Fdiagnosis&response_type=code&client_id=DIAGNOSIS&state="
     },
     "filePath1":"services/diagnosis/data/",
     "filePath":"D:/self/crvframe/testdata"

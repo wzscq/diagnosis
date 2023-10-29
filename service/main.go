@@ -10,6 +10,7 @@ import (
 	"digimatrix.com/diagnosis/mqtt"
 	"digimatrix.com/diagnosis/crv"
 	"digimatrix.com/diagnosis/busi"
+	"digimatrix.com/diagnosis/oauth"
 	"digimatrix.com/diagnosis/saicinterface"
 	"log"
 	"time"
@@ -32,8 +33,7 @@ func main() {
 	//crvClinet 用于到crvframeserver的请求
 	crvClinet:=crv.CRVClient{
 		Server:conf.CRV.Server,
-		User:conf.CRV.User,
-		Password:conf.CRV.Password,
+		Token:conf.CRV.Token,
 		AppID:conf.CRV.AppID,
 	}
 
@@ -103,6 +103,11 @@ func main() {
 		DBCUploadTopic:conf.MQTT.DBCUploadTopic,
 	}
 	sendController.Bind(router)
+
+	oauthContrller:=oauth.OauthController{
+		LoginUrl:conf.Oauth.Url,
+	}
+	oauthContrller.Bind(router)
 
 	router.Run(conf.Service.Port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

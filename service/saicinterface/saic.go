@@ -6,6 +6,7 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"log"
 	"encoding/json"
+	"time"
 )
 
 type PDPMProject struct {
@@ -60,7 +61,7 @@ func (kc *KafkaConsumer)SaveProject(projectString string){
 	}
 
 	//登录
-	if kc.CRVClient.Login() ==0 {
+	//if kc.CRVClient.Login() ==0 {
 		rec:=map[string]interface{}{}
 		rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_CREATE
 		rec["id"]=pdpmPrj.ProjectNo
@@ -74,7 +75,7 @@ func (kc *KafkaConsumer)SaveProject(projectString string){
 		}
 		log.Println(saveReq)
 		kc.CRVClient.Save(saveReq,"")
-	}
+	//}
 }
 
 func (kc *KafkaConsumer)SaveVeichle(vehicle *EVDMSVeihcle){
@@ -95,7 +96,7 @@ func (kc *KafkaConsumer)SaveDevice(deviceString string){
 	}
 
 	//登录
-	if kc.CRVClient.Login() ==0 {
+	//if kc.CRVClient.Login() ==0 {
 		reclst:=[]map[string]interface{}{}
 		for _,deviceItem:=range device.Detail {
 			rec:=map[string]interface{}{}
@@ -108,6 +109,7 @@ func (kc *KafkaConsumer)SaveDevice(deviceString string){
 			rec["id"]=deviceItem.DeviceCode+"_"+deviceItem.BindingDate
 			rec["BindingDate"]=deviceItem.BindingDate
 			rec["UntieDate"]=deviceItem.UntieDate
+			rec["developPhase"]=deviceItem.DevelopPhase
 			reclst=append(reclst,rec)
 		}
 		//添加心跳记录到记录表
@@ -118,7 +120,7 @@ func (kc *KafkaConsumer)SaveDevice(deviceString string){
 		log.Println(saveReq)
 		kc.CRVClient.Save(saveReq,"")
 		
-	}
+	//}
 }
 
 func (kc *KafkaConsumer)doInitConsumer() *kafka.Consumer {
@@ -126,12 +128,13 @@ func (kc *KafkaConsumer)doInitConsumer() *kafka.Consumer {
 	//common arguments
 	var kafkaconf = &kafka.ConfigMap{
 			"api.version.request": "true",
-			"auto.offset.reset": "latest",
+			"auto.offset.reset": "earliest",
 			"heartbeat.interval.ms": 3000,
 			"session.timeout.ms": 30000,
 			"max.poll.interval.ms": 120000,
 			"fetch.max.bytes": 1024000,
-			"max.partition.fetch.bytes": 256000}
+			"max.partition.fetch.bytes": 256000,
+	}
 	kafkaconf.SetKey("bootstrap.servers", kc.KafkaConf.BootstrapServers);
 	kafkaconf.SetKey("group.id", kc.KafkaConf.GroupId)
 
@@ -172,9 +175,11 @@ func (kc *KafkaConsumer)Start(){
 		return
 	}
 
+	log.Println("KafkaConsumer start SubscribeTopics",kc.KafkaConf.TopicPDPMProject,kc.KafkaConf.TopicEVDMSDevice)	
 	consumer.SubscribeTopics([]string{kc.KafkaConf.TopicPDPMProject,kc.KafkaConf.TopicEVDMSDevice}, nil)
 	for {
-			msg, err := consumer.ReadMessage(-1)
+			log.Println("KafkaConsumer start ReadMessage ...")
+			msg, err := consumer.ReadMessage(time.Second * 10)
 			if err == nil {
 				log.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
 				switch *msg.TopicPartition.Topic {

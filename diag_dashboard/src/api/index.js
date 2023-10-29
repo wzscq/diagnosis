@@ -1,3 +1,4 @@
+import { FilterFilled } from '@ant-design/icons';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -13,11 +14,12 @@ const host=getHost()+process.env.REACT_APP_SERVICE_API_PREFIX;
 
 export const getDashboard = createAsyncThunk(
     'getDashboard',
-    async (_,{ rejectWithValue }) => {
+    async (filters,{ rejectWithValue }) => {
         try{
             const response = await axios({
                 url:host+"/dashboard",
-                method:"get",
+                data:filters,
+                method:"post",
             });
             return response.data
         } catch(err){

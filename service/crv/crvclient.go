@@ -63,8 +63,8 @@ type CommonReq struct {
 
 type CRVClient struct {
 	Server string `json:"server"`
-  User string `json:"user"`
-  Password string `json:"password"`
+  //User string `json:"user"`
+  //Password string `json:"password"`
   AppID string `json:"appID"`
 	Token string `json:"token"`
 }
@@ -89,7 +89,7 @@ const (
 	CC_ID = "id"
 )
 
-func (crv *CRVClient) Login()(int) {
+/*func (crv *CRVClient) Login()(int) {
 	log.Println("start login")
 	loginRep:=loginRep{
 		UserID:crv.User,
@@ -129,7 +129,7 @@ func (crv *CRVClient) Login()(int) {
 	crv.Token=*loginRsp.Result.Token
 	log.Println("login success")
 	return 0
-}
+}*/
 
 func (crv *CRVClient)Save(commonReq *CommonReq,token string)(*CommonRsp,int){
 	log.Println("start CRVClient save ...")

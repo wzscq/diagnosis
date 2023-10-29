@@ -36,9 +36,10 @@ type mqttConf struct {
 
 type crvConf struct {
 	Server string `json:"server"`
-  User string `json:"user"`
-  Password string `json:"password"`
+  //User string `json:"user"`
+  //Password string `json:"password"`
   AppID string `json:"appID"`
+	Token string `json:"token"`
 }
 
 type redisConf struct {
@@ -62,6 +63,10 @@ type KafkaConfig struct {
 	SaslPassword string `json:"sasl.password"`
 }
 
+type OauthConf struct {
+	Url string `json:"url"`
+}
+
 type Config struct {
 	Mysql  mysqlConf  `json:"mysql"`
 	Service serviceConf `json:"service"`
@@ -71,6 +76,7 @@ type Config struct {
 	Redis redisConf `json:"redis"`
 	FilePath string `json:"filePath"`
 	Kafka KafkaConfig `json:"kafka"`
+	Oauth OauthConf `json:"oauth"`
 }
 
 var gConfig Config

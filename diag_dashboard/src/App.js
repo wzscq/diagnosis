@@ -2,7 +2,7 @@ import { Provider } from 'react-redux';
 import {HashRouter,Routes,Route} from "react-router-dom"; 
 
 import {store} from './redux';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/DashboardNew';
 
 function App() {
   return (

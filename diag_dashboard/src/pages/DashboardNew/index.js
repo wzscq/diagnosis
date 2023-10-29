@@ -6,6 +6,7 @@ import ProjectCarChart from './ProjectCarChart';
 import FaultStaticChart from './FaultStaticChart';
 import FaultStatusChart from './FaultStatusChart';
 import FaultList from './FaultList';
+import FilterForm from './FilterForm';
 import { useEffect, useState } from 'react';
 import {getDashboard} from '../../api';
 import { useDispatch,useSelector } from 'react-redux';
@@ -16,7 +17,7 @@ export default function Dashboard(){
     const {carCount,faultCountByStatus,faultCountByType,faultList,projectcarCount}=useSelector(state=>state.dashboard);
 
     useEffect(()=>{
-        dispatch(getDashboard());
+        dispatch(getDashboard({}));
         /*setTimeout(()=>{
             setRefresh(refresh+1);
         },5000);*/
@@ -24,23 +25,23 @@ export default function Dashboard(){
 
     return (
         <div className="dashboard">
-            <GridCellWrapper col={1} row={1} colSpan={1} rowSpan={1}>
+            <GridCellWrapper col={1} row={1} colSpan={4} rowSpan={1}>
+                <FilterForm/>
+            </GridCellWrapper>
+            <GridCellWrapper col={1} row={2} colSpan={1} rowSpan={1}>
                 <CarNumber total={carCount}/>
             </GridCellWrapper>
-            <GridCellWrapper col={2} row={1} colSpan={2} rowSpan={1}>
-                <div className='dashboard-title'>智能故障专家库</div>
-            </GridCellWrapper>
-            <GridCellWrapper col={1} row={2} colSpan={3} rowSpan={2}>
-                <FaultList data={faultList}/>                
-            </GridCellWrapper>
-            <GridCellWrapper col={1} row={4} colSpan={1} rowSpan={1}>
+            <GridCellWrapper col={2} row={2} colSpan={1} rowSpan={1}>
                 <FaultStatusChart data={faultCountByStatus}/>
             </GridCellWrapper>
-            <GridCellWrapper col={2} row={4} colSpan={1} rowSpan={1}>
+            <GridCellWrapper col={3} row={2} colSpan={1} rowSpan={1}>
                 <FaultStaticChart data={faultCountByType}/>
             </GridCellWrapper>
-            <GridCellWrapper col={3} row={4} colSpan={1} rowSpan={1}>
+            <GridCellWrapper col={4} row={2} colSpan={1} rowSpan={1}>
                 <ProjectCarChart data={projectcarCount}/>
+            </GridCellWrapper>
+            <GridCellWrapper col={1} row={3} colSpan={4} rowSpan={1}>
+                <FaultList data={faultList}/>                
             </GridCellWrapper>
         </div>
     )

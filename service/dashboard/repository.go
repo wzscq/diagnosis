@@ -12,11 +12,15 @@ type FaultStatusCount struct {
 }
 
 type Repository interface {
-	getCarCount()(int,error)
-	getCarCountByProject()([]map[string]interface{},error)
-	getFaultCountByType()([]map[string]interface{},error)
-	getFaultCountByStatus()(*FaultStatusCount,error)
-	getFaultList()([]map[string]interface{},error)
+	getCarCount(string)(int,error)
+	getCarCountByProject(string)([]map[string]interface{},error)
+	getFaultCountByType(string)([]map[string]interface{},error)
+	getDashboardYears(string)([]map[string]interface{},error)
+	getDashboardProjects(string)([]map[string]interface{},error)
+	getDashboardTypes(string)([]map[string]interface{},error)
+	getDashboardSpecs(string)([]map[string]interface{},error)
+	getFaultCountByStatus(string)(*FaultStatusCount,error)
+	getFaultList(string)([]map[string]interface{},error)
 	query(sql string)([]map[string]interface{},error)
 	closeFault(diagReport string,remark string)
 }
@@ -36,8 +40,8 @@ func (repo *DefatultRepository)query(sql string)([]map[string]interface{},error)
 	return repo.toMap(rows)
 }
 
-func (repo *DefatultRepository)getCarCount()(int,error){
-	row := repo.DB.QueryRow("select count(*) as count from vehiclemanagement")
+func (repo *DefatultRepository)getCarCount(whereStr string)(int,error){
+	row := repo.DB.QueryRow("select count(*) as count from diag_result "+whereStr)
     var count int = 0
 	if err := row.Scan(&count); err != nil {
         log.Println("getCarCount error")
@@ -77,8 +81,8 @@ func (repo *DefatultRepository)toMap(rows *sql.Rows)([]map[string]interface{},er
 	return list,nil
 }
 
-func (repo *DefatultRepository)getFaultList()([]map[string]interface{},error){
-	rows, err := repo.DB.Query("select * from  diag_result order by status asc,time desc limit 0,500")
+func (repo *DefatultRepository)getFaultList(whereStr string)([]map[string]interface{},error){
+	rows, err := repo.DB.Query("select * from  diag_result "+whereStr+" order by status asc,time desc limit 0,500")
 	if err != nil {
 		log.Println(err)
 		return nil,nil
@@ -88,8 +92,8 @@ func (repo *DefatultRepository)getFaultList()([]map[string]interface{},error){
 	return repo.toMap(rows)
 }
 
-func (repo *DefatultRepository)getCarCountByProject()([]map[string]interface{},error){
-	rows, err := repo.DB.Query("select ProjectNum, count(*) as count from vehiclemanagement group by ProjectNum order by ProjectNum")
+func (repo *DefatultRepository)getCarCountByProject(whereStr string)([]map[string]interface{},error){
+	rows, err := repo.DB.Query("select * from (select project_num as ProjectNum, count(*) as count from diag_result "+whereStr+" group by project_num) as t order by count desc limit 0,10")
 	if err != nil {
 		log.Println(err)
 		return nil,nil
@@ -99,8 +103,8 @@ func (repo *DefatultRepository)getCarCountByProject()([]map[string]interface{},e
 	return repo.toMap(rows) 
 }
 
-func (repo *DefatultRepository)getFaultCountByType()([]map[string]interface{},error){
-	rows,err:= repo.DB.Query("select type,count(1) as count from diag_result group by type")
+func (repo *DefatultRepository)getFaultCountByType(whereStr string)([]map[string]interface{},error){
+	rows,err:= repo.DB.Query("select * from (select type,count(1) as count from diag_result "+whereStr+" group by type) as t order by count desc limit 0,10 ")
 	if err!=nil {
 		log.Println(err)
 		return nil,nil
@@ -111,9 +115,9 @@ func (repo *DefatultRepository)getFaultCountByType()([]map[string]interface{},er
 	return repo.toMap(rows)
 }
 
-func (repo *DefatultRepository)getFaultCountByStatus()(*FaultStatusCount,error){
+func (repo *DefatultRepository)getFaultCountByStatus(whereStr string)(*FaultStatusCount,error){
 	var statusCount FaultStatusCount
-	row:= repo.DB.QueryRow("SELECT count(if(status=0,true,null)) as openCount,count(if(status=1,true,null)) as closedCount FROM diag_result")
+	row:= repo.DB.QueryRow("SELECT count(if(status=0,true,null)) as openCount,count(if(status=1,true,null)) as closedCount FROM diag_result "+whereStr)
 	if err := row.Scan(&statusCount.OpenCount, &statusCount.ClosedCount); err != nil {
         log.Println("getFaultCountByType error")
 		log.Println(err)
@@ -147,4 +151,52 @@ func (repo *DefatultRepository)Connect(server string,user string,password string
         log.Fatal(pingErr)
     }
     log.Println("connect to mysql server "+server)
+}
+
+func (repo *DefatultRepository)getDashboardYears(whereStr string)([]map[string]interface{},error){
+	rows,err:= repo.DB.Query("select * from (SELECT distinct(SUBSTR(time,1,4)) as year FROM `diag_result` "+whereStr+") as t order by year desc")
+	if err!=nil {
+		log.Println(err)
+		return nil,nil
+	}
+
+	defer rows.Close()
+
+	return repo.toMap(rows)
+}
+
+func (repo *DefatultRepository)getDashboardProjects(whereStr string)([]map[string]interface{},error){
+	rows,err:= repo.DB.Query("select * from (SELECT distinct(project_num) as project FROM `diag_result` "+whereStr+") as t order by project asc")
+	if err!=nil {
+		log.Println(err)
+		return nil,nil
+	}
+
+	defer rows.Close()
+
+	return repo.toMap(rows)
+}
+
+func (repo *DefatultRepository)getDashboardTypes(whereStr string)([]map[string]interface{},error){
+	rows,err:= repo.DB.Query("select * from (SELECT distinct(type) as type FROM `diag_result` "+whereStr+") as t order by type asc")
+	if err!=nil {
+		log.Println(err)
+		return nil,nil
+	}
+
+	defer rows.Close()
+
+	return repo.toMap(rows)
+}
+
+func (repo *DefatultRepository)getDashboardSpecs(whereStr string)([]map[string]interface{},error){
+	rows,err:= repo.DB.Query("select * from (SELECT distinct(specifications) as spec FROM `diag_result` "+whereStr+") as t order by spec asc")
+	if err!=nil {
+		log.Println(err)
+		return nil,nil
+	}
+
+	defer rows.Close()
+
+	return repo.toMap(rows)
 }
