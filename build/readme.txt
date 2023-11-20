@@ -143,15 +143,67 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    b、后台下发逻辑中补充对platform_id和test_specification字段的处理
 12、车辆信息：vehiclemanagement   
 13、设备上报记录：diag_device_heartbeat,目前上报信息中是否携带项目信息、试验规范和试验阶段信息
+      a、增加字段：vehicle_management_code、project_num、test_specification、develop_phase
+      b、修改后端心跳处理逻辑
+      c、修改对应页面配置
 14、故障仪表盘：
       a、页面展示效果修改
       b、查询逻辑修改
 15、智能诊断分析：diag_result，部分字段目前数据库中没有 SAE故障码，需要诊断程序填充部分信息。
+      增加字段：sae_code
 16、智能诊断综合分析：diag_view_result
 17、触发回传信号分析：diag_event  数据中缺少车辆编号字段、
+      a、数据库表中增加车辆编号字段:vehicle_management_code
 18、用户管理：core_user
     修改数据表，增加字段：email、department、job_number、dimission、disable
 19、角色管理：core_role
 20、访问统计：
     数据库中增加表：core_operation_log
     配置报表模块:reports/access_statics
+
+
+2023-10-30 
+1、IDM同步用户信息
+   更新后台服务和相应的配置文件
+
+2023-11-06
+1、修改dashboard页面代码
+2、修改配置diag_result.json
+3、修改配置diag_event
+4、修改配置diag_select_cars
+5、修改配置diag_param_sendrecord
+6、修改配置diag_event_parameter
+7、修改配置diag_event_sendrecord
+8、修改配置diag_platform
+9、修改配置diag_device_heartbeat
+
+2023-11-8
+1、将原来换色显示的故障改为蓝色
+   a、修改diag_report模块，
+   b、修改diag_v2report模块
+   c、后端服务导出Excel逻辑修改
+2、报告页面打开问题
+   a、修改配置diag_result
+   b、修改配置diag_view_result
+3、页面显示错误
+   a、修改配置文件diag_signal_sendrecord.json
+
+2023-11-19
+1、修改dashboard页面代码
+   a、故障控制器分布字体不一致问题
+   b、年份默认显示当前年份
+   c、项目故障分布横坐标部分项目没显示且不能横向拖动
+   d、故障列表没有分页
+2、进入首页时不跳转大蓝页
+   项目配置中增加oauthback.png
+3. 故障仪表盘改为首页
+   修改菜单配置
+   修改全局操作配置
+4、所有页面序号固定放在操作列后，从1开始编号，更新人显示姓名，删除多余标题
+   修改所有页面对应配置文件
+   a、隐藏序列号字段
+   b、更新人显示对应账号姓名
+   c、去掉默认视图的名称
+5、表vehiclemanagement增加字段vehicleConfiger
+   修改对应的同步数据逻辑
+   修改对应页面配置

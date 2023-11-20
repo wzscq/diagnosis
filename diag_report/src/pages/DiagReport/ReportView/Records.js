@@ -56,7 +56,7 @@ const getRecord=(rec,index)=>{
     <Row>
         <Col span={2} />
         <Col span={1} style={styleContentSN} >{index+1}</Col>
-        <Col span={3} style={{...styleContent,color:rec.DtcId_State==="0"?"orange":"red"}} >{rec.DtcId}</Col>
+        <Col span={3} style={{...styleContent,color:rec.DtcId_State==="0"?"blue":"red"}} >{rec.DtcId}</Col>
         <Col span={10} style={styleContent} >{rec.DtcDescription}</Col>
         <Col span={3} style={styleContent} >{converTime(rec.Time)}</Col>
         <Col span={3} style={styleContent} >{rec.Mileage}</Col>

@@ -220,7 +220,7 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		Font:&excelize.Font {
 			Size:12,
 			Bold:false,
-			Color:"FFFF00",
+			Color:"FF0000",
 		},
 	})
 

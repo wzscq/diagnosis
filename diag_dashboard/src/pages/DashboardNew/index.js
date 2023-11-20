@@ -5,7 +5,7 @@ import CarNumber from './CarNumber';
 import ProjectCarChart from './ProjectCarChart';
 import FaultStaticChart from './FaultStaticChart';
 import FaultStatusChart from './FaultStatusChart';
-import FaultList from './FaultList';
+import FaultList from './FaultListNew';
 import FilterForm from './FilterForm';
 import { useEffect, useState } from 'react';
 import {getDashboard} from '../../api';

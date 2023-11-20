@@ -23,8 +23,15 @@ export default function ProjectCarChart({data}){
                 left:50,
                 top:25,
                 right:5,
-                bottom:25,
+                bottom:65,
             }, 
+            dataZoom: [
+                {
+                  type: 'slider',
+                  startValue: 0,
+                  endValue: 10,
+                }
+            ],
             xAxis: [
                 {
                     type: 'category',
@@ -32,8 +39,9 @@ export default function ProjectCarChart({data}){
                     data: data?.map(item=>item.ProjectNum),
                     axisLabel:{
                         show:true,
-                        color:'#000'
-                    },
+                        color:'#000',
+                        interval:0,
+                    }
                 }
             ],
             yAxis: {

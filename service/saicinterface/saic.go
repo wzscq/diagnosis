@@ -34,6 +34,7 @@ type EVDMSDevice struct {
 	DevelopPhase string `json:"developPhase"`
 	BindingDate string `json:"bindingDate"`
 	UntieDate string `json:"untieDate"`
+	VehicleConfiger string `json:"vehicleConfiger"`
 }
 
 type EVDMSDeviceMsg struct {
@@ -110,6 +111,7 @@ func (kc *KafkaConsumer)SaveDevice(deviceString string){
 			rec["BindingDate"]=deviceItem.BindingDate
 			rec["UntieDate"]=deviceItem.UntieDate
 			rec["developPhase"]=deviceItem.DevelopPhase
+			rec["vehicleConfiger"]=deviceItem.VehicleConfiger
 			reclst=append(reclst,rec)
 		}
 		//添加心跳记录到记录表

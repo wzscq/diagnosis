@@ -93,7 +93,7 @@ func (repo *DefatultRepository)getFaultList(whereStr string)([]map[string]interf
 }
 
 func (repo *DefatultRepository)getCarCountByProject(whereStr string)([]map[string]interface{},error){
-	rows, err := repo.DB.Query("select * from (select project_num as ProjectNum, count(*) as count from diag_result "+whereStr+" group by project_num) as t order by count desc limit 0,10")
+	rows, err := repo.DB.Query("select * from (select project_num as ProjectNum, count(*) as count from diag_result "+whereStr+" group by project_num) as t order by count desc limit 0,1000")
 	if err != nil {
 		log.Println(err)
 		return nil,nil

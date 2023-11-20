@@ -49,6 +49,19 @@
     "oauth":{
         "url":"https://sso-qa.saicmotortest.com/idp/oauth2/authorize?redirect_uri=http%3A%2F%2Fdiagnosis.csp2gccsjcj.shjq-uat-a.sxc.sh%2Fmainframe%2F%23%2FOAuthBack%2Fdiagnosis&response_type=code&client_id=DIAGNOSIS&state="
     },
+    "idmIntegration":{
+        "url":"https://api-at.saicmotortest.com/idm/v1/integration?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
+        "systemCode":"DIAGNOSIS",
+        "integrationKey":"DIAGNOSISsaicP@ssw278rd",
+        "duration":"24h",
+        "roleMap":{
+            "role1":"operator",
+            "role2":"diagnostic",
+            "role3":"development",
+            "role4":"admin"
+        },
+        "defaultRole":"operator"
+    },
     "filePath1":"services/diagnosis/data/",
     "filePath":"D:/self/crvframe/testdata"
 }

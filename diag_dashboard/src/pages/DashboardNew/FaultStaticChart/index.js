@@ -42,7 +42,6 @@ export default function FaultStaticChart({data}){
                     edgeDistance: 10,
                     lineHeight: 12,
                     fontSize:12,
-                    fontFamily:'serif',
                     shadowBlur:0,
                     color:'#000'
                 },

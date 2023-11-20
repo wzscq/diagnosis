@@ -50,6 +50,15 @@ type redisConf struct {
 	Password string `json:"password"`
 }
 
+type IntegrationConf struct {
+	Url string `json:"url"`
+	SystemCode string `json:"systemCode"`
+	IntegrationKey string `json:"integrationKey"`
+	Duration string `json:"duration"`
+	RoleMap map[string]string `json:"roleMap"`
+	DefaultRole string `json:"defaultRole"`
+}
+
 type KafkaConfig struct {
 	Brokers []string `json:"brokers"`
 	TopicPDPMProject string `json:"topic.pdpm.project"`
@@ -77,6 +86,7 @@ type Config struct {
 	FilePath string `json:"filePath"`
 	Kafka KafkaConfig `json:"kafka"`
 	Oauth OauthConf `json:"oauth"`
+	IDMIntegration IntegrationConf `json:"idmIntegration"`
 }
 
 var gConfig Config

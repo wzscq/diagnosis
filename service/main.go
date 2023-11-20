@@ -11,6 +11,7 @@ import (
 	"digimatrix.com/diagnosis/crv"
 	"digimatrix.com/diagnosis/busi"
 	"digimatrix.com/diagnosis/oauth"
+	"digimatrix.com/diagnosis/idm"
 	"digimatrix.com/diagnosis/saicinterface"
 	"log"
 	"time"
@@ -59,6 +60,8 @@ func main() {
 		SendRecordCache:&sendRecordCache,
 	}
 
+	//busiModule.DealDeviceHeartbeat("3ec783","LSJW949UUMS997068")
+
 	//mqttclient
 	mqttClient:=mqtt.MQTTClient{
 		Broker:conf.MQTT.Broker,
@@ -73,6 +76,8 @@ func main() {
 
 	//kafka consumer
 	saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
+
+	idm.InitIntegration(&conf.IDMIntegration,&crvClinet)
 	
 	repo:=&dashboard.DefatultRepository{}
     repo.Connect(

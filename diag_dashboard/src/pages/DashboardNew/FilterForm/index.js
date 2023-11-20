@@ -1,27 +1,28 @@
 import {useState} from 'react';
 import { Button,Select,Space } from 'antd';
-import {ReloadOutlined,SearchOutlined} from '@ant-design/icons';
+import {NotificationTwoTone, ReloadOutlined,SearchOutlined} from '@ant-design/icons';
 import { useDispatch} from 'react-redux';
 import axios from 'axios';
 
 import {getHost,getDashboard} from '../../../api';
 
 const { Option } = Select;
-
+const date=new Date;
 const host=getHost()+process.env.REACT_APP_SERVICE_API_PREFIX;
 
 export default function FilterForm(){
   const dispatch=useDispatch();
-  const [filters,setFilters]=useState({});
+  const [filters,setFilters]=useState({year:date.getFullYear()});
   const [years,setYears]=useState([]);
   const [projects,setProjects]=useState([]);
   const [types,setTypes]=useState([]);
   const [specs,setSpecs]=useState([]);
 
   const onYearSearch=(value)=>{
+    const filter={...filters,year:"%"};
     axios({
       url:host+"/dashboard/years",
-      data:filters,
+      data:filter,
       method:"post",
     }).then(res=>{
       setYears(res.data);
@@ -31,9 +32,10 @@ export default function FilterForm(){
   }
 
   const onProjectSearch=(value)=>{
+    const filter={...filters,project:"%"};
     axios({
       url:host+"/dashboard/projects",
-      data:filters,
+      data:filter,
       method:"post",
     }).then(res=>{
       setProjects(res.data);
@@ -43,9 +45,10 @@ export default function FilterForm(){
   }
 
   const onTypeSearch=(value)=>{
+    const filter={...filters,type:"%"};
     axios({
       url:host+"/dashboard/types",
-      data:filters,
+      data:filter,
       method:"post",
     }).then(res=>{
       setTypes(res.data);
@@ -55,9 +58,10 @@ export default function FilterForm(){
   }
 
   const onSpecSearch=(value)=>{
+    const filter={...filters,spec:"%"};
     axios({
       url:host+"/dashboard/specs",
-      data:filters,
+      data:filter,
       method:"post",
     }).then(res=>{
       setSpecs(res.data);

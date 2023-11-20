@@ -5,6 +5,7 @@ import (
 	"strings"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"digimatrix.com/diagnosis/common"
+	"github.com/google/uuid"
 )
 
 const (
@@ -34,7 +35,8 @@ type MQTTClient struct {
 func (mqc *MQTTClient) getClient()(mqtt.Client){
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(mqc.Broker)
-	opts.SetClientID(mqc.ClientID)
+	clientID:=uuid.New().String()
+	opts.SetClientID(clientID)
 	opts.SetUsername(mqc.User)
 	opts.SetPassword(mqc.Password)
 	opts.SetAutoReconnect(true)
