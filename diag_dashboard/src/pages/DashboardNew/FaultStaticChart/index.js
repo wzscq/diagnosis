@@ -32,9 +32,9 @@ export default function FaultStaticChart({data}){
                 type: 'pie',
                 radius: ['50%', '90%'],
                 left:5,
-                top:25,
+                top:35,
                 right:5,
-                bottom:5,
+                bottom:20,
                 label: {
                     alignTo: 'edge',
                     formatter: '{b}:{c}',

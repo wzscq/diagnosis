@@ -23,13 +23,15 @@ export default function ProjectCarChart({data}){
                 left:50,
                 top:25,
                 right:5,
-                bottom:65,
+                bottom:40,
             }, 
             dataZoom: [
                 {
                   type: 'slider',
                   startValue: 0,
-                  endValue: 10,
+                  endValue: 1,
+                  height:15,
+                  bottom:5
                 }
             ],
             xAxis: [

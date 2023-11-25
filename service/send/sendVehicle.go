@@ -11,6 +11,7 @@ var QueryVehicleFields = []map[string]interface{}{
 	{"field": "DeviceNumber"},
 	{"field": "ProjectNum"},
 	{"field": "TestSpecification"},
+	{"field": "VehicleManagementCode"},
 }
 
 type sendVehicleItem struct {
@@ -18,6 +19,7 @@ type sendVehicleItem struct {
 	DeviceID string
 	ProjectNum string
 	TestSpecification string
+	VehicleManagementCode string
 }
 
 type sendVehicle struct {
@@ -83,6 +85,7 @@ func (sv *sendVehicle)convertVehicleList(queryResult *crv.CommonRsp)([]sendVehic
 		sendVehicles[index].DeviceID=mapItem["DeviceNumber"].(string)
 		sendVehicles[index].ProjectNum=mapItem["ProjectNum"].(string)
 		sendVehicles[index].TestSpecification=mapItem["TestSpecification"].(string)
+		sendVehicles[index].VehicleManagementCode=mapItem["VehicleManagementCode"].(string)
 	}	
 
 	return sendVehicles,common.ResultSuccess

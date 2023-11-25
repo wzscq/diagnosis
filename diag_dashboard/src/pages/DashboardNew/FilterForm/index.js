@@ -12,7 +12,7 @@ const host=getHost()+process.env.REACT_APP_SERVICE_API_PREFIX;
 
 export default function FilterForm(){
   const dispatch=useDispatch();
-  const [filters,setFilters]=useState({year:date.getFullYear()});
+  const [filters,setFilters]=useState({year:date.getFullYear()+''});
   const [years,setYears]=useState([]);
   const [projects,setProjects]=useState([]);
   const [types,setTypes]=useState([]);

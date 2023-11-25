@@ -18,7 +18,7 @@ func getSaveEventRecord(
 	parameter string)(map[string]interface{}){
 	row:=map[string]interface{}{
 		"device_number":vehicle.DeviceID,
-		"vin":vehicle.Vin,
+		"vin":vehicle.VehicleManagementCode,
 		"status":"0",
 		"test_specification":vehicle.TestSpecification,
 		"platform_id":vehicle.ProjectNum,

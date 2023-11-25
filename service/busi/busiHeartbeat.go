@@ -31,7 +31,7 @@ func getDeviceHeartbeatSaveReq(deviceID,vin string,veicheleRow map[string]interf
 		List:&[]map[string]interface{}{
 			map[string]interface{}{
 				"device_number":deviceID,
-				"vin":vin,
+				"vin":veicheleRow["VIN"],
 				"vehicle_management_code":veicheleRow["VehicleManagementCode"],
 				"project_num":veicheleRow["ProjectNum"],
 				"test_specification":veicheleRow["TestSpecification"],
@@ -56,7 +56,7 @@ func getUpdateVinDeviceReq(deviceID,vin string,version interface{})(*crv.CommonR
 	}
 }
 
-func getQueryVinReq(vin string)(*crv.CommonReq){
+func getQueryVinReq(deviceNumber string)(*crv.CommonReq){
 	now:=time.Now().Format("2006-01-02 15:04:05")
 
 	return &crv.CommonReq{
@@ -68,9 +68,11 @@ func getQueryVinReq(vin string)(*crv.CommonReq){
 			{"field": "ProjectNum"},
 			{"field": "TestSpecification"},
 			{"field": "developPhase"},
+			{"field": "VIN"},
+			{"field": "DeviceNumber"},
 		},
 		Filter:&map[string]interface{}{
-			"id":vin,
+			"DeviceNumber":deviceNumber,
 			"BindingDate":map[string]interface{}{
 				"Op.lte":now,
 			},
@@ -111,7 +113,7 @@ func (busi *Busi)DealDeviceHeartbeat(deviceID,vin string){
 	//登录
 	//if busi.CrvClient.Login() ==0 {
 		//查询车辆信息
-		queryReq:=getQueryVinReq(vin)
+		queryReq:=getQueryVinReq(deviceID)
 		rsp,err:=busi.CrvClient.Query(queryReq,"")
 		if err==common.ResultSuccess && rsp.Error==false {
 			//添加心跳记录到记录表

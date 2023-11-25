@@ -207,3 +207,39 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 5、表vehiclemanagement增加字段vehicleConfiger
    修改对应的同步数据逻辑
    修改对应页面配置
+
+2023-11-25
+1、问题20，增加SAE故障码防止输入小写功能
+   需改模型配置：diag_dtc
+2、问题21，车辆信息页面隐藏序列号列
+   修改模型配置：vehiclemanagement
+3、问题40，故障码库所属控制器字段设置为必填
+   需改模型配置：diag_dtc
+4、问题42，故障仪表盘修改
+5、问题46，设备上报记录序列号隐藏
+   需改模型配置：diag_device_heartbeat
+   修改获取项目信息的逻辑，原来通过vin匹配不到，改为通过device_id匹配
+6、问题47，故障仪表盘修改
+7、问题50，修改配置文件
+   模型配置：core_user
+   模型配置：core_operation_log
+   模型配置：core_role
+8、问题52，车辆信息页面增加解绑和绑定时间
+   修改模型配置：vehiclemanagement
+9、问题53，故障仪表盘修改
+10、问题55，诊断下发记录发送人应显示名字
+    模型配置：diag_param_sendrecord
+11、问题56，修改后台下发逻辑
+12、问题57，隐藏诊断执行配置功能
+    需改菜单配置：menus.json
+13、问题58，触发回传下发记录发送人应显示名字
+   模型配置:diag_event_sendrecord
+14、问题59，修改后台下发逻辑
+15、问题60，隐藏信号下发记录菜单
+   需改菜单配置：menus.json
+16、问题62，修改密码功能隐藏
+   修改框架处理逻辑
+   增加应用配置：app.json
+17、问题63，登录token的有效期延长已经设置了6000s
+
+
