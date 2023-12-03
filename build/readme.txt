@@ -241,5 +241,17 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    修改框架处理逻辑
    增加应用配置：app.json
 17、问题63，登录token的有效期延长已经设置了6000s
+18、问题36, 浏览器版本检查
 
-
+2023-11-30
+1、问题65，修改菜单配置
+   menus.json
+2、问题67，修改相应的模型配置
+   模型：diag_result.json
+   模型：diag_view_result.json
+3、修改前端页面，优化打开慢时导致数据无法加载问题
+   更新diag_event_report
+   更新diag_report
+   更新diag_v2report
+4、修改后台服务逻辑，优化mqtt重连后订阅失效问题
+5、问题48，问题49，修改IDM接口逻辑

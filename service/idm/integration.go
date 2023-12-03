@@ -32,15 +32,17 @@ type pullRsp struct {
 }
 
 type idmUser struct {
-	UserName string
-	FullName string
-	Email string
-	RoleList []string
-	Mobile string
-	UserDepartShort string
-	IsLocked bool
-	IsDisabled bool
-	ZHRSSGW string    //工号？
+	UserName string `json:"username"`
+	FullName string `json:"fullname"`
+	Email string `json:"email"`
+	RoleList []string `json:"roleList"`
+	Mobile string `json:"mobile"`
+	UserDepartShort string `json:"userDepartShort"`
+	IsLocked bool `json:"isLocked"`
+	IsDisabled bool `json:"isDisabled"`
+	AID string `json:"_AID"`
+	ZHRSSGW string `json:"ZHRSSGW"`
+	OrganizationID string `json:"organizationId"`
 }
 
 type Integration struct {
@@ -463,7 +465,7 @@ func IntegrationPullTask(idmUrl,systemCode,tokenId string)(*pullRsp,error){
 		log.Println("IntegrationLogin error:",err.Error())
 		return nil,err
 	}
-
+	log.Println("IntegrationLogin end with pullRsp:",pullRsp)
 	return &pullRsp,nil
 }
 

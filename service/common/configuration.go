@@ -52,11 +52,16 @@ type redisConf struct {
 
 type IntegrationConf struct {
 	Url string `json:"url"`
+	GetAppTokenUrl string `json:"getAppTokenUrl"`
+	GetAppAccBy string `json:"getAppAccBy"`
+	ClientID string `json:"clientID"`
 	SystemCode string `json:"systemCode"`
 	IntegrationKey string `json:"integrationKey"`
 	Duration string `json:"duration"`
 	RoleMap map[string]string `json:"roleMap"`
 	DefaultRole string `json:"defaultRole"`
+	InitUpdateAt string `json:"initUpdateAt"`
+	UpdateTime string `json:"updateTime"`
 }
 
 type KafkaConfig struct {

@@ -6,6 +6,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"digimatrix.com/diagnosis/common"
 	"github.com/google/uuid"
+	"time"
 )
 
 const (
@@ -40,6 +41,7 @@ func (mqc *MQTTClient) getClient()(mqtt.Client){
 	opts.SetUsername(mqc.User)
 	opts.SetPassword(mqc.Password)
 	opts.SetAutoReconnect(true)
+	opts.SetKeepAlive(time.Second*10)
 
 	opts.SetDefaultPublishHandler(mqc.messagePublishHandler)
 	opts.OnConnect = mqc.connectHandler
@@ -56,6 +58,12 @@ func (mqc *MQTTClient) getClient()(mqtt.Client){
 
 func (mqc *MQTTClient) connectHandler(client mqtt.Client){
 	log.Println("MQTTClient connectHandler connect status: ",client.IsConnected())
+	if client.IsConnected() {
+		log.Println("MQTTClient Subscribe HeartbeatTopic: ",mqc.HeartbeatTopic)
+		client.Subscribe(mqc.HeartbeatTopic,0,mqc.onHeartbeat)
+		log.Println("MQTTClient Subscribe DiagResponseTopic: ",mqc.DiagResponseTopic)
+		client.Subscribe(mqc.DiagResponseTopic,0,mqc.onDiagResponse)
+	}
 }
 
 func (mqc *MQTTClient) connectLostHandler(client mqtt.Client, err error){
@@ -66,7 +74,7 @@ func (mqc *MQTTClient) messagePublishHandler(client mqtt.Client, msg mqtt.Messag
 	log.Println("MQTTClient messagePublishHandler topic: ",msg.Topic())
 }
 
-func (mqc *MQTTClient) reconnectingHandler(Client mqtt.Client,opts *mqtt.ClientOptions){
+func (mqc *MQTTClient) reconnectingHandler(client mqtt.Client,opts *mqtt.ClientOptions){
 	log.Println("MQTTClient reconnectingHandler ")
 }
 
@@ -119,6 +127,4 @@ func (mqc *MQTTClient) Init(){
 	if mqc.Client == nil {
 		return
 	}
-	mqc.Client.Subscribe(mqc.HeartbeatTopic,0,mqc.onHeartbeat)
-	mqc.Client.Subscribe(mqc.DiagResponseTopic,0,mqc.onDiagResponse)
 }
