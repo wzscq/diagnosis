@@ -52,12 +52,13 @@
     "idmIntegration":{
         "url":"https://api-at.saicmotortest.com/idm/v1/integration?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
         "getAppTokenUrl":"https://api-at.saicmotortest.com/idm/v1/bim/getAppToken?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
-        "getAppAccBy":"https://api-at.saicmotortest.com/idm/v1/bim/getAppAccBy?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
+        "getAppAccByUrl":"https://api-at.saicmotortest.com/idm/v1/bim/getAppAccBy?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
+        "getAppOrgByUrl":"https://api-at.saicmotortest.com/idm/v1/bim/getAppOrgBy?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
         "clientID":"DIAGNOSIS",
         "systemCode":"DIAGNOSIS",
         "integrationKey":"DIAGNOSISsaicP@ssw278rd",
         "duration":"24h",
-        "initUpdateAt":"2023-11-25 00:00:00",
+        "initUpdateAt":"2023-10-01 00:00:00",
         "updateTime":"00:00:00",
         "roleMap":{
             "role1":"operator",

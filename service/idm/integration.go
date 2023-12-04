@@ -31,20 +31,6 @@ type pullRsp struct {
 	Data map[string]interface{} `json:"data"`
 }
 
-type idmUser struct {
-	UserName string `json:"username"`
-	FullName string `json:"fullname"`
-	Email string `json:"email"`
-	RoleList []string `json:"roleList"`
-	Mobile string `json:"mobile"`
-	UserDepartShort string `json:"userDepartShort"`
-	IsLocked bool `json:"isLocked"`
-	IsDisabled bool `json:"isDisabled"`
-	AID string `json:"_AID"`
-	ZHRSSGW string `json:"ZHRSSGW"`
-	OrganizationID string `json:"organizationId"`
-}
-
 type Integration struct {
 	Url string
 	SystemCode string

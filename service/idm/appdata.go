@@ -7,20 +7,10 @@ import (
 	"digimatrix.com/diagnosis/common"
 )
 
-type getAppTokenRsp struct {
-	Success bool `json:"success"`
-	Data string `json:"data"`
-	ErrorMessage string `json:"errorMessage"`
-}
-
-type getAppAccByRsp struct {
-	Success bool `json:"success"`
-	Data []idmUser `json:"data"`
-}
-
 type AppData struct {
 	GetAppTokenUrl string
-	GetAppAccBy string
+	GetAppAccByUrl string
+	GetAppOrgByUrl string
 	SystemCode string
 	IntegrationKey string
 	ClientID string
@@ -35,7 +25,8 @@ type AppData struct {
 func InitAppDataSyncTask(integrationConf *common.IntegrationConf,crvClient *crv.CRVClient){
 	appData := &AppData{
 		GetAppTokenUrl:integrationConf.GetAppTokenUrl,
-		GetAppAccBy:integrationConf.GetAppAccBy,
+		GetAppAccByUrl:integrationConf.GetAppAccByUrl,
+		GetAppOrgByUrl:integrationConf.GetAppOrgByUrl,
 		SystemCode: integrationConf.SystemCode,
 		IntegrationKey: integrationConf.IntegrationKey,
 		ClientID:integrationConf.ClientID,
@@ -93,30 +84,16 @@ func (appData *AppData) start() {
 	}
 }
 
-func (appData *AppData) DoSync(updateAt string) {
+func (appData *AppData)DoSync(updateAt string) {
 	//get app token
 	appToken,err := GetAppToken(appData.GetAppTokenUrl,appData.SystemCode,appData.IntegrationKey,appData.ClientID)
 	if err!=nil {
 		log.Println("DoSync error:",err.Error())
 		return
 	}
-
-	//get user info
-	users,err:=GetAppAccBy(appData.GetAppAccBy,appToken,updateAt)
-	if err!=nil {
-		log.Println("DoSync error:",err.Error())
-		return
-	}
-
-	for _,user:= range users {
-		appData.UpdateUser(user)
-	}
-
-	log.Println("DoSync users:",users)
+	log.Println("DoSync appToken:",appToken)
+	appData.SyncOrgs(updateAt,appToken)
+	appData.SyncUsers(updateAt,appToken)
+	//orgName:=appData.getUserOrg("10005668")
+	//log.Println("orgName:",orgName)
 }
-
-func (appData *AppData)UpdateUser(user idmUser){
-	//获取用户角色
-	
-}
-

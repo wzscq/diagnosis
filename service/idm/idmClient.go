@@ -8,20 +8,61 @@ import (
 	"errors"
 )
 
-func GetAppAccBy(reqUrl,token string,updateAt string)([]idmUser,error){
+type idmUser struct {
+	UserName string `json:"username"`
+	FullName string `json:"fullname"`
+	Email string `json:"email"`
+	RoleList []string `json:"roleList"`
+	Mobile string `json:"mobile"`
+	UserDepartShort string `json:"userDepartShort"`
+	IsLocked bool `json:"isLocked"`
+	IsDisabled bool `json:"isDisabled"`
+	AID string `json:"_AID"`
+	ZHRSSGW string `json:"ZHRSSGW"`
+	OrganizationID string `json:"organizationId"`
+}
+
+type idmOrg struct {
+	OrganizationID string `json:"organizationId"`
+	Name string `json:"name"`
+	ParentID string `json:"parentId"`
+	OrgType string `json:"orgType"`
+	Code string `json:"code"`
+	Sequence int `json:"sequence"`
+	IsDisabled bool `json:"isDisabled"`
+	CJ string `json:"ZHRDXCJ"`
+}
+
+type getAppTokenRsp struct {
+	Success bool `json:"success"`
+	Data string `json:"data"`
+	ErrorMessage string `json:"errorMessage"`
+}
+
+type getAppAccByRsp struct {
+	Success bool `json:"success"`
+	Data []idmUser `json:"data"`
+}
+
+type getAppOrgByRsp struct {
+	Success bool `json:"success"`
+	Data []idmOrg `json:"data"`
+}
+
+func GetAppAccBy(reqUrl,token,updateAt string,number int)([]idmUser,error){
 	searchMap:=map[string]interface{}{
 		"updateAt_gt":updateAt,
 	}
 	searchJson,_:= json.Marshal(searchMap)
 	pageMap:=map[string]interface{}{
-		"size":10000,
-		"number":1,
+		"size":100,
+		"number":number,
 	}
 	pageJson,_:=json.Marshal(pageMap)
 
 	data := url.Values{}
-  data.Set("token", token)
-  data.Set("_search", string(searchJson))
+  	data.Set("token", token)
+  	data.Set("_search", string(searchJson))
 	data.Set("_page", string(pageJson))
 
 	rsp, err := http.PostForm(reqUrl, data)
@@ -46,6 +87,46 @@ func GetAppAccBy(reqUrl,token string,updateAt string)([]idmUser,error){
 	}
 
 	return appAccByRsp.Data,nil
+}
+
+func GetAppOrgBy(reqUrl,token,updateAt string,number int)([]idmOrg,error){
+	searchMap:=map[string]interface{}{
+		"updateAt_gt":updateAt,
+	}
+	searchJson,_:= json.Marshal(searchMap)
+	pageMap:=map[string]interface{}{
+		"size":100,
+		"number":number,
+	}
+	pageJson,_:=json.Marshal(pageMap)
+
+	data := url.Values{}
+  	data.Set("token", token)
+  	data.Set("_search", string(searchJson))
+	data.Set("_page", string(pageJson))
+
+	rsp, err := http.PostForm(reqUrl, data)
+	if err != nil {
+		log.Println("GetAppOrgBy error:",err.Error())
+		return nil,err
+	}
+	defer rsp.Body.Close()
+
+	if rsp.StatusCode != 200 { 
+		log.Println("GetAppOrgBy rsp.StatusCode:",rsp.StatusCode)
+		err := errors.New("GetAppOrgBy rsp.StatusCode")
+		return nil,err
+	}
+	
+	decoder := json.NewDecoder(rsp.Body)
+	var appOrgByRsp getAppOrgByRsp
+	err = decoder.Decode(&appOrgByRsp)
+	if err != nil {
+		log.Println("GetAppOrgBy error:",err.Error())
+		return nil,err
+	}
+
+	return appOrgByRsp.Data,nil
 }
 
 func GetAppToken(reqUrl,systemCode,integrationKey,clientID string)(string,error){

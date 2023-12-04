@@ -53,7 +53,8 @@ type redisConf struct {
 type IntegrationConf struct {
 	Url string `json:"url"`
 	GetAppTokenUrl string `json:"getAppTokenUrl"`
-	GetAppAccBy string `json:"getAppAccBy"`
+	GetAppAccByUrl string `json:"getAppAccByUrl"`
+	GetAppOrgByUrl string `json:"getAppOrgByUrl"`
 	ClientID string `json:"clientID"`
 	SystemCode string `json:"systemCode"`
 	IntegrationKey string `json:"integrationKey"`
