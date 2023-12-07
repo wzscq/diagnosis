@@ -12,14 +12,18 @@ import (
 	"digimatrix.com/diagnosis/busi"
 	"digimatrix.com/diagnosis/oauth"
 	"digimatrix.com/diagnosis/idm"
-	//"digimatrix.com/diagnosis/saicinterface"
+	"digimatrix.com/diagnosis/saicinterface"
 	"log"
 	"time"
 )
 
 func main() {
 	//设置log打印文件名和行号
-    log.SetFlags(log.Lshortfile | log.LstdFlags)
+  log.SetFlags(log.Lshortfile | log.LstdFlags)
+
+	//初始化时区
+	var cstZone = time.FixedZone("CST", 8*3600) // 东八
+	time.Local = cstZone
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
@@ -54,10 +58,20 @@ func main() {
 		0,
 		conf.Redis.Password)
 
+	//
+	duration, _ = time.ParseDuration(conf.Redis.HeartbeatLockExpired)
+	heartbeatLock:=busi.HeartbeatLock{}
+	heartbeatLock.Init(
+		conf.Redis.Server,
+		conf.Redis.HeartbeatLockDB,
+		duration,
+		conf.Redis.Password)
+
 	//实际的业务处理模块
 	busiModule:=busi.Busi{
 		CrvClient:&crvClinet,
 		SendRecordCache:&sendRecordCache,
+		HeartbeatLock:&heartbeatLock,
 	}
 
 	//busiModule.DealDeviceHeartbeat("3ec783","LSJW949UUMS997068")
@@ -75,10 +89,18 @@ func main() {
 	mqttClient.Init()
 
 	//kafka consumer
-	//saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
+	saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
 
 	//idm.InitIntegration(&conf.IDMIntegration,&crvClinet)
-	idm.InitAppDataSyncTask(&conf.IDMIntegration,&crvClinet)
+	duration, _ = time.ParseDuration(conf.Redis.IdmAppDataSyncLockExpired)
+	idmSyncLock:=idm.IdmSyncLock{}
+	idmSyncLock.Init(
+		conf.Redis.Server,
+		conf.Redis.IdmAppDataSyncLockDB,
+		duration,
+		conf.Redis.Password)
+
+	idm.InitAppDataSyncTask(&conf.IDMIntegration,&crvClinet,&idmSyncLock)
 
 	repo:=&dashboard.DefatultRepository{}
     repo.Connect(

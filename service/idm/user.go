@@ -33,7 +33,7 @@ func (appData *AppData)SyncUser(user *idmUser){
 	//获取用户部门
 	user.OrganizationID=appData.getUserOrg(user.OrganizationID)
 	//获取用户角色
-
+	user.RoleList=appData.getUserRole(user.RoleList)
 	//查询本地用户信息
 	crvUser:=appData.GetCRVUserInfo(user.UserName)
 	if crvUser!=nil {
@@ -41,6 +41,26 @@ func (appData *AppData)SyncUser(user *idmUser){
 	} else {
 		appData.CreateCRVUser(user)
 	}
+}
+
+func (appData *AppData)getUserRole(roleList []string)([]string){
+	//获取角色信息
+	newRoleList:=[]string{}
+	if roleList!=nil && len(roleList)>0 {
+		for _,role:=range roleList {	
+			localRole,ok:=appData.RoleMap[role]
+			log.Println("idm role:",role,"crv role:",localRole)
+			if ok {
+				newRoleList=append(newRoleList,localRole)
+			}
+		}
+	}
+
+	if len(newRoleList)==0 {
+		newRoleList=append(newRoleList,appData.DefaultRole)
+	}
+
+	return newRoleList
 }
 
 func (appData *AppData)GetCRVUserInfo(userID string)(map[string]interface{}){
@@ -59,7 +79,7 @@ func (appData *AppData)GetCRVUserInfo(userID string)(map[string]interface{}){
 	}
 
 	if req.Error == true {
-		log.Println("GetProjectData error:",req.ErrorCode,req.Message)
+		log.Println("GetCRVUserInfo error:",req.ErrorCode,req.Message)
 		return nil
 	}
 
@@ -71,13 +91,13 @@ func (appData *AppData)GetCRVUserInfo(userID string)(map[string]interface{}){
 
 func (appData *AppData)CreateCRVUser(idmUser *idmUser)(error){
 	//查询数据
-  	/*roleList:=[]map[string]interface{}{}
+  roleList:=[]map[string]interface{}{}
 	for _,role:=range idmUser.RoleList {
 		roleList=append(roleList,map[string]interface{}{
 			"id":role,
 			"_save_type":"create",
 		})
-	}*/
+	}
 
 	dimission:="否"
 	if idmUser.IsLocked {
@@ -103,11 +123,11 @@ func (appData *AppData)CreateCRVUser(idmUser *idmUser)(error){
 				"disable":disable,
 				"password":"a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
 				"_save_type":"create",
-				/*"roles":map[string]interface{}{
+				"roles":map[string]interface{}{
 					"list":roleList,
 					"fieldType":"many2many",
 					"modelID":"core_role",
-				},*/
+				},
 			},
 		},
 	}
@@ -116,7 +136,7 @@ func (appData *AppData)CreateCRVUser(idmUser *idmUser)(error){
 }
 
 func (appData *AppData)UpdateCRVUser(idmUser *idmUser,crvUser map[string]interface{})(error){
-	/*roleList:=[]map[string]interface{}{}
+	roleList:=[]map[string]interface{}{}
 	//删除没有的角色
 	crvRoles:=crvUser["roles"].(map[string]interface{})["list"].([]interface{})
 	for _,crvRole:=range crvRoles {
@@ -152,7 +172,7 @@ func (appData *AppData)UpdateCRVUser(idmUser *idmUser,crvUser map[string]interfa
 				"_save_type":"create",
 			})
 		}
-	}*/
+	}
 
 	dimission:="否"
 	if idmUser.IsLocked {
@@ -178,11 +198,11 @@ func (appData *AppData)UpdateCRVUser(idmUser *idmUser,crvUser map[string]interfa
 				"job_number":idmUser.AID,
 				"dimission":dimission,
 				"disable":disable,
-				/*"roles":map[string]interface{}{
+				"roles":map[string]interface{}{
 					"list":roleList,
 					"fieldType":"many2many",
 					"modelID":"core_role",
-				},*/
+				},
 			},
 		},
 	}
@@ -251,7 +271,7 @@ func (appData *AppData)getUserOrg(orgID string)(string){
 	}
 
 	if req.Error == true {
-		log.Println("GetProjectData error:",req.ErrorCode,req.Message)
+		log.Println("getUserOrg error:",req.ErrorCode,req.Message)
 		return orgID
 	}
 

@@ -58,7 +58,7 @@ export default function ProjectCarChart({data}){
                 barGap:'100%',
                 label:{
                     show:true,
-                    position:'top',
+                    position:'insideTop',
                     formatter: '{c}',
                     color:'#000',
                     fontSize:12,

@@ -101,8 +101,8 @@ func GetAppOrgBy(reqUrl,token,updateAt string,number int)([]idmOrg,error){
 	pageJson,_:=json.Marshal(pageMap)
 
 	data := url.Values{}
-  	data.Set("token", token)
-  	data.Set("_search", string(searchJson))
+  data.Set("token", token)
+  data.Set("_search", string(searchJson))
 	data.Set("_page", string(pageJson))
 
 	rsp, err := http.PostForm(reqUrl, data)
