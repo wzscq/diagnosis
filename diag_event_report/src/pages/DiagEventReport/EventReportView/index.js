@@ -8,9 +8,13 @@ export default function EventReportView({chartType}){
 
     //数据收敛
     const signalList=[];
+    const remark=[];
     dataList.forEach(dataItem => {
         dataItem.Records.forEach(recItem=>{
             signalList.push(...recItem.SignalList);
+            if(recItem.remark!==undefined&&recItem.remark!==""){
+                remark.push(recItem.remark);
+            }
         });
     });
 
@@ -20,6 +24,7 @@ export default function EventReportView({chartType}){
 
     return (
         <div style={{width:'100%',height:'400px',overflow:"auto"}}>
+            {remark.length>0?<div style={{position:'absolute',left:'23px',top:'50px',textAlign:'left'}}>{remark[0]}</div>:null}
             {chartType===0?
             <MultiYAxisChart signalList={signalList} />:
             <MultiSubChart signalList={signalList}/>

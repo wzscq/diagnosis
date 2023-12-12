@@ -270,5 +270,11 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 7、添加redis锁机制，控制mqtt、数据同步接口的并发
    修改后台服务逻辑
    修改配置文件，增加了4个配置项目用于配置锁
+8、问题64，修改
+   a、修改diag_report
+   b、修改diag_v2report
+   c、修改diag_event_report
+   d、修改后端导出逻辑
+
 
 

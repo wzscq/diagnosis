@@ -131,6 +131,14 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
                 <Col span={16} style={styleContent}>{rec?.RecommendedRecovery}</Col>
                 <Col span={2} />
             </Row>
+            {rec?.remark!==undefined&&rec?.remark!==""?
+                (<Row>
+                    <Col span={2} />
+                    <Col span={4} style={styleLabel}>备注</Col>
+                    <Col span={16} style={styleContent}>{rec?.remark}</Col>
+                    <Col span={2} />
+                </Row>):null
+            }
             
             <Row>
                 <Col span={2} />
