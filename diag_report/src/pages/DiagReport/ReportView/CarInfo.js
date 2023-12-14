@@ -91,7 +91,7 @@ export default function CarInfo({report,vin}){
         <Row>
             <Col span={2} />
             <Col span={6} style={styleLabel} >采集时间</Col>
-            <Col span={14} style={{...styleContent}} >{converTime(report?.SamplingTime)}</Col>
+            <Col span={14} style={{...styleContent}} >{report?.SamplingTime}</Col>
             <Col span={2} />
         </Row>
     </div>

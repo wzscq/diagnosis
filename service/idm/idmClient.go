@@ -50,6 +50,7 @@ type getAppOrgByRsp struct {
 }
 
 func GetAppAccBy(reqUrl,token,updateAt string,number int)([]idmUser,error){
+	log.Println("GetAppAccBy",updateAt)
 	searchMap:=map[string]interface{}{
 		"updateAt_gt":updateAt,
 	}
@@ -77,7 +78,7 @@ func GetAppAccBy(reqUrl,token,updateAt string,number int)([]idmUser,error){
 		err := errors.New("GetAppAccBy rsp.StatusCode")
 		return nil,err
 	}
-	
+
 	decoder := json.NewDecoder(rsp.Body)
 	var appAccByRsp getAppAccByRsp
 	err = decoder.Decode(&appAccByRsp)
@@ -86,6 +87,9 @@ func GetAppAccBy(reqUrl,token,updateAt string,number int)([]idmUser,error){
 		return nil,err
 	}
 
+	log.Println(appAccByRsp.Data)
+
+	//return nil,nil
 	return appAccByRsp.Data,nil
 }
 
@@ -125,7 +129,7 @@ func GetAppOrgBy(reqUrl,token,updateAt string,number int)([]idmOrg,error){
 		log.Println("GetAppOrgBy error:",err.Error())
 		return nil,err
 	}
-
+	
 	return appOrgByRsp.Data,nil
 }
 

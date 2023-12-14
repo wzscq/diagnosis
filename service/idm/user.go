@@ -10,6 +10,7 @@ func (appData *AppData)SyncUsers(updateAt,appToken string){
 	//get user info
 	number:=1
 	for {
+
 		users,err:=GetAppAccBy(appData.GetAppAccByUrl,appToken,updateAt,number)
 		if err!=nil {
 			log.Println("DoSync error:",err.Error())
@@ -21,11 +22,14 @@ func (appData *AppData)SyncUsers(updateAt,appToken string){
 		}
 
 		for _,user:= range users {
+			//log.Println("user:",user)
 			appData.SyncUser(&user)
 		}
 		
 		number++
 	}
+
+	log.Println("SyncUsers",number)
 }
 
 func (appData *AppData)SyncUser(user *idmUser){
@@ -137,23 +141,28 @@ func (appData *AppData)CreateCRVUser(idmUser *idmUser)(error){
 
 func (appData *AppData)UpdateCRVUser(idmUser *idmUser,crvUser map[string]interface{})(error){
 	roleList:=[]map[string]interface{}{}
+	log.Println("UpdateCRVUser crvUser:",crvUser)
 	//删除没有的角色
-	crvRoles:=crvUser["roles"].(map[string]interface{})["list"].([]interface{})
-	for _,crvRole:=range crvRoles {
-		crvRoleID:=crvRole.(map[string]interface{})["id"].(string)
-		hasRole:=false
-		for _,userRole:=range idmUser.RoleList {
-			if crvRoleID==userRole {
-				hasRole=true
-				break
+	crvRoles:=[]interface{}{}
+	roles,ok:=crvUser["roles"].(map[string]interface{})
+	if ok {
+		crvRoles=roles["list"].([]interface{})
+		for _,crvRole:=range crvRoles {
+			crvRoleID:=crvRole.(map[string]interface{})["id"].(string)
+			hasRole:=false
+			for _,userRole:=range idmUser.RoleList {
+				if crvRoleID==userRole {
+					hasRole=true
+					break
+				}
 			}
-		}
-		if hasRole==false {
-			roleList=append(roleList,map[string]interface{}{
-				"id":crvRoleID,
-				"version":crvRole.(map[string]interface{})["version"],
-				"_save_type":"delete",
-			})
+			if hasRole==false {
+				roleList=append(roleList,map[string]interface{}{
+					"id":crvRoleID,
+					"version":crvRole.(map[string]interface{})["version"],
+					"_save_type":"delete",
+				})
+			}
 		}
 	}
 
@@ -295,9 +304,11 @@ func GetOrgName(org map[string]interface{})(string){
 	}
 
 	//如果当前层级大于40，获取上级机构
-	parentOrg:=org["parent_id"].(map[string]interface{})
-	if parentOrg["list"]!=nil && len(parentOrg["list"].([]interface{}))>0 {
-		return GetOrgName(parentOrg["list"].([]interface{})[0].(map[string]interface{}))
+	parentOrg,ok:=org["parent_id"].(map[string]interface{})
+	if ok {
+		if parentOrg["list"]!=nil && len(parentOrg["list"].([]interface{}))>0 {
+			return GetOrgName(parentOrg["list"].([]interface{})[0].(map[string]interface{}))
+		}
 	}
 
 	return orgName
