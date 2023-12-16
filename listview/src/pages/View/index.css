@@ -1,0 +1,9 @@
+.list_view_main {
+    width: calc(100% - 10px);
+    height: calc(100vh - 10px);
+    padding: 5px;
+}
+
+.list_view_main .ant-col {
+    padding: 2px;
+}

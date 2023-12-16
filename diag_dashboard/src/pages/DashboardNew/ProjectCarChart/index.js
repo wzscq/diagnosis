@@ -21,7 +21,7 @@ export default function ProjectCarChart({data}){
             },
             grid:{
                 left:50,
-                top:25,
+                top:45,
                 right:5,
                 bottom:40,
             }, 
@@ -58,7 +58,7 @@ export default function ProjectCarChart({data}){
                 barGap:'100%',
                 label:{
                     show:true,
-                    position:'insideTop',
+                    position:'top',
                     formatter: '{c}',
                     color:'#000',
                     fontSize:12,

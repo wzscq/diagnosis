@@ -276,5 +276,13 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    c、修改diag_event_report
    d、修改后端导出逻辑
 
-
-
+2023-12-15
+1、问题34、35、69
+   a、新增查询功能页面listview实现相应的功能定制
+   b、修改打包脚本，用定制页面替换原有框架统一页面
+2、问题48
+   修改后端服务逻辑
+3、问题74
+   修改diag_dashboard模块代码
+4、问题75
+   修改配置文件diag_result、diag_view_result

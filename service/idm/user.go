@@ -299,8 +299,12 @@ func GetOrgName(org map[string]interface{})(string){
 	orgCj:=org["zhrdxcj"].(string)
 	orgName:=org["name"].(string)
 	//如果当前层级小于等于40，直接返回
-	if orgCj<="40" {
+	if orgCj=="30" {
 		return orgName		
+	}
+	//小于30，则直接返回空，不再向上查找
+	if orgCj<"30" {
+		return ""
 	}
 
 	//如果当前层级大于40，获取上级机构
