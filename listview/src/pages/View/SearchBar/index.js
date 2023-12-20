@@ -1,6 +1,6 @@
-import {useMemo,useCallback} from 'react';
+import {useMemo,useCallback, useState} from 'react';
 import { Input, Space, Button,Tooltip } from 'antd';
-import { StopOutlined,SyncOutlined,SettingOutlined } from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
 import { useDispatch,useSelector } from "react-redux";
 import { refreshData,setFilter } from '../../../redux/dataSlice';
 import {setShowColumnSettingDialog} from '../../../redux/definitionSlice';
@@ -8,12 +8,11 @@ import {setShowColumnSettingDialog} from '../../../redux/definitionSlice';
 import './index.css';
 import useI18n from '../../../hooks/useI18n';
 
-const { Search } = Input;
-
 export default function SearchBar(){
     const {getLocaleLabel}=useI18n();
     const {fields,views}=useSelector(state=>state.definition);
     const {currentView} = useSelector(state=>state.data);
+    const [searchText,setSearchText]=useState("");
     const dispatch=useDispatch();
 
     const {quickSearchFields,showColumnSettings}=useMemo(()=>{
@@ -29,11 +28,11 @@ export default function SearchBar(){
         return {quickSearchFields,showColumnSettings};
     },[fields,currentView]);
 
-    const onSearch=useCallback((value)=>{
+    const onSearch=useCallback(()=>{
         if(quickSearchFields.length>0){
             const fieldsFilter=quickSearchFields.map(element => {
                 const tempFieldFilter={};
-                tempFieldFilter[element]='%'+value+'%';
+                tempFieldFilter[element]='%'+searchText+'%';
                 return tempFieldFilter;
             });
             const op='Op.or';
@@ -41,7 +40,7 @@ export default function SearchBar(){
         } else {
             console.log('no quick search fields');
         }
-    },[quickSearchFields,dispatch]);
+    },[quickSearchFields,searchText,dispatch]);
 
     const reset=()=>{
         dispatch(setFilter({}));
@@ -59,8 +58,28 @@ export default function SearchBar(){
         <div className='search-bar'>
             <Space>
                 {quickSearchFields.length>0?<>
-                    <Search placeholder={getLocaleLabel({key:'page.crvlistview.searchInputPlaceholder',default:'input search text'})} onSearch={onSearch}/>
-                        
+                    <Input style={{width:"250px"}} value={searchText} placeholder={getLocaleLabel({key:'page.crvlistview.searchInputPlaceholder',default:'input search text'})} onChange={(e)=>{setSearchText(e.target.value)}}/>
+                    <Button
+                        type="primary"
+                        loading={false}
+                        onClick={onSearch}
+                    >
+                        {getLocaleLabel({key:'page.crvlistview.query',default:'查询'})}
+                    </Button>
+                    <Button
+                        type="primary"
+                        loading={false}
+                        onClick={reset}
+                    >
+                        {getLocaleLabel({key:'page.crvlistview.resetFilter',default:'重置'})}
+                    </Button>
+                    <Button
+                        type="primary"
+                        loading={false}
+                        onClick={refresh}
+                    >
+                        {getLocaleLabel({key:'page.crvlistview.refresh',default:'刷新'})}
+                    </Button>    
                 </>:null
                 }
                 {

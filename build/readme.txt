@@ -286,3 +286,12 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    修改diag_dashboard模块代码
 4、问题75
    修改配置文件diag_result、diag_view_result
+
+2023-12-20
+1、修改listview页面，调整页面布局控件样式
+2、修改相关配置文件的文字信息
+   a、i18n.json
+   b、diag_event_parameter.json
+   c、diag_parameter.json
+   d、diag_signal.json
+   e、core_operation_log

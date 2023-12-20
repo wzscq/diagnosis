@@ -6,7 +6,6 @@ import { useSelector,useDispatch } from "react-redux";
 import {FRAME_MESSAGE_TYPE} from '../../../utils/constant';
 import OperationButton from '../../../components/OperationButton';
 import useI18n from '../../../hooks/useI18n';
-import { refreshData,setFilter } from '../../../redux/dataSlice';
 
 import {
     getListOperationPreporcessFunc
@@ -15,7 +14,6 @@ import {
 import './index.css';
 
 export default function ListOperationBar({sendMessageToParent}){
-    const dispatch=useDispatch();
     const {currentView} = useSelector(state=>state.data);
     const {getLocaleLabel}=useI18n();
     const {fields,views,modelID,operations}=useSelector(state=>state.definition);
@@ -135,31 +133,9 @@ export default function ListOperationBar({sendMessageToParent}){
         return buttonControls;
     },[currentView,operations,doOperation]);
 
-    const reset=()=>{
-        dispatch(setFilter({}));
-    }
-
-    const refresh=()=>{
-        dispatch(refreshData());
-    }
-
     return (
         <div className="list-operation-bar">
             <Space >
-                <Button
-                    type="primary"
-                    loading={false}
-                    onClick={reset}
-                >
-                    {getLocaleLabel({key:'page.crvlistview.resetFilter',default:'重置'})}
-                </Button>
-                <Button
-                    type="primary"
-                    loading={false}
-                    onClick={refresh}
-                >
-                    {getLocaleLabel({key:'page.crvlistview.refresh',default:'刷新'})}
-                </Button>
                 {buttonControls}
             </Space>
         </div>

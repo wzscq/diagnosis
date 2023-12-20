@@ -63,10 +63,11 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
     });
 
     const converTime=(time)=>{
-        if(time.length<14){
+        return time;
+        /*if(time.length<14){
             return time;
         }
-        return time.substr(0,4)+'-'+time.substr(4,2)+'-'+time.substr(6,2)+' '+time.substr(8,2)+':'+time.substr(10,2)+':'+time.substr(12,2);
+        return time.substr(0,4)+'-'+time.substr(4,2)+'-'+time.substr(6,2)+' '+time.substr(8,2)+':'+time.substr(10,2)+':'+time.substr(12,2);*/
     }
 
     let possibleCauses=rec?.PossibleCauses

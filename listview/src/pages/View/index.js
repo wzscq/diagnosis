@@ -64,11 +64,11 @@ export default function View(){
                 <ConfigProvider locale={locales[locale]} theme={theme}>
                     <div className='list_view_main'>
                         <Row>
-                            <Col ><ModelViewList/></Col>
-                            <Col ><SearchBar/></Col>
+                            <Col span={0}><ModelViewList/></Col>
+                            <Col span={12}><SearchBar/></Col>
+                            <Col span={12}><ListOperationBar sendMessageToParent={sendMessageToParent}/></Col>
                         </Row>
                         <Row>
-                            <Col ><ListOperationBar sendMessageToParent={sendMessageToParent}/></Col>
                             <Col ><StatusBar/></Col>
                         </Row>
                         <Row>
