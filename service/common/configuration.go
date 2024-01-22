@@ -46,8 +46,12 @@ type redisConf struct {
 	Server string `json:"server"`
   SendRecordExpired string `json:"sendRecordExpired"`
   DB int `json:"db"`
-	DeviceSignalCacheDB int `json:"deviceSignalCacheDB"`
+	DeviceSignalCacheDB int 
 	Password string `json:"password"`
+	HeartbeatLockDB int  `json:"heartbeatLockDB"`
+	HeartbeatLockExpired string `json:"heartbeatLockExpired"`
+	IdmAppDataSyncLockDB int  `json:"idmAppDataSyncLockDB"`
+	IdmAppDataSyncLockExpired string `json:"idmAppDataSyncLockExpired"`
 }
 
 type IntegrationConf struct {

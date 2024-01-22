@@ -20,9 +20,10 @@ type AppData struct {
 	DefaultRole string
 	InitUpdateAt string
 	UpdateTime string
+	IdmSyncLock *IdmSyncLock
 }
 
-func InitAppDataSyncTask(integrationConf *common.IntegrationConf,crvClient *crv.CRVClient){
+func InitAppDataSyncTask(integrationConf *common.IntegrationConf,crvClient *crv.CRVClient,idmSyncLock *IdmSyncLock){
 	appData := &AppData{
 		GetAppTokenUrl:integrationConf.GetAppTokenUrl,
 		GetAppAccByUrl:integrationConf.GetAppAccByUrl,
@@ -36,6 +37,7 @@ func InitAppDataSyncTask(integrationConf *common.IntegrationConf,crvClient *crv.
 		CRVClient:crvClient,
 		InitUpdateAt:integrationConf.InitUpdateAt,
 		UpdateTime:integrationConf.UpdateTime,
+		IdmSyncLock:idmSyncLock,
 	}
 
 	//i.TestDealUserAccount()
@@ -46,9 +48,14 @@ func InitAppDataSyncTask(integrationConf *common.IntegrationConf,crvClient *crv.
 func (appData *AppData) start() {
 	//第一次同步
 	if appData.InitUpdateAt!="" {
-		log.Println("AppData init sync start ...")
-		appData.DoSync(appData.InitUpdateAt)
-		log.Println("AppData init sync end")
+		if appData.IdmSyncLock.Lock()==true {
+			log.Println("AppData init sync start ...")
+			appData.DoSync(appData.InitUpdateAt)
+			log.Println("AppData init sync end")
+			appData.IdmSyncLock.Unlock()
+		} else {
+			log.Println("AppData init sync is running ...")
+		}
 	}
 
 	//获取最新的更新时间
@@ -74,12 +81,17 @@ func (appData *AppData) start() {
 	}
 
 	for {
-		currentUpdateAt := updateAt
-		//当前时间减去一分钟，防止同步过程中有新的数据
-		updateAt = time.Now().Add(-time.Minute*1).Format("2006-01-02 15:04:05")
-		log.Println("AppData sync start with updateAt:",currentUpdateAt," ...")
-		appData.DoSync(currentUpdateAt)
-		log.Println("AppData sync end")
+		if appData.IdmSyncLock.Lock()==true {
+			currentUpdateAt := updateAt
+			//当前时间减去一分钟，防止同步过程中有新的数据
+			updateAt = time.Now().Add(-time.Minute*1).Format("2006-01-02 15:04:05")
+			log.Println("AppData sync start with updateAt:",currentUpdateAt," ...")
+			appData.DoSync(currentUpdateAt)
+			log.Println("AppData sync end")
+			appData.IdmSyncLock.Unlock()
+		} else {
+			log.Println("AppData sync is running ...")
+		}
 		time.Sleep(duration)
 	}
 }

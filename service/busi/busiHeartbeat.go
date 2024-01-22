@@ -112,16 +112,21 @@ func getVeichleRow(result map[string]interface{})(map[string]interface{}){
 func (busi *Busi)DealDeviceHeartbeat(deviceID,vin string){
 	//登录
 	//if busi.CrvClient.Login() ==0 {
-		//查询车辆信息
-		queryReq:=getQueryVinReq(deviceID)
-		rsp,err:=busi.CrvClient.Query(queryReq,"")
-		if err==common.ResultSuccess && rsp.Error==false {
-			//添加心跳记录到记录表
-			veicheleRow:=getVeichleRow(rsp.Result)
-			saveReq:=getDeviceHeartbeatSaveReq(deviceID,vin,veicheleRow)
-			busi.CrvClient.Save(saveReq,"")
+		//获取锁
+		if busi.HeartbeatLock.Lock(deviceID)==true {
+			//查询车辆信息
+			queryReq:=getQueryVinReq(deviceID)
+			rsp,err:=busi.CrvClient.Query(queryReq,"")
+			if err==common.ResultSuccess && rsp.Error==false {
+				//添加心跳记录到记录表
+				veicheleRow:=getVeichleRow(rsp.Result)
+				saveReq:=getDeviceHeartbeatSaveReq(deviceID,vin,veicheleRow)
+				busi.CrvClient.Save(saveReq,"")
+			} else {
+				log.Printf("Query vin info error %s,%d \n",rsp.Message,err)
+			}
 		} else {
-			log.Printf("Query vin info error %s,%d",rsp.Message,err)
+			log.Printf("can not get lock of device %s \n",deviceID)
 		}
 	//}
 }

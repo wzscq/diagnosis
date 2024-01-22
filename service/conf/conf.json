@@ -33,7 +33,11 @@
         "password":"",
         "sendRecordExpired":"60000s",
         "db":5,
-        "deviceSignalCacheDB":10
+        "deviceSignalCacheDB":10,
+        "heartbeatLockDB":11,
+        "heartbeatLockExpired":"60s",
+        "idmAppDataSyncLockDB":11,
+        "idmAppDataSyncLockExpired":"60s"
     },
     "kafka":{
         "topic.pdpm.project":"ISDC_PDPM_PROJECT_INFO",
@@ -58,13 +62,13 @@
         "systemCode":"DIAGNOSIS",
         "integrationKey":"DIAGNOSISsaicP@ssw278rd",
         "duration":"24h",
-        "initUpdateAt":"2023-10-01 00:00:00",
+        "initUpdateAt":"2023-12-14 01:00:00",
         "updateTime":"00:00:00",
         "roleMap":{
             "role1":"operator",
-            "role2":"diagnostic",
-            "role3":"development",
-            "role4":"admin"
+            "DIAG-ENGINEER":"diagnostic",
+            "DIAG-DEVELOPER":"development",
+            "DIAG-SYS":"admin"
         },
         "defaultRole":"operator"
     },

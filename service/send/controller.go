@@ -38,7 +38,7 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
 		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
 		c.IndentedJSON(http.StatusOK, rsp)
 		return
-    }	
+  }	
 
 	if rep.List==nil || len(*rep.List)==0 {
 		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
@@ -72,7 +72,6 @@ func (controller *SendController) sendParameter1 (c *gin.Context){
     jsonEncoder.Encode(parameter)
 	strParam:=bf.String()
 
-	
 	/*log.Println(strParam)
 	rsp1:=common.CreateResponse(common.CreateError(errorCode,nil),nil)
 	c.IndentedJSON(http.StatusOK, rsp1)

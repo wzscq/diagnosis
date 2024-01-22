@@ -30,6 +30,7 @@ type ecuRecord struct {
 	Time string  `json:"Time"`
 	PossibleCauses string `json:"PossibleCauses"`
 	RecommendedRecovery string `json:"RecommendedRecovery"`
+	Remark *string `json:"remark"`
 }
 
 type logisticsItem struct {
@@ -547,8 +548,23 @@ func (repo *ReportContent)getReport()(*excelize.File){
 		f.MergeCell(sheetName,cellStart,cellEnd)
 		f.SetCellStr(sheetName, cellStart, alyItem.Item.RecommendedRecovery)
 		f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
-
 		row++
+
+		if alyItem.Item.Remark != nil && len(*alyItem.Item.Remark)>0 {
+			cellStart,_=excelize.CoordinatesToCellName(1, row)
+			cellEnd,_=excelize.CoordinatesToCellName(1, row)
+			//f.MergeCell(sheetName,cellStart,cellEnd)
+			f.SetCellStr(sheetName, cellStart, "备注")
+			f.SetCellStyle(sheetName,cellStart,cellEnd,styleLabel)
+
+			cellStart,_=excelize.CoordinatesToCellName(2, row)
+			cellEnd,_=excelize.CoordinatesToCellName(8, row)
+			f.MergeCell(sheetName,cellStart,cellEnd)
+			f.SetCellStr(sheetName, cellStart, *alyItem.Item.Remark)
+			f.SetCellStyle(sheetName,cellStart,cellEnd,styleNormal)
+			row++
+		}
+
 		cellStart,_=excelize.CoordinatesToCellName(1, row)
 		cellEnd,_=excelize.CoordinatesToCellName(8, row+20)
 		f.MergeCell(sheetName,cellStart,cellEnd)

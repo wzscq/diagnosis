@@ -21,7 +21,7 @@ export default function ProjectCarChart({data}){
             },
             grid:{
                 left:50,
-                top:25,
+                top:45,
                 right:5,
                 bottom:40,
             }, 

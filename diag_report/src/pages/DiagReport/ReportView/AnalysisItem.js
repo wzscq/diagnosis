@@ -65,10 +65,11 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
     });
 
     const converTime=(time)=>{
-        if(time.length<14){
+        return time;
+        /*if(time.length<14){
             return time;
         }
-        return time.substr(0,4)+'-'+time.substr(4,2)+'-'+time.substr(6,2)+' '+time.substr(8,2)+':'+time.substr(10,2)+':'+time.substr(12,2);
+        return time.substr(0,4)+'-'+time.substr(4,2)+'-'+time.substr(6,2)+' '+time.substr(8,2)+':'+time.substr(10,2)+':'+time.substr(12,2);*/
     }
 
     let possibleCauses=rec?.PossibleCauses
@@ -133,6 +134,14 @@ export default function AnalysisItem({itmeIndex,report,rec,vin}){
                 <Col span={16} style={styleContent}>{rec?.RecommendedRecovery}</Col>
                 <Col span={2} />
             </Row>
+            {rec?.remark!==undefined&&rec?.remark!==""?
+                (<Row>
+                    <Col span={2} />
+                    <Col span={4} style={styleLabel}>备注</Col>
+                    <Col span={16} style={styleContent}>{rec?.remark}</Col>
+                    <Col span={2} />
+                </Row>):null
+            }
             
             <Row>
                 <Col span={2} />

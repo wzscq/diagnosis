@@ -254,4 +254,44 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    更新diag_report
    更新diag_v2report
 4、修改后台服务逻辑，优化mqtt重连后订阅失效问题
-5、问题48，问题49，修改IDM接口逻辑
+5、问题49，修改IDM接口逻辑
+
+2023-12-07
+1、问题48，需要同步部门数据
+2、问题68，修改前端dashboard模块代码
+      把标签值放到了柱子的里面
+3、问题69，修改所有模型的配置，增加快速检索字段
+4、问题70，修改菜单配置
+   menus.json
+5、问题71，替换logo图标
+6、问题41，退出到IDM登录页面
+   a、增加应用配置，指定退出地址,
+   b、修改crvframe  mainframe页面逻辑支持退出到指定地址
+7、添加redis锁机制，控制mqtt、数据同步接口的并发
+   修改后台服务逻辑
+   修改配置文件，增加了4个配置项目用于配置锁
+8、问题64，修改
+   a、修改diag_report
+   b、修改diag_v2report
+   c、修改diag_event_report
+   d、修改后端导出逻辑
+
+2023-12-15
+1、问题34、35、69
+   a、新增查询功能页面listview实现相应的功能定制
+   b、修改打包脚本，用定制页面替换原有框架统一页面
+2、问题48
+   修改后端服务逻辑
+3、问题74
+   修改diag_dashboard模块代码
+4、问题75
+   修改配置文件diag_result、diag_view_result
+
+2023-12-20
+1、修改listview页面，调整页面布局控件样式
+2、修改相关配置文件的文字信息
+   a、i18n.json
+   b、diag_event_parameter.json
+   c、diag_parameter.json
+   d、diag_signal.json
+   e、core_operation_log

@@ -7,7 +7,7 @@ import (
 )
 
 func (appData *AppData)SyncOrgs(updateAt,appToken string){
-	number:=38
+	number:=1
 	for {
 		//get user info
 		orgs,err:=GetAppOrgBy(appData.GetAppOrgByUrl,appToken,updateAt,number)
@@ -33,7 +33,6 @@ func (appData *AppData)SyncOrg(org idmOrg){
 	if crvOrg!=nil {
 		log.Println("crvOrg:",crvOrg)
 		appData.UpdateCRVOrg(&org,crvOrg)
-
 	} else {
 		appData.CreateCRVOrg(&org)
 	}
@@ -58,7 +57,7 @@ func (appData *AppData)GetCrvOrg(id string)(map[string]interface{}){
 	}
 
 	if req.Error == true {
-		log.Println("GetProjectData error:",req.ErrorCode,req.Message)
+		log.Println("GetCrvOrg error:",req.ErrorCode,req.Message)
 		return nil
 	}
 

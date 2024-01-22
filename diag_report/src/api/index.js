@@ -3,13 +3,16 @@ import axios from 'axios';
 
 
 export const getHost=()=>{
-    const rootElement=document.getElementById('root');
+    /*const rootElement=document.getElementById('root');
     const host=rootElement.getAttribute("host");
     console.log("host:"+host);
-    return host;
+    return host;*/
+    return process.env.REACT_APP_SERVER_HOST;
 }
 
 const host=getHost()+process.env.REACT_APP_SERVICE_API_PREFIX;
+
+console.log('getHost:',host,process.env);
 
 //getReport api
 export const getReport = createAsyncThunk(
