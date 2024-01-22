@@ -83,6 +83,91 @@ func (kc *KafkaConsumer)SaveVeichle(vehicle *EVDMSVeihcle){
 	
 }
 
+func (kc *KafkaConsumer)getDevice(deviceID string)(map[string]interface{}){
+	//查询数据
+	commonRep:=crv.CommonReq{
+		ModelID:MODEL_DEVICE,
+		Fields:&[]map[string]interface{}{
+			{"field":"id"},
+			{"field":"version"},
+		},
+		Filter:&map[string]interface{}{
+			"id":deviceID,
+		},
+	}
+
+	req,commonErr:=kc.CRVClient.Query(&commonRep,"")
+	if commonErr!=common.ResultSuccess {
+		return nil
+	}
+
+	if req.Error == true {
+		log.Println("getDevice error:",req.ErrorCode,req.Message)
+		return nil
+	}
+
+	if req.Result["list"]!=nil && len(req.Result["list"].([]interface{}))>0 {
+		return req.Result["list"].([]interface{})[0].(map[string]interface{})
+	}
+	return nil
+}
+
+func (kc *KafkaConsumer)addDevice(deviceItem *EVDMSDevice){
+	rec:=map[string]interface{}{}
+	rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_CREATE
+	rec["VehicleManagementCode"]=deviceItem.VehicleNo
+	rec["VIN"]=deviceItem.Vin
+	rec["ProjectNum"]=deviceItem.ProjectNo
+	rec["TestSpecification"]=deviceItem.Standard
+	rec["DeviceNumber"]=deviceItem.DeviceCode
+	rec["id"]=deviceItem.DeviceCode+"_"+deviceItem.BindingDate
+	rec["BindingDate"]=deviceItem.BindingDate
+	rec["UntieDate"]=deviceItem.UntieDate
+	rec["developPhase"]=deviceItem.DevelopPhase
+	rec["vehicleConfiger"]=deviceItem.VehicleConfiger
+
+	saveReq:=&crv.CommonReq{
+		ModelID:MODEL_DEVICE,
+		List:&[]map[string]interface{}{
+			rec,
+		},
+	}
+	log.Println(saveReq)
+	kc.CRVClient.Save(saveReq,"")
+}
+
+func (kc *KafkaConsumer)updateDevice(deviceItem *EVDMSDevice,rec map[string]interface{}){
+	rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_UPDATE
+	rec["VehicleManagementCode"]=deviceItem.VehicleNo
+	rec["VIN"]=deviceItem.Vin
+	rec["ProjectNum"]=deviceItem.ProjectNo
+	rec["TestSpecification"]=deviceItem.Standard
+	rec["DeviceNumber"]=deviceItem.DeviceCode
+	rec["BindingDate"]=deviceItem.BindingDate
+	rec["UntieDate"]=deviceItem.UntieDate
+	rec["developPhase"]=deviceItem.DevelopPhase
+	rec["vehicleConfiger"]=deviceItem.VehicleConfiger
+
+	saveReq:=&crv.CommonReq{
+		ModelID:MODEL_DEVICE,
+		List:&[]map[string]interface{}{
+			rec,
+		},
+	}
+	log.Println(saveReq)
+	kc.CRVClient.Save(saveReq,"")
+}
+
+func (kc *KafkaConsumer)SaveOneDevice(dev *EVDMSDevice){
+	deviceID:=dev.DeviceCode+"_"+dev.BindingDate
+	deviceRec:=kc.getDevice(deviceID)
+	if deviceRec == nil {
+		kc.addDevice(dev)
+	} else {
+		kc.updateDevice(dev,deviceRec)
+	}
+}
+
 func (kc *KafkaConsumer)SaveDevice(deviceString string){
 	device:=&EVDMSDeviceMsg{}
 	err:=json.Unmarshal([]byte(deviceString),device)
@@ -96,33 +181,9 @@ func (kc *KafkaConsumer)SaveDevice(deviceString string){
 		return
 	}
 
-	//登录
-	//if kc.CRVClient.Login() ==0 {
-		reclst:=[]map[string]interface{}{}
-		for _,deviceItem:=range device.Detail {
-			rec:=map[string]interface{}{}
-			rec[crv.SAVE_TYPE_COLUMN]=crv.SAVE_CREATE
-			rec["VehicleManagementCode"]=deviceItem.VehicleNo
-			rec["VIN"]=deviceItem.Vin
-			rec["ProjectNum"]=deviceItem.ProjectNo
-			rec["TestSpecification"]=deviceItem.Standard
-			rec["DeviceNumber"]=deviceItem.DeviceCode
-			rec["id"]=deviceItem.DeviceCode+"_"+deviceItem.BindingDate
-			rec["BindingDate"]=deviceItem.BindingDate
-			rec["UntieDate"]=deviceItem.UntieDate
-			rec["developPhase"]=deviceItem.DevelopPhase
-			rec["vehicleConfiger"]=deviceItem.VehicleConfiger
-			reclst=append(reclst,rec)
-		}
-		//添加心跳记录到记录表
-		saveReq:=&crv.CommonReq{
-			ModelID:MODEL_DEVICE,
-			List:&reclst,
-		}
-		log.Println(saveReq)
-		kc.CRVClient.Save(saveReq,"")
-		
-	//}
+	for _,deviceItem:=range device.Detail {
+		kc.SaveOneDevice(&deviceItem)
+	}
 }
 
 func (kc *KafkaConsumer)doInitConsumer() *kafka.Consumer {
