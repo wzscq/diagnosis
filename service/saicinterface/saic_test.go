@@ -23,7 +23,7 @@ func TestKafkaConsumer(t *testing.T) {
 		Standard:"test01",
 		DevelopPhase:"test01",
 		BindingDate:"2024-01-20 00:00:00",
-		UntieDate:"2024-02-20 00:00:00",
+		UntieDate:"2024-03-20 00:00:00",
 		VehicleConfiger:"1",
 	}
 

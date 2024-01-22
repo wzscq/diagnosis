@@ -266,11 +266,7 @@ func StartConsumer(kafkaConf *common.KafkaConfig,crvClient *crv.CRVClient){
 		KafkaConf:kafkaConf,
 		CRVClient:crvClient,
 	}
-
+	//log.Println("KafkaConsumer start ... ",kafkaConsumer.KafkaConf.TopicPDPMProject,kafkaConsumer.KafkaConf.TopicEVDMSDevice)
 	go kafkaConsumer.Start()
-	//go kafkaConsumer.ConnectToKafa()
-	//go kafkaConsumer.ConsumePDPMProject()
-	//go kafkaConsumer.ConsumeEVDMSVeihcle()
-	//go kafkaConsumer.ConsumeEVDMSDevice() 
 }
 
