@@ -295,3 +295,6 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    c、diag_parameter.json
    d、diag_signal.json
    e、core_operation_log
+
+2024-02-20
+1、修改listview页面代码，解决按钮弹出提示闪烁问题
