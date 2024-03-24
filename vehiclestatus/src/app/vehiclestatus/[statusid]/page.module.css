@@ -1,0 +1,25 @@
+.vechileStatusLayout {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 33% 33% 33%;
+  grid-gap: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  padding: 5px;
+  background-color: silver;
+}
+
+.statusGrid div {
+  background-color: white;
+}
+
+.statusGrid .statusChart {
+  grid-column:1 / span 5;
+  grid-row:1 / span 2;
+}

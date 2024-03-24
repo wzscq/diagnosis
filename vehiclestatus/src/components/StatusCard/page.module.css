@@ -1,0 +1,25 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  position: relative;
+}
+
+.wrapper div {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.wrapper h2 {
+  font-weight: 400;
+  text-align: center;
+  color:grey
+}
+
+.wrapper h1 {
+  color: deepskyblue;
+  text-align: center;
+}
