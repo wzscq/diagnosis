@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Chart from '@/components/Chart';
 import StatusCard from '@/components/StatusCard';
+import {getVechicleStatus} from "@/api";
 import styles from './page.module.css';
 
 const option = {
@@ -46,19 +47,20 @@ const option = {
     ]
   };
 
-export default function vehicleStatus({params}){
-    option.title.text = '能耗曲线'+params.statusid;
+export default async function vehicleStatus({params}){
+  const result=await getVechicleStatus({id:params.statusid})
+  const row=result?.result?.list?.[0]??{};
 
-    return (
-        <div className={styles.statusGrid}>
-            <div className={styles.statusChart}>
-              <Chart chartOption={option} />
-            </div>
-            <StatusCard title={'最大车速'} value={'53.5 km/h'} />
-            <StatusCard title={'平均车速'} value={'23.5 km/h'} />
-            <StatusCard title={'行驶里程'} value={'3.5 km'} />
-            <StatusCard title={'行驶时间'} value={'35min26s'} />
-            <StatusCard title={'平均能耗'} value={'17.5 kw'} />
-        </div>
-    )
+  return (
+    <div className={styles.statusGrid}>
+      <div className={styles.statusChart}>
+        <Chart chartOption={option} />
+      </div>
+      <StatusCard title={'最大车速'} value={(row['speed_max']??'')+'km/h'} />
+      <StatusCard title={'平均车速'} value={(row['speed_avg']??'')+'km/h'} />
+      <StatusCard title={'行驶里程'} value={(row['mileage']??'')+'km'} />
+      <StatusCard title={'行驶时间'} value={(row['travel_time']??'')+'s'} />
+      <StatusCard title={'平均能耗'} value={(row['ec_avg']??'')+'kw'} />
+    </div>
+  )
 }

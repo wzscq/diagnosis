@@ -1,5 +1,6 @@
 'use client'
 import { Table } from 'antd';
+import { useRouter } from 'next/navigation'
 
 const columns = [
     {
@@ -45,102 +46,15 @@ const columns = [
 ];
   
 
-export default function StatusTable() {
-    const dataSource=[
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'1'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'2'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'3'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'4'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'5'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'6'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'7'
-        },
-        {
-            vehicle_code:'V001',
-            project_code:'P001',
-            test_spec:'TS001',
-            device_code:'D001',
-            speed_max:53.5,
-            speed_avg:23.5,
-            mileage:3.5,
-            ec_avg:17.5,
-            key:'8'
-        }
-    ]
-
+export default function StatusTable({dataSource}) {
+    const router = useRouter()
     const rowSelection = {
         type:'radio',
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            if(selectedRowKeys.length>0){
+                router.push('/vehiclestatus/'+selectedRowKeys[0])
+            }
         },
         getCheckboxProps: (record) => ({
             disabled: record.name === 'Disabled User',
@@ -149,11 +63,15 @@ export default function StatusTable() {
         }),
     }
 
+    dataSource.forEach(element => {
+        element['key'] = element['id']
+    });
+
     return <Table
         size='small' 
         dataSource={dataSource} 
         columns={columns} 
-        pagination={{position:'bottomRight',defaultCurrent:1,total:1}}
+        pagination={{position:'bottomRight',defaultCurrent:1,pageSize:8}}
         rowSelection={rowSelection}
     />
 }
