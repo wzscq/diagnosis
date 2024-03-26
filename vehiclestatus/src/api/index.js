@@ -1,4 +1,4 @@
-export async function getVechicleStatus(filter) {
+export async function getVechicleStatus(pageSize,filter) {
     let headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("token","carapiv2");
@@ -23,13 +23,12 @@ export async function getVechicleStatus(filter) {
         {field:"version"}
       ],
       sorter:[{field:"update_time",order:"desc"}],
-      pagination:{current:1,pageSize:1000},
+      pagination:{current:1,pageSize:pageSize??1000},
       filter:filter
     }
   
     let options = {headers,body:JSON.stringify(body),method:"POST",cache:'no-store'}
-  
-    const res = await fetch('http://localhost:8200/data/query/',options)
+    const res = await fetch(`${process.env.CRV_SERVICE_URL}/data/query`,options)
     // The return value is *not* serialized
     // You can return Date, Map, Set, etc.
    

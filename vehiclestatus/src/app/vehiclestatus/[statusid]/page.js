@@ -48,7 +48,11 @@ const option = {
   };
 
 export default async function vehicleStatus({params}){
-  const result=await getVechicleStatus({id:params.statusid})
+  let filter = {};
+  if(params.statusid !== '-1'){
+    filter={id:params.statusid}
+  }
+  const result=await getVechicleStatus(1,filter)
   const row=result?.result?.list?.[0]??{};
 
   return (
