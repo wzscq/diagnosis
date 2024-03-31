@@ -5,3 +5,7 @@ body {
 .ant-drawer-body {
   padding: 8px !important;
 }
+
+.ant-card-body {
+  height: 100% !important;
+}

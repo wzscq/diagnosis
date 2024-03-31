@@ -1,0 +1,19 @@
+.dataGrid {
+  width: 100%;
+  height: 100%;
+  gap: 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr ;
+  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px;
+  text-align: center;
+}
+
+.title {
+  background-color: cornflowerblue;
+  color: white;
+  line-height: 50px !important;
+}
+
+.dataGrid div {
+  line-height: 20px;
+}
