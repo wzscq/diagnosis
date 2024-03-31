@@ -12,7 +12,8 @@ import (
 	"digimatrix.com/diagnosis/busi"
 	"digimatrix.com/diagnosis/oauth"
 	"digimatrix.com/diagnosis/idm"
-	//"digimatrix.com/diagnosis/saicinterface"
+	"digimatrix.com/diagnosis/vehiclestatus"
+	"digimatrix.com/diagnosis/saicinterface"
 	"log"
 	"time"
 )
@@ -74,8 +75,6 @@ func main() {
 		HeartbeatLock:&heartbeatLock,
 	}
 
-	//busiModule.DealDeviceHeartbeat("3ec783","LSJW949UUMS997068")
-
 	//mqttclient
 	mqttClient:=mqtt.MQTTClient{
 		Broker:conf.MQTT.Broker,
@@ -89,9 +88,8 @@ func main() {
 	mqttClient.Init()
 
 	//kafka consumer
-	//saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
+	saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
 
-	//idm.InitIntegration(&conf.IDMIntegration,&crvClinet)
 	duration, _ = time.ParseDuration(conf.Redis.IdmAppDataSyncLockExpired)
 	idmSyncLock:=idm.IdmSyncLock{}
 	idmSyncLock.Init(
@@ -136,6 +134,13 @@ func main() {
 		LoginUrl:conf.Oauth.Url,
 	}
 	oauthContrller.Bind(router)
+
+	vehiclestatusController:=vehiclestatus.CreateController(
+		conf.VehicleStatusMongo.Server,
+		conf.VehicleStatusMongo.DBName,
+		conf.VehicleStatusMongo.User,
+		conf.VehicleStatusMongo.Password)
+	vehiclestatusController.Bind(router)
 
 	router.Run(conf.Service.Port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

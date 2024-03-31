@@ -97,6 +97,7 @@ type Config struct {
 	Kafka KafkaConfig `json:"kafka"`
 	Oauth OauthConf `json:"oauth"`
 	IDMIntegration IntegrationConf `json:"idmIntegration"`
+	VehicleStatusMongo mongoConf `json:"vehicleStatusMongo"`
 }
 
 var gConfig Config

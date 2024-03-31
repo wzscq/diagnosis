@@ -11,6 +11,12 @@
         "user":"tester",
         "dbName":"DiagInfo"
     },
+    "vehicleStatusMongo":{
+        "server":"mongodb://114.115.255.157:20222",
+        "password":"123456",
+        "user":"adminUser",
+        "dbName":"modelInfo"
+    },
     "service":{
         "port":"localhost:8300"
     },
@@ -62,7 +68,7 @@
         "systemCode":"DIAGNOSIS",
         "integrationKey":"DIAGNOSISsaicP@ssw278rd",
         "duration":"24h",
-        "initUpdateAt":"2023-12-14 01:00:00",
+        "initUpdateAt":"",
         "updateTime":"00:00:00",
         "roleMap":{
             "role1":"operator",

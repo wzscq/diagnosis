@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Chart from '@/components/Chart';
 import StatusCard from '@/components/StatusCard';
-import {getVechicleStatus} from "@/api";
+import {getVechicleStatus,getVechicleStatusDetail} from "@/api";
 import styles from './page.module.css';
 
 const option = {
@@ -27,21 +27,7 @@ const option = {
     },
     series: [
       {
-        data: [
-          [10, 50],
-          [50, 100],
-          [60, 20],
-          [70, 60],
-          [80, 30],
-          [90, 100],
-          [170, 160],
-          [270, 260],
-          [370, 560],
-          [470, 160],
-          [570, 260],
-          [670, 460],
-          [770, 60],
-        ],
+        data: [],
         type: 'line'
       }
     ]
@@ -54,6 +40,19 @@ export default async function vehicleStatus({params}){
   }
   const result=await getVechicleStatus(1,filter)
   const row=result?.result?.list?.[0]??{};
+
+  const detail=await getVechicleStatusDetail(params.statusid)
+  let data=[]
+  if(detail?.length>0){
+    const detailRow=detail[0];
+    if(detailRow){
+      data=detailRow.SignalCoordinateValue.map((item)=>{
+        return [parseFloat(item.Coordinate_X),parseFloat(item.Coordinate_Y['$numberDouble'])]
+      })
+    }
+  }
+
+  option.series[0].data=data;
 
   return (
     <div className={styles.statusGrid}>
