@@ -22,4 +22,5 @@
 .wrapper h1 {
   color: deepskyblue;
   text-align: center;
+  word-break: break-all;
 }

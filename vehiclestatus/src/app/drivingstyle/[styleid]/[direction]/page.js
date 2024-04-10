@@ -123,6 +123,8 @@ const waterfallOption = {
 const radarOption = {
     radar: {
       // shape: 'circle',
+      radius:'70%',
+      nameGap:10,
       indicator: [
         { name: '车速', max: 5,color:'#000' },
         { name: '油门深度', max: 5,color:'#000' },
@@ -157,37 +159,43 @@ export default async function DrivingStylePage({params}){
 
     if(row){
         const value=[
-            row['speed_max_leve']??0,
-            row['mtpd_ratio_level']??0,
-            row['mtc_ratio_level']??0,
-            row['mbpd_ratio_level']??0,
-            row['mbc_ratio_level']??0,
-            row['mtwav_level']??0,
-            row['lateral_acc_max_level']??0,
-            row['long_acc_max_level']??0
+          parseInt(row['speed_max_level']??0),
+          parseInt(row['mtpd_ratio_level']??0),
+          parseInt(row['mtc_ratio_level']??0),
+          parseInt(row['mbpd_ratio_level']??0),
+          parseInt(row['mbc_ratio_level']??0),
+          parseInt(row['mtwav_level']??0),
+          parseInt(row['lateral_acc_max_level']??0),
+          parseInt(row['long_acc_max_level']??0)
         ]
         radarOption.series[0].data=[{
             value:[...value]
         }]
-        const gradeValue=[...value]
+        const gradeValue=[0, 0, 0, 0, 0, 0,0,0]
         let total=0;
         for(let i=0;i<gradeValue.length;i++){
-            gradeValue[i]=parseInt(gradeValue[i])+total
-            total=gradeValue[i]
+            gradeValue[i]=total
+            total=value[i]+total
         }
         waterfallOption.series[0].data=[...gradeValue]
         waterfallOption.series[1].data=[...value]
+
+        console.log('gradeValue',gradeValue,"value",value)
+
+        waterfallOption.title.text=row['driving_style']??''
     }
 
     if(params.direction!=='h'){
       waterfallOption.xAxis.axisLabel.rotate=0
+    } else {
+      waterfallOption.xAxis.axisLabel.rotate=45
     }
 
     return (
         <div className={styles.main}>
             <div className={styles.header}>
                 <div className={styles.title}>驾驶风格分析</div>
-                <div className={styles.subTitle}>车辆编号：{row?.['vehicle_code']??''}</div>
+                <div className={styles.subTitle}></div>
                 <div className={styles.toolbar}>
                     <Toolbar styleid={params.styleid}  direction={params.direction}/>
                 </div>

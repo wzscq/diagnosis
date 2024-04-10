@@ -4,19 +4,9 @@ import { useRouter } from 'next/navigation'
 
 const columns = [
     {
-      title: '车辆编码',
-      dataIndex: 'vehicle_code',
-      key: 'vehicle_code',
-    },
-    {
-      title: '项目编码',
-      dataIndex: 'project_code',
-      key: 'project_code',
-    },
-    {
-      title: '试验规范',
-      dataIndex: 'test_spec',
-      key: 'test_spec',
+      title: '创建时间',
+      dataIndex: 'create_time',
+      key: 'create_time',
     },
     {
         title: '设备编号',
@@ -39,7 +29,7 @@ const columns = [
         key: 'mileage',
     },
     {
-        title: '平均能耗(kw)',
+        title: '平均能耗(kwh/100km)',
         dataIndex: 'ec_avg',
         key: 'ec_avg',
     }

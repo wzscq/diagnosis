@@ -31,8 +31,8 @@ export default function Toolbar({direction,styleid}){
 
     return (
         <Space size={2}>
-            <Button onClick={switchDriection} disabled={direction==='h'}><ProfileFilled /></Button>,
-            <Button onClick={switchDriection} disabled={direction!=='h'}><DatabaseFilled /></Button>,
+            <Button onClick={switchDriection} disabled={direction==='h'}><ProfileFilled /></Button>
+            <Button onClick={switchDriection} disabled={direction!=='h'}><DatabaseFilled /></Button>
             <Button onClick={close} type='primary'>关闭</Button>
         </Space>
     )

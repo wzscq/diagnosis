@@ -13,7 +13,7 @@ import (
 	"digimatrix.com/diagnosis/oauth"
 	"digimatrix.com/diagnosis/idm"
 	"digimatrix.com/diagnosis/vehiclestatus"
-	"digimatrix.com/diagnosis/saicinterface"
+	//"digimatrix.com/diagnosis/saicinterface"
 	"log"
 	"time"
 )
@@ -88,7 +88,7 @@ func main() {
 	mqttClient.Init()
 
 	//kafka consumer
-	saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
+	//saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
 
 	duration, _ = time.ParseDuration(conf.Redis.IdmAppDataSyncLockExpired)
 	idmSyncLock:=idm.IdmSyncLock{}

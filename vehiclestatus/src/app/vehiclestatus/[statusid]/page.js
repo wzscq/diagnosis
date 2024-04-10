@@ -15,13 +15,16 @@ const option = {
         fontSize:20
       }
     },
+    tooltip:{
+      trigger:'axis'
+    },
     xAxis: {
       name:'Time（s）',
       nameLocation:'middle',
       nameGap:30
     },
     yAxis: {
-      name:'能耗（kw）',
+      name:'能耗（kwh/100km）',
       nameLocation:'middle',
       nameGap:50
     },
@@ -54,6 +57,14 @@ export default async function vehicleStatus({params}){
 
   option.series[0].data=data;
 
+  const travel_time=row['travel_time']??0
+  console.log('travel_time',travel_time)
+  const travelFloat = parseInt(travel_time)
+  const travelMin = Math.floor(travelFloat / 60)
+  let travelTime = travelMin>0?travelMin + 'min':''
+  const travelSec = travelFloat % 60
+  travelTime = travelTime +' '+travelSec + 's'
+
   return (
     <div className={styles.statusGrid}>
       <div className={styles.statusChart}>
@@ -62,8 +73,8 @@ export default async function vehicleStatus({params}){
       <StatusCard title={'最大车速'} value={(row['speed_max']??'')+'km/h'} />
       <StatusCard title={'平均车速'} value={(row['speed_avg']??'')+'km/h'} />
       <StatusCard title={'行驶里程'} value={(row['mileage']??'')+'km'} />
-      <StatusCard title={'行驶时间'} value={(row['travel_time']??'')+'s'} />
-      <StatusCard title={'平均能耗'} value={(row['ec_avg']??'')+'kw'} />
+      <StatusCard title={'行驶时间'} value={travelTime} />
+      <StatusCard title={'平均能耗'} value={(row['ec_avg']??'')+'kwh/100km'} />
     </div>
   )
 }
