@@ -247,10 +247,47 @@ func (controller *Controller) downloadRawData (c *gin.Context){
 	io.Copy(c.Writer,file)
 }
 
+func (controller *Controller) closeReport (c *gin.Context){
+	var header crv.CommonHeader
+	if err := c.ShouldBindHeader(&header); err != nil {
+		log.Println(err)
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		log.Println("end closeReport with error")
+		return
+	}	
+	
+	var rep crv.CommonReq
+	if err := c.BindJSON(&rep); err != nil {
+		log.Println(err)
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+  	}	
+
+	if rep.SelectedRowKeys==nil || len(*rep.SelectedRowKeys)==0 {
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+	
+	if rep.List==nil || len(*rep.List)==0 {
+		rsp:=common.CreateResponse(common.CreateError(common.ResultWrongRequest,nil),nil)
+		c.IndentedJSON(http.StatusOK, rsp)
+		return
+	}
+
+	CloseReports(controller.CRVClient,header.Token,*rep.SelectedRowKeys,(*rep.List)[0])	
+
+	rsp:=common.CreateResponse(nil,nil)
+	c.IndentedJSON(http.StatusOK, rsp)
+}
+
 //Bind bind the controller function to url
 func (controller *Controller) Bind(router *gin.Engine) {
 	log.Println("Bind controller")
 	router.POST("/reports", controller.getReports)
 	router.POST("/downloadReport",controller.downloadReport)
 	router.POST("/downloadRawData",controller.downloadRawData)
+	router.POST("/closeReport",controller.closeReport)
 }

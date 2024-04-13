@@ -73,6 +73,7 @@ const (
 	URL_LOGIN = "/user/login"
 	URL_SAVE = "/data/save"
 	URL_QUERY = "/data/query"
+	URL_UPDATE = "/data/update"
 )
 
 const (
@@ -173,6 +174,51 @@ func (crv *CRVClient)Save(commonReq *CommonReq,token string)(*CommonRsp,int){
 	log.Println(string(resultJson))
 
 	log.Println("end CRVClient save success")
+	return &commonRsp,common.ResultSuccess
+}
+
+func (crv *CRVClient)Update(commonReq *CommonReq,token string)(*CommonRsp,int){
+	log.Println("start CRVClient update ...")
+	postJson,_:=json.Marshal(*commonReq)
+	postBody:=bytes.NewBuffer(postJson)
+	req,err:=http.NewRequest("POST",crv.Server+URL_UPDATE,postBody)
+	if err != nil {
+		log.Println("CRVClient update NewRequest error",err)
+		return nil,common.ResultSaveDataError
+	}
+
+	if len(token)==0 {
+		req.Header.Set("token", crv.Token)
+	} else {
+		req.Header.Set("token", token)
+	}
+	
+	req.Header.Set("Content-Type","application/json")
+	
+	resp, err := (&http.Client{}).Do(req)
+	if err != nil {
+		log.Println("CRVClient update Do request error",err)
+		return nil,common.ResultSaveDataError
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 { 
+		log.Println("CRVClient update StatusCode error",resp)
+		return nil,common.ResultSaveDataError
+	}
+
+	decoder := json.NewDecoder(resp.Body)
+	commonRsp:=CommonRsp{}
+	err = decoder.Decode(&commonRsp)
+	if err != nil {
+		log.Println("CRVClient update result decode failed [Err:%s]", err.Error())
+		return nil,common.ResultSaveDataError
+	}
+
+	resultJson,_:=json.Marshal(&commonRsp.Result)
+	log.Println(string(resultJson))
+
+	log.Println("end CRVClient update success")
 	return &commonRsp,common.ResultSuccess
 }
 

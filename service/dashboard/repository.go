@@ -41,7 +41,7 @@ func (repo *DefatultRepository)query(sql string)([]map[string]interface{},error)
 }
 
 func (repo *DefatultRepository)getCarCount(whereStr string)(int,error){
-	row := repo.DB.QueryRow("select count(*) as count from diag_result "+whereStr)
+	row := repo.DB.QueryRow("select count(*) as count from diag_view_result "+whereStr)
     var count int = 0
 	if err := row.Scan(&count); err != nil {
         log.Println("getCarCount error")
@@ -82,7 +82,7 @@ func (repo *DefatultRepository)toMap(rows *sql.Rows)([]map[string]interface{},er
 }
 
 func (repo *DefatultRepository)getFaultList(whereStr string)([]map[string]interface{},error){
-	rows, err := repo.DB.Query("select * from  diag_result "+whereStr+" order by status asc,time desc limit 0,500")
+	rows, err := repo.DB.Query("select * from  diag_view_result "+whereStr+" order by status asc,time desc limit 0,500")
 	if err != nil {
 		log.Println(err)
 		return nil,nil
@@ -117,7 +117,7 @@ func (repo *DefatultRepository)getFaultCountByType(whereStr string)([]map[string
 
 func (repo *DefatultRepository)getFaultCountByStatus(whereStr string)(*FaultStatusCount,error){
 	var statusCount FaultStatusCount
-	row:= repo.DB.QueryRow("SELECT count(if(status=0,true,null)) as openCount,count(if(status=1,true,null)) as closedCount FROM diag_result "+whereStr)
+	row:= repo.DB.QueryRow("SELECT count(if(status=0,true,null)) as openCount,count(if(status=1,true,null)) as closedCount FROM diag_view_result "+whereStr)
 	if err := row.Scan(&statusCount.OpenCount, &statusCount.ClosedCount); err != nil {
         log.Println("getFaultCountByType error")
 		log.Println(err)
