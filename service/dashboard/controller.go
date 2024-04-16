@@ -28,7 +28,7 @@ func GetWhereString(filter DashBoradFilter)(string){
 	}
 
 	if len(filter.Type)>0 {
-		str=str+"and type like '"+filter.Type+"' "
+		str=str+"and type like '%"+filter.Type+"%' "
 	}
 
 	if len(filter.Spec)>0 {
