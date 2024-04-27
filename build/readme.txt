@@ -310,4 +310,9 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 2、dashboard页面取数逻辑修改
    a、修改后台服务查询数据逻辑
 
-
+2024-04-27
+1、增加诊断执行配置
+   a、修改菜单配置，menus.json
+   b、修改表diag_exe_config定义，增加platform_id字段
+   c、修改模型配置diag_exe_config
+   d、修改后端下发逻辑，增加对diag_exe_config查询条件

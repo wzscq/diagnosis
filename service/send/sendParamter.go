@@ -69,7 +69,7 @@ func (sp *SendParameter)getSendParameter(row map[string]interface{},token string
 	}
 	//获取配置信息
 	log.Println("getSendParameter getDiagConf ...")
-	dc,errorCode:=getDiagConf(sp.CRVClient,token)
+	dc,errorCode:=getDiagConf(sp.CRVClient,dp.PlatformID,token)
 	if errorCode!=common.ResultSuccess {
 		log.Println("getSendParameter getDiagConf error")
 		return nil,errorCode

@@ -49,12 +49,12 @@ type diagConf struct {
 	Conf map[string]interface{}
 }
 
-func getDiagConf(crvClient *crv.CRVClient,token string)(*diagConf,int){
+func getDiagConf(crvClient *crv.CRVClient,platform,token string)(*diagConf,int){
 	dc:=&diagConf{
 		CRVClient:crvClient,
 	}
 
-	rsp,errorCode:=dc.queryDiagConfig(token)
+	rsp,errorCode:=dc.queryDiagConfig(platform,token)
 	if errorCode!=common.ResultSuccess {
 		return nil,errorCode
 	}
@@ -67,11 +67,20 @@ func getDiagConf(crvClient *crv.CRVClient,token string)(*diagConf,int){
 	return dc,common.ResultSuccess
 }
 
-func (dc *diagConf)queryDiagConfig(token string)(*crv.CommonRsp,int){
+func (dc *diagConf)queryDiagConfig(platform,token string)(*crv.CommonRsp,int){
 	log.Println("start queryDiagConfig")
 	commonReq:=crv.CommonReq{
 		ModelID:"diag_exe_config",
 		Fields:&QueryConfigFields,
+		Filter:&map[string]interface{}{
+			"platform_id":map[string]interface{}{
+				"Op.eq":platform,
+			},
+		},
+		Pagination:&crv.Pagination{
+			Current:1,
+			PageSize:1,
+		},
 	}
 
 	return dc.CRVClient.Query(&commonReq,token)
