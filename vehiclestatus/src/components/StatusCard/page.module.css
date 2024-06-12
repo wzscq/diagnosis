@@ -16,11 +16,23 @@
 .wrapper h2 {
   font-weight: 400;
   text-align: center;
-  color:grey
+  color:grey;
+  font-size: 21px;
+  line-height: 21px;
+  margin: 0;
+}
+
+.wrapper br {
+  font-size: 21px;
+  line-height: 21px;
+  height: 21px;
 }
 
 .wrapper h1 {
   color: deepskyblue;
   text-align: center;
   word-break: break-all;
+  font-size: 30px;
+  line-height: 30px;
+  margin: 0;
 }

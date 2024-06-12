@@ -74,6 +74,7 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 1、执行以下命令安装alpine的编译环境
    apk add alpine-sdk
 2、执行以下命令编译程序
+   go get -tags musl github.com/mattn/go-isatty@v0.0.14
    go build -tags musl
 
 
@@ -316,3 +317,16 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
    b、修改表diag_exe_config定义，增加platform_id字段
    c、修改模型配置diag_exe_config
    d、修改后端下发逻辑，增加对diag_exe_config查询条件
+
+2024-05-20
+1、诊断执行配置补充平台+总线名称
+   a、数据库表增加总线名称字段
+   b、修改相应模型配置 diag_exe_config
+
+2024-05-29
+1、综合报告页面字段显示顺序修改
+   a、修改模型配置：diag_view_result
+   b、修改模型配置: diag_result
+
+2024-06-12
+1、use_triggercanid为0时，triggercanid设置为0，修改后端服务逻辑

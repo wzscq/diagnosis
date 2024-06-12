@@ -24,14 +24,29 @@ const columns = [
         key: 'speed_avg',
     },
     {
-        title: '行驶里程(km)',
-        dataIndex: 'mileage',
-        key: 'mileage',
-    },
-    {
         title: '平均能耗(kwh/100km)',
         dataIndex: 'ec_avg',
         key: 'ec_avg',
+    },
+    {
+        title: 'NOP激活行驶里程(km)',
+        dataIndex: 'nop_mileage',
+        key: 'nop_mileage',
+    },
+    {
+        title: 'NOP退出次数',
+        dataIndex: 'nop_disabledTimes',
+        key: 'nop_disabledTimes',
+    },
+    {
+        title: 'TJA激活行驶里程(km)',
+        dataIndex: 'tja_mileage',
+        key: 'tja_mileage',
+    },
+    {
+        title: 'ACC激活行驶里程(km)',
+        dataIndex: 'acc_mileage',
+        key: 'acc_mileage',
     }
 ];
   
@@ -61,7 +76,7 @@ export default function StatusTable({dataSource}) {
         size='small' 
         dataSource={dataSource} 
         columns={columns} 
-        pagination={{position:'bottomRight',defaultCurrent:1,pageSize:8}}
+        pagination={{position:'bottomRight',defaultCurrent:1,pageSize:8,showSizeChanger:false}}
         rowSelection={rowSelection}
     />
 }

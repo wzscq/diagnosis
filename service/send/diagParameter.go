@@ -16,6 +16,7 @@ var QueryParameterFields = []map[string]interface{}{
 	{"field": "platform_id"},
 	{"field": "time_offset"},
 	{"field": "channel"},
+	{"field": "use_triggercanid"},
 	/*{
 		"field": "domain_id",
 		"fieldType": "MANY_TO_ONE",
@@ -220,6 +221,8 @@ func (dp *diagParameter)convertDiagParameter(
 	diagParaList:=map[string]interface{}{}
 	diagParaList["TimeOffset"]=row["time_offset"]
 	diagParaList["Channel"]=row["channel"]
+
+	use_triggercanid,_:=row["use_triggercanid"].(string)
 	
 	ecuList,ok:=row["ecu_id"].(map[string]interface{})["list"].([]interface{})
 	if ok && len(ecuList)>0 {
@@ -227,7 +230,11 @@ func (dp *diagParameter)convertDiagParameter(
 		diagParaList["Ecu"]=ecu["id"]
 		diagParaList["TxId"]=ecu["tx"]
 		diagParaList["RxId"]=ecu["rx"]
-		diagParaList["TriggerCanId"]=ecu["trigger_can_id"]
+		if use_triggercanid=="1" {
+			diagParaList["TriggerCanId"]=ecu["trigger_can_id"]
+		} else {
+			diagParaList["TriggerCanId"]="0"
+		}
 		diagParaList["DiagInstruct"]=ecu["instruct"]
 	}
 	

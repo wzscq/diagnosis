@@ -65,7 +65,7 @@ const waterfallOption = {
             data:[
                 [
                     {
-                        name: '保守   \n\n0≤∑≤21',
+                        name: '温和   \n\n0≤∑<20',
                         itemStyle:{
                             
                         },
@@ -76,12 +76,12 @@ const waterfallOption = {
                         yAxis:0
                     },
                     {
-                        yAxis: 21
+                        yAxis: 20
                     }
                 ],
                 [
                     {
-                        name: '温和   \n\n22≤∑≤35',
+                        name: '标准   \n\n20≤∑≤35',
                         itemStyle:{
                             color:'#1677FF',
                             opacity:0.5
@@ -90,7 +90,7 @@ const waterfallOption = {
                             position:'insideRight',
                             color:'#000'
                         },
-                        yAxis: 21
+                        yAxis: 20
                     },
                     {
                         yAxis: 35
@@ -98,7 +98,7 @@ const waterfallOption = {
                 ],
                 [
                     {
-                        name: '激进   \n\n36≤∑≤40',
+                        name: '激进   \n\n35<∑≤40',
                         itemStyle:{
                             color:'#124D9F',
                             opacity:0.5
