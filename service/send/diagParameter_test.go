@@ -18,7 +18,7 @@ func TestGetSendParameter(t *testing.T) {
 		SignalList:&map[string]interface{}{},
 	}
 
-	ids:=[]string{"13"}
+	ids:=[]string{"33"}
 	dp,errorCode:=getDiagParams(ids,sp.CRVClient,sp.SignalList,"carapi")
 	if errorCode!=common.ResultSuccess {
 		t.Error("getSendParameter getDiagParams error")

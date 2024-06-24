@@ -254,7 +254,13 @@ func (dp *diagParameter)convertDiagParameter(
 		delete(mapItem,"did")
 	}
 
-	triggerList,_:=row["triggers"].(map[string]interface{})["list"].([]interface{})
+	var triggerList []interface{}
+	if val, ok := row["triggers"]; ok {
+		triggerList=val.(map[string]interface{})["list"].([]interface{})
+	} else {
+		triggerList=[]interface{}{}
+	}
+	
 	for _,item:=range triggerList {
 		mapItem:=item.(map[string]interface{})
 		delete(mapItem,"id")
