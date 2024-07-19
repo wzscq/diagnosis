@@ -300,7 +300,7 @@ docker run -d -p80:80 --name diagnosis -v /home/Digimatrix/project/saic/TotalDat
 2024-02-20
 1、修改listview页面代码，解决按钮弹出提示闪烁问题
 
-2024-04-13
+2024-04-13  ok
 1、综合报告关闭逻辑修改
    a、修改综合诊断报告数据库视图逻辑 diag_view_result
       a1、逻辑修改为单项有一个为open则综合为open，全部close则综合close
