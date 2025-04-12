@@ -13,7 +13,8 @@ import (
 	"digimatrix.com/diagnosis/oauth"
 	"digimatrix.com/diagnosis/idm"
 	"digimatrix.com/diagnosis/vehiclestatus"
-	"digimatrix.com/diagnosis/saicinterface"
+	//"digimatrix.com/diagnosis/saicinterface"
+	"digimatrix.com/diagnosis/fulldata"
 	"log"
 	"time"
 )
@@ -87,8 +88,8 @@ func main() {
 	}
 	mqttClient.Init()
 
-	//kafka consumer
-	saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
+	//kafka consumer  注意这里再windows下不支持，需要在linux下测试，本地测试时需要注释掉
+	//saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
 
 	duration, _ = time.ParseDuration(conf.Redis.IdmAppDataSyncLockExpired)
 	idmSyncLock:=idm.IdmSyncLock{}
@@ -134,6 +135,12 @@ func main() {
 		LoginUrl:conf.Oauth.Url,
 	}
 	oauthContrller.Bind(router)
+
+	//全数据下载
+	fulldataController:=fulldata.Controller{
+		CRVClient:&crvClinet,
+	}
+	fulldataController.Bind(router)
 
 	vehiclestatusController:=vehiclestatus.CreateController(
 		conf.VehicleStatusMongo.Server,

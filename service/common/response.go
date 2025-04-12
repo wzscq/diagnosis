@@ -33,6 +33,9 @@ const (
 	ResultParamWithoutEcu = 10100014
 	ResultWrongDiagConf = 10100015
 	ResultOpenFileError = 10100016
+	ResultGetFullDataConfError = 10100017
+	ResultGetCarInfoError = 10100018
+	ResultCreateFullDataSendRecError = 10100019
 )
 
 var errMsg = map[int]CommonRsp{
@@ -129,6 +132,21 @@ var errMsg = map[int]CommonRsp{
 	ResultWrongDiagConf:CommonRsp{
 		ErrorCode:ResultWrongDiagConf,
 		Message:"下发参数时诊断配置信息不完整，请确认诊断信息正确配置后重新尝试",
+		Error:true,
+	},
+	ResultGetFullDataConfError:CommonRsp{
+		ErrorCode:ResultGetFullDataConfError,
+		Message:"获取全量数据配置信息失败，请与管理员联系处理",
+		Error:true,
+	},
+	ResultGetCarInfoError:CommonRsp{
+		ErrorCode:ResultGetCarInfoError,
+		Message:"获取车辆配置信息失败，请与管理员联系处理",
+		Error:true,
+	},
+	ResultCreateFullDataSendRecError:CommonRsp{
+		ErrorCode:ResultCreateFullDataSendRecError,
+		Message:"创建全量配置下发记录失败，请与管理员联系处理",
 		Error:true,
 	},
 }
