@@ -99,7 +99,7 @@ func main() {
 	mqttClient.Init()
 
 	//kafka consumer  注意这里再windows下不支持，需要在linux下测试，本地测试时需要注释掉
-	//saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
+	saicinterface.StartConsumer(&conf.Kafka,&crvClinet)
 
 	duration, _ = time.ParseDuration(conf.Redis.IdmAppDataSyncLockExpired)
 	idmSyncLock:=idm.IdmSyncLock{}
