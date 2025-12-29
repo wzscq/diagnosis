@@ -36,6 +36,7 @@ const (
 	ResultGetFullDataConfError = 10100017
 	ResultGetCarInfoError = 10100018
 	ResultCreateFullDataSendRecError = 10100019
+	ResultCreateTempFileError = 10100020
 )
 
 var errMsg = map[int]CommonRsp{
@@ -147,6 +148,11 @@ var errMsg = map[int]CommonRsp{
 	ResultCreateFullDataSendRecError:CommonRsp{
 		ErrorCode:ResultCreateFullDataSendRecError,
 		Message:"创建全量配置下发记录失败，请与管理员联系处理",
+		Error:true,
+	},
+	ResultCreateTempFileError:CommonRsp{
+		ErrorCode:ResultCreateTempFileError,
+		Message:"创建用于下载的临时文件失败，请与管理员联系处理",
 		Error:true,
 	},
 }

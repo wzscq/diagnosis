@@ -69,11 +69,20 @@ func main() {
 		duration,
 		conf.Redis.Password)
 
+	huaweiOSSClient:=busi.HuaweiOSSClient{
+		AccessKeyID:conf.HuaweiOSS.AccessKeyID,
+		SecretAccessKey:conf.HuaweiOSS.SecretAccessKey,
+		EndPoint:conf.HuaweiOSS.EndPoint,
+		BucketName:conf.HuaweiOSS.BucketName,
+		OutputPath:conf.HuaweiOSS.OutputPath,
+	}
+
 	//实际的业务处理模块
 	busiModule:=busi.Busi{
 		CrvClient:&crvClinet,
 		SendRecordCache:&sendRecordCache,
 		HeartbeatLock:&heartbeatLock,
+		HuaweiOSSClient:&huaweiOSSClient,
 	}
 
 	//mqttclient
@@ -83,6 +92,7 @@ func main() {
 		Password:conf.MQTT.Password,
 		HeartbeatTopic:conf.MQTT.HeartbeatTopic,
 		DiagResponseTopic:conf.MQTT.DiagResponseTopic,
+		DownloadOSSFileTopic:conf.MQTT.DownloadOSSFileTopic,
 		Handler:&busiModule,
 		ClientID:conf.MQTT.ClientID,
 	}
@@ -139,6 +149,7 @@ func main() {
 	//全数据下载
 	fulldataController:=fulldata.Controller{
 		CRVClient:&crvClinet,
+		FullDataConf: &conf.FullData,
 	}
 	fulldataController.Bind(router)
 

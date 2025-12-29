@@ -9,5 +9,6 @@ type Busi struct {
 	CrvClient *crv.CRVClient
 	SendRecordCache *send.SendRecordCache
 	HeartbeatLock *HeartbeatLock
+	HuaweiOSSClient *HuaweiOSSClient
 }
 

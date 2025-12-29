@@ -20,6 +20,7 @@ type eventHandler interface {
 	DealDiagResponse(deviceID string)
 	DealEventResponse(deviceID string)
 	DealSignalResponse(deviceID string)
+	DealDownloadOSSFile(key string)
 }
 
 type MQTTClient struct {
@@ -28,6 +29,7 @@ type MQTTClient struct {
 	Password string
 	HeartbeatTopic string
 	DiagResponseTopic string
+	DownloadOSSFileTopic string
 	ClientID string
 	Handler eventHandler
 	Client mqtt.Client
@@ -50,7 +52,7 @@ func (mqc *MQTTClient) getClient()(mqtt.Client){
 
 	client:=mqtt.NewClient(opts)
 	if token:=client.Connect(); token.Wait() && token.Error() != nil {
-		log.Println(token.Error)
+		log.Println(token.Error())
 		return nil
 	}
 	return client
@@ -63,6 +65,8 @@ func (mqc *MQTTClient) connectHandler(client mqtt.Client){
 		client.Subscribe(mqc.HeartbeatTopic,0,mqc.onHeartbeat)
 		log.Println("MQTTClient Subscribe DiagResponseTopic: ",mqc.DiagResponseTopic)
 		client.Subscribe(mqc.DiagResponseTopic,0,mqc.onDiagResponse)
+		log.Println("MQTTClient Subscribe DownloadOSSFileTopic: ",mqc.DownloadOSSFileTopic)
+		client.Subscribe(mqc.DownloadOSSFileTopic,0,mqc.onDownloadOSSFile)
 	}
 }
 
@@ -76,6 +80,13 @@ func (mqc *MQTTClient) messagePublishHandler(client mqtt.Client, msg mqtt.Messag
 
 func (mqc *MQTTClient) reconnectingHandler(client mqtt.Client,opts *mqtt.ClientOptions){
 	log.Println("MQTTClient reconnectingHandler ")
+}
+
+func (mqc *MQTTClient)onDownloadOSSFile(Client mqtt.Client, msg mqtt.Message){
+	log.Println("MQTTClient onDownloadOSSFile ",msg.Topic())
+	key:=string(msg.Payload())
+	log.Println("MQTTClient onDownloadOSSFile key: ",key)
+	mqc.Handler.DealDownloadOSSFile(key)
 }
 
 func (mqc *MQTTClient)onHeartbeat(Client mqtt.Client, msg mqtt.Message){

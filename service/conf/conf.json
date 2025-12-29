@@ -27,7 +27,8 @@
         "heartbeatTopic":"MQB1/Status/+",
         "diagResponseTopic":"MQB1/ReciveAck/+",
         "dbcUploadTopic":"upload/dbcFile",
-        "clientID":"diagonsis_mqtt_subscribe_client_2"
+        "clientID":"diagonsis_mqtt_subscribe_client_2",
+        "downloadOSSFileTopic":"download_oss_file"
     },
     "crv":{
         "server":"http://127.0.0.1:8200",
@@ -79,5 +80,17 @@
         "defaultRole":"operator"
     },
     "filePath1":"services/diagnosis/data/",
-    "filePath":"D:/self/crvframe/testdata"
+    "filePath":"D:/self/crvframe/testdata",
+    "fullData":{
+        "tempPath":"./temp/",
+        "tempFileExpired":"24h",
+        "urlPrefix":"http://localhost:8300"
+    },
+    "huaweiOSS":{
+        "accessKeyID":"HPUAZSP3LUEP3S86CUCP",
+        "secretAccessKey":"HQ1MBmc7AShxJpwRiXShXUQp3LPHSiikDapRKVbX",
+        "endPoint":"obs.cn-east-3.myhuaweicloud.com",
+        "bucketName":"obs-qa-evdms",
+        "outputPath":"D:/"
+    }
 }

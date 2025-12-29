@@ -32,6 +32,7 @@ type mqttConf struct {
 	DiagResponseTopic string `json:"diagResponseTopic"`
 	DBCUploadTopic string `json:"dbcUploadTopic"`
 	ClientID string `json:"clientID"`
+	DownloadOSSFileTopic string `json:"downloadOSSFileTopic"`
 }
 
 type crvConf struct {
@@ -86,6 +87,20 @@ type OauthConf struct {
 	Url string `json:"url"`
 }
 
+type FullData struct {
+	TempPath string `json:"tempPath"`
+	URLPrefix string `json:"urlPrefix"`
+	TempFileExpired string `json:"tempFileExpired"`
+}
+
+type HuaweiOSSConf struct {
+	AccessKeyID string `json:"accessKeyID"`
+	SecretAccessKey string `json:"secretAccessKey"`
+	EndPoint string `json:"endPoint"`
+	BucketName string `json:"bucketName"`
+	OutputPath string `json:"outputPath"`
+}
+
 type Config struct {
 	Mysql  mysqlConf  `json:"mysql"`
 	Service serviceConf `json:"service"`
@@ -98,6 +113,8 @@ type Config struct {
 	Oauth OauthConf `json:"oauth"`
 	IDMIntegration IntegrationConf `json:"idmIntegration"`
 	VehicleStatusMongo mongoConf `json:"vehicleStatusMongo"`
+	FullData FullData `json:fullData`
+	HuaweiOSS HuaweiOSSConf `json:"huaweiOSS"`
 }
 
 var gConfig Config
